@@ -316,7 +316,7 @@ export default function Projects() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="budget">Budget ($)</Label>
+                    <Label htmlFor="budget">Budget (₦)</Label>
                     <Input id="budget" type="number" placeholder="0" />
                   </div>
                   <div className="grid gap-2">
