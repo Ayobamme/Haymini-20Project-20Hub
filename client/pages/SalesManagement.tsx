@@ -407,7 +407,7 @@ export default function SalesManagement() {
                     </Select>
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="estimatedValue">Estimated Value ($)</Label>
+                    <Label htmlFor="estimatedValue">Estimated Value (₦)</Label>
                     <Input
                       id="estimatedValue"
                       type="number"
