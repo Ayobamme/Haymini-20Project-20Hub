@@ -510,7 +510,7 @@ export default function Inventory() {
 
                 <div className="grid grid-cols-3 gap-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="unitPrice">Unit Price ($)</Label>
+                    <Label htmlFor="unitPrice">Unit Price (₦)</Label>
                     <Input
                       id="unitPrice"
                       type="number"
