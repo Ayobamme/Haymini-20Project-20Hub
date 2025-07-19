@@ -20,6 +20,8 @@ import Inventory from "./pages/Inventory";
 import Communication from "./pages/Communication";
 import Integrations from "./pages/Integrations";
 import Departments from "./pages/Departments";
+import ProfileSettings from "./pages/ProfileSettings";
+import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
 import PlaceholderPage from "./pages/PlaceholderPage";
 
@@ -133,6 +135,22 @@ const App = () => (
             element={
               <DashboardLayout>
                 <Integrations />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <DashboardLayout>
+                <ProfileSettings />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <DashboardLayout>
+                <Notifications />
               </DashboardLayout>
             }
           />
