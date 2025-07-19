@@ -39,12 +39,13 @@ const navigation = [
     title: "Overview",
     items: [
       { title: "Dashboard", url: "/", icon: LayoutDashboard },
-      { title: "Analytics", url: "/analytics", icon: Home },
+      { title: "Reports & Analytics", url: "/analytics", icon: BarChart3 },
     ],
   },
   {
-    title: "Project Management",
+    title: "Business Management",
     items: [
+      { title: "Sales Management", url: "/sales", icon: TrendingUp },
       { title: "Projects", url: "/projects", icon: FolderKanban },
       { title: "Tasks", url: "/tasks", icon: CheckSquare },
       { title: "Teams", url: "/teams", icon: Users },
@@ -67,7 +68,10 @@ const navigation = [
   },
   {
     title: "System",
-    items: [{ title: "Integrations", url: "/integrations", icon: Settings }],
+    items: [
+      { title: "Departments", url: "/departments", icon: Building },
+      { title: "Integrations", url: "/integrations", icon: Settings },
+    ],
   },
 ];
 
