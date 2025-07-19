@@ -39,6 +39,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   Plus,
   Search,
@@ -61,224 +62,292 @@ import {
   Archive,
   Settings,
   FolderKanban,
+  CalendarDays,
+  X,
 } from "lucide-react";
 
-const projects = [
-  {
-    id: "PRJ-001",
-    name: "E-commerce Platform Redesign",
-    description:
-      "Complete overhaul of the e-commerce platform with modern UI/UX and improved performance",
-    status: "In Progress",
-    priority: "High",
-    progress: 75,
-    budget: 150000,
-    spent: 112500,
-    startDate: "2024-01-15",
-    endDate: "2024-03-15",
-    owner: "John Doe",
-    team: "Frontend Development",
-    members: [
-      { name: "John Doe", avatar: "", role: "Project Manager" },
-      { name: "Sarah Wilson", avatar: "", role: "Lead Developer" },
-      { name: "Mike Chen", avatar: "", role: "UI/UX Designer" },
-    ],
-    tags: ["Web", "E-commerce", "UI/UX"],
-    isPrivate: false,
-    group: "Customer Experience",
-    tasksTotal: 45,
-    tasksCompleted: 34,
-    issuesOpen: 3,
-    lastUpdate: "2024-01-25",
-  },
-  {
-    id: "PRJ-002",
-    name: "Mobile App Development",
-    description:
-      "Native mobile application for iOS and Android with cross-platform features",
-    status: "In Progress",
-    priority: "Medium",
-    progress: 45,
-    budget: 200000,
-    spent: 90000,
-    startDate: "2024-02-01",
-    endDate: "2024-06-01",
-    owner: "Alex Rodriguez",
-    team: "Backend Development",
-    members: [
-      { name: "Alex Rodriguez", avatar: "", role: "Project Manager" },
-      { name: "Emma Thompson", avatar: "", role: "Mobile Developer" },
-    ],
-    tags: ["Mobile", "iOS", "Android"],
-    isPrivate: false,
-    group: "Product Development",
-    tasksTotal: 67,
-    tasksCompleted: 30,
-    issuesOpen: 5,
-    lastUpdate: "2024-01-24",
-  },
-  {
-    id: "PRJ-003",
-    name: "Marketing Campaign Q1",
-    description:
-      "Comprehensive marketing campaign for Q1 product launch and brand awareness",
-    status: "Planning",
-    priority: "High",
-    progress: 20,
-    budget: 75000,
-    spent: 15000,
-    startDate: "2024-01-01",
-    endDate: "2024-03-31",
-    owner: "Lisa Park",
-    team: "Marketing & Growth",
-    members: [
-      { name: "Lisa Park", avatar: "", role: "Marketing Manager" },
-      { name: "David Kim", avatar: "", role: "Content Strategist" },
-      { name: "Rachel Green", avatar: "", role: "Social Media Manager" },
-    ],
-    tags: ["Marketing", "Campaign", "Q1"],
-    isPrivate: true,
-    group: "Marketing Initiatives",
-    tasksTotal: 28,
-    tasksCompleted: 6,
-    issuesOpen: 1,
-    lastUpdate: "2024-01-23",
-  },
-  {
-    id: "PRJ-004",
-    name: "Database Migration",
-    description: "Migration of legacy database to modern cloud infrastructure",
-    status: "Completed",
-    priority: "High",
-    progress: 100,
-    budget: 80000,
-    spent: 75000,
-    startDate: "2023-11-01",
-    endDate: "2024-01-15",
-    owner: "Alex Rodriguez",
-    team: "Backend Development",
-    members: [
-      { name: "Alex Rodriguez", avatar: "", role: "Project Manager" },
-      { name: "Emma Thompson", avatar: "", role: "Database Engineer" },
-    ],
-    tags: ["Database", "Migration", "Infrastructure"],
-    isPrivate: false,
-    group: "Technical Infrastructure",
-    tasksTotal: 32,
-    tasksCompleted: 32,
-    issuesOpen: 0,
-    lastUpdate: "2024-01-15",
-  },
-];
+interface Project {
+  id: string;
+  name: string;
+  description: string;
+  status: "Not Started" | "In Progress" | "On Hold" | "Completed" | "Cancelled";
+  priority: "Low" | "Medium" | "High" | "Critical";
+  progress: number;
+  budget: number;
+  spent: number;
+  startDate: string;
+  endDate: string;
+  owner: string;
+  team: string;
+  members: Array<{
+    name: string;
+    avatar?: string;
+    role: string;
+  }>;
+  tags: string[];
+  isPrivate: boolean;
+  group: string;
+  tasksTotal: number;
+  tasksCompleted: number;
+  issuesOpen: number;
+  lastUpdate: string;
+}
 
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case "Completed":
-      return "success";
-    case "In Progress":
-      return "default";
-    case "Planning":
-      return "secondary";
-    case "On Hold":
-      return "warning";
-    case "Cancelled":
-      return "destructive";
-    default:
-      return "secondary";
-  }
-};
+const Projects = () => {
+  const [projects, setProjects] = useState<Project[]>([
+    {
+      id: "PRJ-001",
+      name: "E-commerce Platform Redesign",
+      description:
+        "Complete overhaul of the e-commerce platform with modern UI/UX and improved performance",
+      status: "In Progress",
+      priority: "High",
+      progress: 75,
+      budget: 1500000,
+      spent: 1125000,
+      startDate: "2024-01-15",
+      endDate: "2024-03-15",
+      owner: "John Doe",
+      team: "Frontend Development",
+      members: [
+        { name: "John Doe", avatar: "", role: "Project Manager" },
+        { name: "Sarah Wilson", avatar: "", role: "Lead Developer" },
+        { name: "Mike Chen", avatar: "", role: "UI/UX Designer" },
+      ],
+      tags: ["Web", "E-commerce", "UI/UX"],
+      isPrivate: false,
+      group: "Customer Experience",
+      tasksTotal: 45,
+      tasksCompleted: 34,
+      issuesOpen: 3,
+      lastUpdate: "2024-01-25",
+    },
+    {
+      id: "PRJ-002",
+      name: "Mobile App Development",
+      description:
+        "Native mobile application for iOS and Android with cross-platform features",
+      status: "In Progress",
+      priority: "Medium",
+      progress: 45,
+      budget: 2000000,
+      spent: 900000,
+      startDate: "2024-02-01",
+      endDate: "2024-05-30",
+      owner: "Sarah Wilson",
+      team: "Mobile Development",
+      members: [
+        { name: "Sarah Wilson", avatar: "", role: "Project Manager" },
+        { name: "Alex Rodriguez", avatar: "", role: "Mobile Developer" },
+        { name: "Emma Davis", avatar: "", role: "QA Engineer" },
+      ],
+      tags: ["Mobile", "iOS", "Android"],
+      isPrivate: false,
+      group: "Product Development",
+      tasksTotal: 60,
+      tasksCompleted: 27,
+      issuesOpen: 5,
+      lastUpdate: "2024-01-23",
+    },
+    {
+      id: "PRJ-003",
+      name: "Marketing Campaign Q1",
+      description:
+        "Comprehensive marketing strategy and campaign execution for Q1 2024",
+      status: "Completed",
+      priority: "Medium",
+      progress: 100,
+      budget: 800000,
+      spent: 750000,
+      startDate: "2023-12-01",
+      endDate: "2024-01-31",
+      owner: "Lisa Park",
+      team: "Marketing",
+      members: [
+        { name: "Lisa Park", avatar: "", role: "Marketing Manager" },
+        { name: "David Kim", avatar: "", role: "Content Strategist" },
+        { name: "Jennifer Lee", avatar: "", role: "Graphic Designer" },
+      ],
+      tags: ["Marketing", "Campaign", "Content"],
+      isPrivate: false,
+      group: "Marketing & Sales",
+      tasksTotal: 28,
+      tasksCompleted: 28,
+      issuesOpen: 0,
+      lastUpdate: "2024-01-31",
+    },
+    {
+      id: "PRJ-004",
+      name: "Data Analytics Platform",
+      description:
+        "Internal analytics platform for business intelligence and reporting",
+      status: "On Hold",
+      priority: "Low",
+      progress: 20,
+      budget: 1200000,
+      spent: 240000,
+      startDate: "2024-01-01",
+      endDate: "2024-06-30",
+      owner: "Michael Brown",
+      team: "Data Engineering",
+      members: [
+        { name: "Michael Brown", avatar: "", role: "Data Engineer" },
+        { name: "Anna Thompson", avatar: "", role: "Data Scientist" },
+      ],
+      tags: ["Analytics", "BI", "Data"],
+      isPrivate: true,
+      group: "Technology",
+      tasksTotal: 35,
+      tasksCompleted: 7,
+      issuesOpen: 2,
+      lastUpdate: "2024-01-10",
+    },
+  ]);
 
-const getPriorityColor = (priority: string) => {
-  switch (priority) {
-    case "High":
-      return "destructive";
-    case "Medium":
-      return "default";
-    case "Low":
-      return "secondary";
-    default:
-      return "secondary";
-  }
-};
-
-const getInitials = (name: string) => {
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase();
-};
-
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-  }).format(amount);
-};
-
-export default function Projects() {
-  const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [priorityFilter, setPriorityFilter] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [priorityFilter, setPriorityFilter] = useState("all");
+  const [startDateFilter, setStartDateFilter] = useState<Date | undefined>();
+  const [endDateFilter, setEndDateFilter] = useState<Date | undefined>();
+  const [showCreateProject, setShowCreateProject] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
+  const handleDateFilter = () => {
+    // Date filtering is now handled in the filteredProjects computed value
+    console.log("Date filter applied:", { startDateFilter, endDateFilter });
+  };
+
+  const clearDateFilters = () => {
+    setStartDateFilter(undefined);
+    setEndDateFilter(undefined);
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Not Started":
+        return "bg-gray-100 text-gray-800";
+      case "In Progress":
+        return "bg-blue-100 text-blue-800";
+      case "On Hold":
+        return "bg-yellow-100 text-yellow-800";
+      case "Completed":
+        return "bg-green-100 text-green-800";
+      case "Cancelled":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case "Low":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "Medium":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "High":
+        return "bg-orange-100 text-orange-800 border-orange-200";
+      case "Critical":
+        return "bg-red-100 text-red-800 border-red-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
+    }
+  };
+
+  const isProjectInDateRange = (project: Project) => {
+    const projectStart = new Date(project.startDate);
+    const projectEnd = new Date(project.endDate);
+
+    // If no date filters are set, include all projects
+    if (!startDateFilter && !endDateFilter) return true;
+
+    // If only start date filter is set
+    if (startDateFilter && !endDateFilter) {
+      return projectStart >= startDateFilter || projectEnd >= startDateFilter;
+    }
+
+    // If only end date filter is set
+    if (!startDateFilter && endDateFilter) {
+      return projectStart <= endDateFilter || projectEnd <= endDateFilter;
+    }
+
+    // If both date filters are set
+    if (startDateFilter && endDateFilter) {
+      return (
+        (projectStart >= startDateFilter && projectStart <= endDateFilter) ||
+        (projectEnd >= startDateFilter && projectEnd <= endDateFilter) ||
+        (projectStart <= startDateFilter && projectEnd >= endDateFilter)
+      );
+    }
+
+    return true;
+  };
+
   const filteredProjects = projects.filter((project) => {
-    const matchesSearch = project.name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
+    const matchesSearch =
+      project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.owner.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.team.toLowerCase().includes(searchTerm.toLowerCase());
+
     const matchesStatus =
       statusFilter === "all" || project.status === statusFilter;
     const matchesPriority =
       priorityFilter === "all" || project.priority === priorityFilter;
-    return matchesSearch && matchesStatus && matchesPriority;
-  });
+    const matchesDateRange = isProjectInDateRange(project);
 
-  const projectStats = {
-    total: projects.length,
-    inProgress: projects.filter((p) => p.status === "In Progress").length,
-    completed: projects.filter((p) => p.status === "Completed").length,
-    planning: projects.filter((p) => p.status === "Planning").length,
-    totalBudget: projects.reduce((acc, p) => acc + p.budget, 0),
-    totalSpent: projects.reduce((acc, p) => acc + p.spent, 0),
-  };
+    return (
+      matchesSearch && matchesStatus && matchesPriority && matchesDateRange
+    );
+  });
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Projects</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Project Management
+          </h1>
           <p className="text-muted-foreground">
-            Create, manage, and track all your projects in one place.
+            Manage and track all your projects with advanced filtering
           </p>
         </div>
-        <div className="flex items-center space-x-2">
-          <Dialog
-            open={isCreateProjectOpen}
-            onOpenChange={setIsCreateProjectOpen}
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
           >
+            {viewMode === "grid" ? "List View" : "Grid View"}
+          </Button>
+          <Dialog open={showCreateProject} onOpenChange={setShowCreateProject}>
             <DialogTrigger asChild>
               <Button>
-                <Plus className="mr-2 h-4 w-4" />
-                Create Project
+                <Plus className="h-4 w-4 mr-2" />
+                New Project
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px]">
+            <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>Create New Project</DialogTitle>
                 <DialogDescription>
-                  Set up a new project with all the necessary details and team
-                  assignments.
+                  Set up a new project with team members and timeline
                 </DialogDescription>
               </DialogHeader>
-              <div className="grid gap-4 py-4 max-h-[500px] overflow-y-auto">
+              <div className="grid gap-4 py-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="projectName">Project Name</Label>
+                  <Input id="projectName" placeholder="Enter project name" />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    placeholder="Describe the project..."
+                    rows={3}
+                  />
+                </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="name">Project Name *</Label>
-                    <Input id="name" placeholder="Enter project name" />
-                  </div>
                   <div className="grid gap-2">
                     <Label htmlFor="priority">Priority</Label>
                     <Select>
@@ -289,54 +358,12 @@ export default function Projects() {
                         <SelectItem value="low">Low</SelectItem>
                         <SelectItem value="medium">Medium</SelectItem>
                         <SelectItem value="high">High</SelectItem>
+                        <SelectItem value="critical">Critical</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
-
-                <div className="grid gap-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    placeholder="Describe the project goals and objectives"
-                    rows={3}
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="startDate">Start Date</Label>
-                    <Input id="startDate" type="date" />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="endDate">End Date</Label>
-                    <Input id="endDate" type="date" />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="budget">Budget (₦)</Label>
-                    <Input id="budget" type="number" placeholder="0" />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="owner">Project Owner</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select owner" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="john">John Doe</SelectItem>
-                        <SelectItem value="alex">Alex Rodriguez</SelectItem>
-                        <SelectItem value="lisa">Lisa Park</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="team">Assign Team</Label>
+                    <Label htmlFor="team">Team</Label>
                     <Select>
                       <SelectTrigger>
                         <SelectValue placeholder="Select team" />
@@ -348,41 +375,29 @@ export default function Projects() {
                         <SelectItem value="backend">
                           Backend Development
                         </SelectItem>
-                        <SelectItem value="marketing">
-                          Marketing & Growth
+                        <SelectItem value="mobile">
+                          Mobile Development
                         </SelectItem>
+                        <SelectItem value="design">Design Team</SelectItem>
+                        <SelectItem value="marketing">Marketing</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="startDate">Start Date</Label>
+                    <DatePicker placeholder="Select start date" />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="group">Project Group</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select group" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="customer">
-                          Customer Experience
-                        </SelectItem>
-                        <SelectItem value="product">
-                          Product Development
-                        </SelectItem>
-                        <SelectItem value="marketing">
-                          Marketing Initiatives
-                        </SelectItem>
-                        <SelectItem value="technical">
-                          Technical Infrastructure
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="endDate">End Date</Label>
+                    <DatePicker placeholder="Select end date" />
                   </div>
                 </div>
-
                 <div className="grid gap-2">
-                  <Label htmlFor="tags">Tags (comma-separated)</Label>
-                  <Input id="tags" placeholder="e.g., Web, Mobile, UI/UX" />
+                  <Label htmlFor="budget">Budget (₦)</Label>
+                  <Input id="budget" type="number" placeholder="0" />
                 </div>
-
                 <div className="flex items-center space-x-2">
                   <Switch id="private" />
                   <Label htmlFor="private">Make this project private</Label>
@@ -390,156 +405,205 @@ export default function Projects() {
               </div>
               <DialogFooter>
                 <Button
-                  type="button"
                   variant="outline"
-                  onClick={() => setIsCreateProjectOpen(false)}
+                  onClick={() => setShowCreateProject(false)}
                 >
                   Cancel
                 </Button>
-                <Button type="submit">Create Project</Button>
+                <Button onClick={() => setShowCreateProject(false)}>
+                  Create Project
+                </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
       </div>
 
-      {/* Project Stats */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Projects
-            </CardTitle>
-            <FolderKanban className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{projectStats.total}</div>
-            <p className="text-xs text-muted-foreground">All project types</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">In Progress</CardTitle>
-            <PlayCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-primary">
-              {projectStats.inProgress}
+      {/* Enhanced Filters with Date Range */}
+      <Card>
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            <div className="flex flex-col lg:flex-row gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search projects..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-full lg:w-[180px]">
+                  <SelectValue placeholder="Filter by status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="Not Started">Not Started</SelectItem>
+                  <SelectItem value="In Progress">In Progress</SelectItem>
+                  <SelectItem value="On Hold">On Hold</SelectItem>
+                  <SelectItem value="Completed">Completed</SelectItem>
+                  <SelectItem value="Cancelled">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+                <SelectTrigger className="w-full lg:w-[180px]">
+                  <SelectValue placeholder="Filter by priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Priority</SelectItem>
+                  <SelectItem value="Low">Low</SelectItem>
+                  <SelectItem value="Medium">Medium</SelectItem>
+                  <SelectItem value="High">High</SelectItem>
+                  <SelectItem value="Critical">Critical</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            <p className="text-xs text-muted-foreground">Active projects</p>
-          </CardContent>
-        </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Completed</CardTitle>
-            <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-success">
-              {projectStats.completed}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Successfully delivered
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Budget Usage</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {Math.round(
-                (projectStats.totalSpent / projectStats.totalBudget) * 100,
+            {/* Date Range Filters */}
+            <div className="flex flex-col lg:flex-row gap-4 items-center border-t pt-4">
+              <div className="flex items-center gap-2">
+                <CalendarDays className="h-4 w-4 text-muted-foreground" />
+                <Label className="text-sm font-medium">Date Range:</Label>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-2 items-center">
+                <DatePicker
+                  date={startDateFilter}
+                  onDateChange={setStartDateFilter}
+                  placeholder="Start date"
+                  className="w-full sm:w-[160px]"
+                />
+                <span className="text-sm text-muted-foreground">to</span>
+                <DatePicker
+                  date={endDateFilter}
+                  onDateChange={setEndDateFilter}
+                  placeholder="End date"
+                  className="w-full sm:w-[160px]"
+                />
+              </div>
+              {(startDateFilter || endDateFilter) && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={clearDateFilters}
+                  className="flex items-center gap-2"
+                >
+                  <X className="h-3 w-3" />
+                  Clear Dates
+                </Button>
               )}
-              %
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {formatCurrency(projectStats.totalSpent)} /{" "}
-              {formatCurrency(projectStats.totalBudget)}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Filters and Search */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <div className="flex-1 max-w-sm">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search projects..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
-              />
+              <div className="text-sm text-muted-foreground">
+                {filteredProjects.length} of {projects.length} projects
+              </div>
             </div>
           </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="Planning">Planning</SelectItem>
-              <SelectItem value="In Progress">In Progress</SelectItem>
-              <SelectItem value="Completed">Completed</SelectItem>
-              <SelectItem value="On Hold">On Hold</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Priority" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Priority</SelectItem>
-              <SelectItem value="High">High</SelectItem>
-              <SelectItem value="Medium">Medium</SelectItem>
-              <SelectItem value="Low">Low</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <Tabs
-          value={viewMode}
-          onValueChange={(value) => setViewMode(value as "grid" | "list")}
-        >
-          <TabsList>
-            <TabsTrigger value="grid">Grid</TabsTrigger>
-            <TabsTrigger value="list">List</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        </CardContent>
+      </Card>
+
+      {/* Project Statistics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Total Projects
+                </p>
+                <div className="text-2xl font-bold">
+                  {filteredProjects.length}
+                </div>
+              </div>
+              <FolderKanban className="h-8 w-8 text-blue-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  In Progress
+                </p>
+                <div className="text-2xl font-bold">
+                  {
+                    filteredProjects.filter((p) => p.status === "In Progress")
+                      .length
+                  }
+                </div>
+              </div>
+              <PlayCircle className="h-8 w-8 text-orange-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Completed
+                </p>
+                <div className="text-2xl font-bold">
+                  {
+                    filteredProjects.filter((p) => p.status === "Completed")
+                      .length
+                  }
+                </div>
+              </div>
+              <CheckCircle2 className="h-8 w-8 text-green-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Total Budget
+                </p>
+                <div className="text-2xl font-bold">
+                  ₦
+                  {(
+                    filteredProjects.reduce((sum, p) => sum + p.budget, 0) /
+                    1000000
+                  ).toFixed(1)}
+                  M
+                </div>
+              </div>
+              <DollarSign className="h-8 w-8 text-green-500" />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Projects */}
+      {/* Projects Display */}
       {viewMode === "grid" ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredProjects.map((project) => (
             <Card
               key={project.id}
-              className="hover:shadow-md transition-shadow"
+              className="hover:shadow-lg transition-shadow"
             >
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
-                  <div className="space-y-1 flex-1">
+                  <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <CardTitle className="text-lg line-clamp-1">
-                        {project.name}
-                      </CardTitle>
+                      <CardTitle className="text-lg">{project.name}</CardTitle>
                       {project.isPrivate && (
                         <EyeOff className="h-4 w-4 text-muted-foreground" />
                       )}
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant={getStatusColor(project.status) as any}>
+                      <Badge className={getStatusColor(project.status)}>
                         {project.status}
                       </Badge>
                       <Badge
-                        variant={getPriorityColor(project.priority) as any}
+                        variant="outline"
+                        className={getPriorityColor(project.priority)}
                       >
                         {project.priority}
                       </Badge>
@@ -547,120 +611,117 @@ export default function Projects() {
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
+                      <Button variant="ghost" className="h-8 w-8 p-0">
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuItem>
-                        <Eye className="mr-2 h-4 w-4" />
+                        <Eye className="h-4 w-4 mr-2" />
                         View Details
                       </DropdownMenuItem>
                       <DropdownMenuItem>
-                        <Edit className="mr-2 h-4 w-4" />
+                        <Edit className="h-4 w-4 mr-2" />
                         Edit Project
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Users className="mr-2 h-4 w-4" />
-                        Manage Team
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem>
-                        <Archive className="mr-2 h-4 w-4" />
+                        <Archive className="h-4 w-4 mr-2" />
                         Archive
                       </DropdownMenuItem>
                       <DropdownMenuItem className="text-destructive">
-                        <Trash2 className="mr-2 h-4 w-4" />
+                        <Trash2 className="h-4 w-4 mr-2" />
                         Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
-                <CardDescription className="text-sm line-clamp-2">
-                  {project.description}
-                </CardDescription>
               </CardHeader>
 
               <CardContent className="space-y-4">
-                {/* Progress */}
+                <p className="text-sm text-muted-foreground line-clamp-2">
+                  {project.description}
+                </p>
+
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
                     <span>Progress</span>
                     <span className="font-medium">{project.progress}%</span>
                   </div>
-                  <Progress value={project.progress} className="w-full" />
+                  <Progress value={project.progress} className="h-2" />
                 </div>
 
-                {/* Budget */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span>Budget</span>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Budget</span>
                     <span className="font-medium">
-                      {formatCurrency(project.spent)} /{" "}
-                      {formatCurrency(project.budget)}
+                      ₦{(project.budget / 1000000).toFixed(1)}M
                     </span>
                   </div>
-                  <Progress
-                    value={(project.spent / project.budget) * 100}
-                    className="w-full"
-                  />
-                </div>
-
-                {/* Project Info */}
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <div className="text-muted-foreground">Tasks</div>
-                    <div className="font-medium">
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Spent</span>
+                    <span className="font-medium">
+                      ₦{(project.spent / 1000000).toFixed(1)}M
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Tasks</span>
+                    <span className="font-medium">
                       {project.tasksCompleted}/{project.tasksTotal}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-muted-foreground">Issues</div>
-                    <div className="font-medium text-destructive">
-                      {project.issuesOpen}
-                    </div>
+                    </span>
                   </div>
                 </div>
 
-                {/* Dates */}
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <Calendar className="mr-1 h-3 w-3" />
-                  {project.startDate} - {project.endDate}
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">
+                      {new Date(project.startDate).toLocaleDateString()} -{" "}
+                      {new Date(project.endDate).toLocaleDateString()}
+                    </span>
+                  </div>
                 </div>
 
-                {/* Team */}
-                <div className="space-y-2">
-                  <div className="text-sm font-medium">
-                    Team: {project.team}
-                  </div>
-                  <div className="flex items-center -space-x-2">
+                <div className="flex items-center gap-2">
+                  <div className="flex -space-x-2">
                     {project.members.slice(0, 3).map((member, index) => (
                       <Avatar
                         key={index}
-                        className="h-8 w-8 border-2 border-background"
+                        className="h-6 w-6 border-2 border-background"
                       >
-                        <AvatarImage src={member.avatar} alt={member.name} />
+                        <AvatarImage src={member.avatar} />
                         <AvatarFallback className="text-xs">
-                          {getInitials(member.name)}
+                          {member.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")}
                         </AvatarFallback>
                       </Avatar>
                     ))}
                     {project.members.length > 3 && (
-                      <div className="h-8 w-8 rounded-full bg-muted border-2 border-background flex items-center justify-center text-xs font-medium">
-                        +{project.members.length - 3}
+                      <div className="h-6 w-6 rounded-full bg-muted border-2 border-background flex items-center justify-center">
+                        <span className="text-xs text-muted-foreground">
+                          +{project.members.length - 3}
+                        </span>
                       </div>
                     )}
                   </div>
+                  <span className="text-sm text-muted-foreground">
+                    {project.team}
+                  </span>
                 </div>
 
-                {/* Tags */}
-                <div className="flex flex-wrap gap-1">
-                  {project.tags.map((tag) => (
-                    <Badge key={tag} variant="outline" className="text-xs">
+                <div className="flex gap-1">
+                  {project.tags.slice(0, 3).map((tag) => (
+                    <Badge key={tag} variant="secondary" className="text-xs">
                       {tag}
                     </Badge>
                   ))}
+                  {project.tags.length > 3 && (
+                    <Badge variant="secondary" className="text-xs">
+                      +{project.tags.length - 3}
+                    </Badge>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -670,6 +731,9 @@ export default function Projects() {
         <Card>
           <CardHeader>
             <CardTitle>Projects List</CardTitle>
+            <CardDescription>
+              All projects with detailed information
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -678,62 +742,85 @@ export default function Projects() {
                   key={project.id}
                   className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
                 >
-                  <div className="flex-1 space-y-2">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-medium">{project.name}</h3>
-                      {project.isPrivate && (
-                        <EyeOff className="h-4 w-4 text-muted-foreground" />
-                      )}
-                      <Badge variant={getStatusColor(project.status) as any}>
-                        {project.status}
-                      </Badge>
-                      <Badge
-                        variant={getPriorityColor(project.priority) as any}
-                      >
-                        {project.priority}
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground line-clamp-1">
-                      {project.description}
-                    </p>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span>Owner: {project.owner}</span>
-                      <span>Team: {project.team}</span>
-                      <span>Due: {project.endDate}</span>
+                  <div className="flex items-center gap-4">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-semibold">{project.name}</h4>
+                        {project.isPrivate && (
+                          <EyeOff className="h-4 w-4 text-muted-foreground" />
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge className={getStatusColor(project.status)}>
+                          {project.status}
+                        </Badge>
+                        <Badge
+                          variant="outline"
+                          className={getPriorityColor(project.priority)}
+                        >
+                          {project.priority}
+                        </Badge>
+                        <span className="text-sm text-muted-foreground">
+                          {project.team}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-right">
+
+                  <div className="flex items-center gap-6">
+                    <div className="text-center">
                       <div className="text-sm font-medium">
                         {project.progress}%
                       </div>
-                      <Progress value={project.progress} className="w-20" />
+                      <div className="text-xs text-muted-foreground">
+                        Progress
+                      </div>
                     </div>
-                    <div className="text-right">
+                    <div className="text-center">
                       <div className="text-sm font-medium">
-                        {formatCurrency(project.spent)}
+                        ₦{(project.budget / 1000000).toFixed(1)}M
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        of {formatCurrency(project.budget)}
+                        Budget
                       </div>
                     </div>
+                    <div className="text-center">
+                      <div className="text-sm font-medium">
+                        {project.tasksCompleted}/{project.tasksTotal}
+                      </div>
+                      <div className="text-xs text-muted-foreground">Tasks</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-sm font-medium">
+                        {new Date(project.endDate).toLocaleDateString()}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Due Date
+                      </div>
+                    </div>
+
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" className="h-8 w-8 p-0">
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem>
-                          <Eye className="mr-2 h-4 w-4" />
+                          <Eye className="h-4 w-4 mr-2" />
                           View Details
                         </DropdownMenuItem>
                         <DropdownMenuItem>
-                          <Edit className="mr-2 h-4 w-4" />
+                          <Edit className="h-4 w-4 mr-2" />
                           Edit Project
                         </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>
+                          <Archive className="h-4 w-4 mr-2" />
+                          Archive
+                        </DropdownMenuItem>
                         <DropdownMenuItem className="text-destructive">
-                          <Trash2 className="mr-2 h-4 w-4" />
+                          <Trash2 className="h-4 w-4 mr-2" />
                           Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -745,6 +832,24 @@ export default function Projects() {
           </CardContent>
         </Card>
       )}
+
+      {filteredProjects.length === 0 && (
+        <Card>
+          <CardContent className="p-12 text-center">
+            <FolderKanban className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+            <h3 className="text-lg font-semibold mb-2">No Projects Found</h3>
+            <p className="text-muted-foreground mb-4">
+              No projects match your current search and filter criteria.
+            </p>
+            <Button onClick={() => setShowCreateProject(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Create Your First Project
+            </Button>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
-}
+};
+
+export default Projects;
