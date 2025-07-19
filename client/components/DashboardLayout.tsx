@@ -27,6 +27,9 @@ import {
   Home,
   Search,
   Bell,
+  BarChart3,
+  TrendingUp,
+  Building,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
