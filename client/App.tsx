@@ -11,6 +11,10 @@ import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
 import Teams from "./pages/Teams";
 import Tasks from "./pages/Tasks";
+import Documents from "./pages/Documents";
+import Issues from "./pages/Issues";
+import RiskManagement from "./pages/RiskManagement";
+import Inventory from "./pages/Inventory";
 import NotFound from "./pages/NotFound";
 import PlaceholderPage from "./pages/PlaceholderPage";
 
@@ -70,10 +74,7 @@ const App = () => (
             path="/documents"
             element={
               <DashboardLayout>
-                <PlaceholderPage
-                  title="Documents"
-                  description="Manage and organize all your project documents in one place."
-                />
+                <Documents />
               </DashboardLayout>
             }
           />
@@ -92,10 +93,7 @@ const App = () => (
             path="/issues"
             element={
               <DashboardLayout>
-                <PlaceholderPage
-                  title="Issues"
-                  description="Track and manage project issues and bugs."
-                />
+                <Issues />
               </DashboardLayout>
             }
           />
@@ -103,10 +101,7 @@ const App = () => (
             path="/risks"
             element={
               <DashboardLayout>
-                <PlaceholderPage
-                  title="Risk Management"
-                  description="Identify, assess, and mitigate project risks."
-                />
+                <RiskManagement />
               </DashboardLayout>
             }
           />
@@ -114,10 +109,7 @@ const App = () => (
             path="/inventory"
             element={
               <DashboardLayout>
-                <PlaceholderPage
-                  title="Inventory Management"
-                  description="Manage items, stock levels, and supply chain."
-                />
+                <Inventory />
               </DashboardLayout>
             }
           />
