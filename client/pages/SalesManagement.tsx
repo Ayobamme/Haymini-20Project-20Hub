@@ -48,346 +48,398 @@ import {
   Download,
   Upload,
   Users,
-  TrendingUp,
-  TrendingDown,
   DollarSign,
-  UserPlus,
+  TrendingUp,
   Phone,
   Mail,
-  Calendar,
-  ArrowRight,
+  FileText,
+  UserCheck,
+  MapPin,
   Target,
   Activity,
-  BarChart3,
-  PieChart,
-  FileText,
-  Eye,
-  MoveRight,
+  Award,
+  Calendar,
 } from "lucide-react";
 import {
-  PieChart as RechartsPieChart,
+  PieChart,
   Pie,
   Cell,
+  ResponsiveContainer,
   BarChart,
   Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
+  Legend,
   LineChart,
   Line,
-  ResponsiveContainer,
-  FunnelChart,
-  Funnel,
-  LabelList,
 } from "recharts";
+import { toast } from "@/hooks/use-toast";
 
-const customers = [
-  {
-    id: "LEAD-001",
-    name: "John Anderson",
-    email: "john.anderson@techcorp.com",
-    phone: "+1-555-0123",
-    company: "TechCorp Solutions",
-    status: "Lead",
-    source: "Website",
-    value: 15000,
-    createdDate: "2024-01-25",
-    lastContact: "2024-01-26",
-    nextFollowUp: "2024-01-28",
-    assignedTo: "Sarah Wilson",
-    tags: ["enterprise", "tech"],
-    notes: "Interested in project management solution for 50+ team",
-  },
-  {
-    id: "ONBOARD-001",
-    name: "Emily Chen",
-    email: "emily.chen@innovate.com",
-    phone: "+1-555-0124",
-    company: "Innovate Labs",
-    status: "Onboarding",
-    source: "Referral",
-    value: 25000,
-    createdDate: "2024-01-20",
-    lastContact: "2024-01-25",
-    nextFollowUp: "2024-01-30",
-    assignedTo: "John Doe",
-    tags: ["startup", "innovation"],
-    notes: "Signed contract, setting up initial project structure",
-  },
-  {
-    id: "PAYING-001",
-    name: "Michael Torres",
-    email: "michael.torres@globalinc.com",
-    phone: "+1-555-0125",
-    company: "Global Inc",
-    status: "Paying Customer",
-    source: "Direct Sales",
-    value: 45000,
-    createdDate: "2024-01-15",
-    lastContact: "2024-01-26",
-    nextFollowUp: "2024-02-15",
-    assignedTo: "Alex Rodriguez",
-    tags: ["enterprise", "global"],
-    notes: "Active subscription, considering expansion",
-  },
-  {
-    id: "RETURN-001",
-    name: "Lisa Rodriguez",
-    email: "lisa.rodriguez@design.studio",
-    phone: "+1-555-0126",
-    company: "Creative Design Studio",
-    status: "Returning Customer",
-    source: "Previous Client",
-    value: 12000,
-    createdDate: "2023-11-10",
-    lastContact: "2024-01-24",
-    nextFollowUp: "2024-02-01",
-    assignedTo: "Emma Thompson",
-    tags: ["creative", "returning"],
-    notes: "Previous client returning for new project",
-  },
-  {
-    id: "LEAD-002",
-    name: "David Park",
-    email: "david.park@startup.co",
-    phone: "+1-555-0127",
-    company: "StartupCo",
-    status: "Lead",
-    source: "Social Media",
-    value: 8000,
-    createdDate: "2024-01-24",
-    lastContact: "2024-01-25",
-    nextFollowUp: "2024-01-29",
-    assignedTo: "Sarah Wilson",
-    tags: ["startup", "small"],
-    notes: "Early stage startup, budget conscious",
-  },
-];
+interface Customer {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  status: "Leads" | "Onboarding" | "Paying" | "Returning";
+  estimatedValue: number;
+  lastContact: string;
+  source: string;
+  assignedTo: string;
+  notes: string;
+}
 
-const salesFunnelData = [
-  { name: "Leads", value: 150, fill: "#8884d8" },
-  { name: "Qualified", value: 80, fill: "#82ca9d" },
-  { name: "Proposal", value: 40, fill: "#ffc658" },
-  { name: "Negotiation", value: 20, fill: "#ff7300" },
-  { name: "Closed Won", value: 12, fill: "#00ff00" },
-];
+interface TeamMemberStats {
+  id: string;
+  name: string;
+  avatar?: string;
+  role: string;
+  coldCalls: number;
+  emailsSent: number;
+  proposalsSent: number;
+  customerVisits: number;
+  leadsAssigned: number;
+  conversions: number;
+  revenue: number;
+  efficiency: number;
+}
 
-const salesMetrics = [
-  { month: "Oct", leads: 120, onboarding: 15, paying: 45, returning: 8 },
-  { month: "Nov", leads: 135, onboarding: 18, paying: 52, returning: 12 },
-  { month: "Dec", leads: 140, onboarding: 22, paying: 58, returning: 15 },
-  { month: "Jan", leads: 150, onboarding: 25, paying: 63, returning: 18 },
-];
+const SalesManagement = () => {
+  const [customers, setCustomers] = useState<Customer[]>([
+    {
+      id: "CUST-001",
+      name: "Acme Corporation",
+      email: "contact@acme.com",
+      phone: "+234-801-234-5678",
+      company: "Acme Corp",
+      status: "Leads",
+      estimatedValue: 250000,
+      lastContact: "2024-01-20",
+      source: "Website",
+      assignedTo: "Sarah Johnson",
+      notes: "Interested in enterprise package",
+    },
+    {
+      id: "CUST-002",
+      name: "Tech Solutions Ltd",
+      email: "info@techsolutions.com",
+      phone: "+234-802-345-6789",
+      company: "Tech Solutions",
+      status: "Onboarding",
+      estimatedValue: 180000,
+      lastContact: "2024-01-19",
+      source: "Referral",
+      assignedTo: "Michael Brown",
+      notes: "Requires custom integration",
+    },
+    {
+      id: "CUST-003",
+      name: "Digital Innovations",
+      email: "hello@digitalinnovations.com",
+      phone: "+234-803-456-7890",
+      company: "Digital Innovations",
+      status: "Paying",
+      estimatedValue: 320000,
+      lastContact: "2024-01-18",
+      source: "LinkedIn",
+      assignedTo: "Alex Wilson",
+      notes: "Monthly subscription active",
+    },
+    {
+      id: "CUST-004",
+      name: "Global Enterprises",
+      email: "support@globalent.com",
+      phone: "+234-804-567-8901",
+      company: "Global Enterprises",
+      status: "Returning",
+      estimatedValue: 450000,
+      lastContact: "2024-01-17",
+      source: "Partnership",
+      assignedTo: "Emma Davis",
+      notes: "Looking to expand services",
+    },
+  ]);
 
-const revenueData = [
-  { month: "Oct", revenue: 145000, target: 150000 },
-  { month: "Nov", revenue: 162000, target: 160000 },
-  { month: "Dec", revenue: 178000, target: 170000 },
-  { month: "Jan", revenue: 195000, target: 180000 },
-];
+  const [teamStats, setTeamStats] = useState<TeamMemberStats[]>([
+    {
+      id: "TM-001",
+      name: "Sarah Johnson",
+      avatar: "",
+      role: "Senior Sales Representative",
+      coldCalls: 145,
+      emailsSent: 89,
+      proposalsSent: 23,
+      customerVisits: 12,
+      leadsAssigned: 34,
+      conversions: 8,
+      revenue: 480000,
+      efficiency: 85,
+    },
+    {
+      id: "TM-002",
+      name: "Michael Brown",
+      avatar: "",
+      role: "Sales Representative",
+      coldCalls: 112,
+      emailsSent: 67,
+      proposalsSent: 18,
+      customerVisits: 9,
+      leadsAssigned: 28,
+      conversions: 6,
+      revenue: 320000,
+      efficiency: 78,
+    },
+    {
+      id: "TM-003",
+      name: "Alex Wilson",
+      avatar: "",
+      role: "Sales Representative",
+      coldCalls: 98,
+      emailsSent: 72,
+      proposalsSent: 15,
+      customerVisits: 7,
+      leadsAssigned: 25,
+      conversions: 5,
+      revenue: 275000,
+      efficiency: 72,
+    },
+    {
+      id: "TM-004",
+      name: "Emma Davis",
+      avatar: "",
+      role: "Account Manager",
+      coldCalls: 76,
+      emailsSent: 95,
+      proposalsSent: 21,
+      customerVisits: 15,
+      leadsAssigned: 30,
+      conversions: 9,
+      revenue: 550000,
+      efficiency: 92,
+    },
+    {
+      id: "TM-005",
+      name: "David Chen",
+      avatar: "",
+      role: "Junior Sales Representative",
+      coldCalls: 134,
+      emailsSent: 58,
+      proposalsSent: 12,
+      customerVisits: 5,
+      leadsAssigned: 22,
+      conversions: 3,
+      revenue: 165000,
+      efficiency: 65,
+    },
+  ]);
 
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case "Lead":
-      return "secondary";
-    case "Onboarding":
-      return "default";
-    case "Paying Customer":
-      return "success";
-    case "Returning Customer":
-      return "info";
-    default:
-      return "secondary";
-  }
-};
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [showAddCustomer, setShowAddCustomer] = useState(false);
+  const [csvData, setCsvData] = useState("");
 
-const getInitials = (name: string) => {
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase();
-};
+  // Sales Circle Data (previously Sales Funnel)
+  const salesCircleData = [
+    { name: "Leads", value: 45, fill: "#f59e0b" },
+    { name: "Onboarding", value: 28, fill: "#3b82f6" },
+    { name: "Paying", value: 18, fill: "#10b981" },
+    { name: "Returning", value: 9, fill: "#8b5cf6" },
+  ];
 
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-  }).format(amount);
-};
+  const teamPerformanceData = teamStats.map((member) => ({
+    name: member.name.split(" ")[0],
+    coldCalls: member.coldCalls,
+    emails: member.emailsSent,
+    proposals: member.proposalsSent,
+    visits: member.customerVisits,
+    conversions: member.conversions,
+    revenue: member.revenue / 1000, // Convert to thousands
+  }));
 
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-};
+  const revenueData = [
+    { month: "Jan", revenue: 45000 },
+    { month: "Feb", revenue: 52000 },
+    { month: "Mar", revenue: 48000 },
+    { month: "Apr", revenue: 65000 },
+    { month: "May", revenue: 58000 },
+    { month: "Jun", revenue: 72000 },
+  ];
 
-export default function SalesManagement() {
-  const [isAddCustomerOpen, setIsAddCustomerOpen] = useState(false);
-  const [isUploadLeadsOpen, setIsUploadLeadsOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [sourceFilter, setSourceFilter] = useState<string>("all");
-  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
-
-  const filteredCustomers = customers.filter((customer) => {
-    const matchesSearch = customer.name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" || customer.status === statusFilter;
-    const matchesSource =
-      sourceFilter === "all" || customer.source === sourceFilter;
-    return matchesSearch && matchesStatus && matchesSource;
-  });
-
-  const salesStats = {
-    totalLeads: customers.filter((c) => c.status === "Lead").length,
-    onboarding: customers.filter((c) => c.status === "Onboarding").length,
-    payingCustomers: customers.filter((c) => c.status === "Paying Customer")
-      .length,
-    returningCustomers: customers.filter(
-      (c) => c.status === "Returning Customer",
-    ).length,
-    totalValue: customers.reduce((acc, c) => acc + c.value, 0),
-    avgDealSize: Math.round(
-      customers.reduce((acc, c) => acc + c.value, 0) / customers.length,
-    ),
+  const handleStatusChange = (
+    customerId: string,
+    newStatus: Customer["status"],
+  ) => {
+    setCustomers(
+      customers.map((customer) =>
+        customer.id === customerId
+          ? { ...customer, status: newStatus }
+          : customer,
+      ),
+    );
+    toast({
+      title: "Customer Status Updated",
+      description: `Customer moved to ${newStatus}`,
+    });
   };
 
-  const conversionRate = Math.round(
-    (salesStats.payingCustomers / salesStats.totalLeads) * 100,
-  );
+  const handleCSVUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const text = e.target?.result as string;
+        setCsvData(text);
+        // Parse CSV and add to customers
+        toast({
+          title: "CSV Uploaded",
+          description: `CSV file processed successfully`,
+        });
+      };
+      reader.readAsText(file);
+    }
+  };
 
-  const generateCSVTemplate = () => {
-    const csvContent = "Name,Email,Phone,Company,Source,Value,Notes\n";
+  const handleCSVDownload = () => {
+    const csvContent = [
+      "ID,Name,Email,Phone,Company,Status,Estimated Value,Last Contact,Source,Assigned To,Notes",
+      ...customers.map(
+        (customer) =>
+          `${customer.id},${customer.name},${customer.email},${customer.phone},${customer.company},${customer.status},${customer.estimatedValue},${customer.lastContact},${customer.source},${customer.assignedTo},"${customer.notes}"`,
+      ),
+    ].join("\n");
+
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "customer_leads_template.csv";
+    a.download = "customers.csv";
     a.click();
     window.URL.revokeObjectURL(url);
+
+    toast({
+      title: "CSV Downloaded",
+      description: "Customer data exported successfully",
+    });
   };
 
-  const moveCustomerStatus = (customerId: string, newStatus: string) => {
-    // In a real app, this would make an API call
-    console.log(`Moving customer ${customerId} to ${newStatus}`);
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Leads":
+        return "bg-yellow-100 text-yellow-800";
+      case "Onboarding":
+        return "bg-blue-100 text-blue-800";
+      case "Paying":
+        return "bg-green-100 text-green-800";
+      case "Returning":
+        return "bg-purple-100 text-purple-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
   };
+
+  const filteredCustomers = customers.filter((customer) => {
+    const matchesSearch =
+      customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      customer.company.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === "all" || customer.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  const totalLeads = customers.filter((c) => c.status === "Leads").length;
+  const totalOnboarding = customers.filter(
+    (c) => c.status === "Onboarding",
+  ).length;
+  const totalPaying = customers.filter((c) => c.status === "Paying").length;
+  const totalReturning = customers.filter(
+    (c) => c.status === "Returning",
+  ).length;
+  const totalRevenue = customers
+    .filter((c) => c.status === "Paying" || c.status === "Returning")
+    .reduce((sum, c) => sum + c.estimatedValue, 0);
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
             Sales Management
           </h1>
           <p className="text-muted-foreground">
-            Manage customer pipeline from leads to paying customers.
+            Manage customer relationships through the complete sales circle
           </p>
         </div>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" onClick={generateCSVTemplate}>
-            <Download className="mr-2 h-4 w-4" />
-            CSV Template
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={handleCSVDownload}>
+            <Download className="h-4 w-4 mr-2" />
+            Export CSV
           </Button>
-          <Dialog open={isUploadLeadsOpen} onOpenChange={setIsUploadLeadsOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline">
-                <Upload className="mr-2 h-4 w-4" />
-                Upload Leads
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
-              <DialogHeader>
-                <DialogTitle>Upload Customer Leads</DialogTitle>
-                <DialogDescription>
-                  Upload a CSV file with customer lead information.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="csvFile">CSV File</Label>
-                  <Input id="csvFile" type="file" accept=".csv" />
-                  <p className="text-sm text-muted-foreground">
-                    Upload a CSV file with columns: Name, Email, Phone, Company,
-                    Source, Value, Notes
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={generateCSVTemplate}
-                  >
-                    <Download className="mr-2 h-3 w-3" />
-                    Download Template
-                  </Button>
-                </div>
-              </div>
-              <DialogFooter>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsUploadLeadsOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit">Upload Leads</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-          <Dialog open={isAddCustomerOpen} onOpenChange={setIsAddCustomerOpen}>
+          <Button variant="outline" asChild>
+            <label>
+              <Upload className="h-4 w-4 mr-2" />
+              Import CSV
+              <input
+                type="file"
+                accept=".csv"
+                onChange={handleCSVUpload}
+                className="hidden"
+              />
+            </label>
+          </Button>
+          <Dialog open={showAddCustomer} onOpenChange={setShowAddCustomer}>
             <DialogTrigger asChild>
               <Button>
-                <Plus className="mr-2 h-4 w-4" />
-                Add Customer Lead
+                <Plus className="h-4 w-4 mr-2" />
+                Add Customer
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px]">
+            <DialogContent className="max-w-2xl">
               <DialogHeader>
-                <DialogTitle>Add New Customer Lead</DialogTitle>
+                <DialogTitle>Add New Customer</DialogTitle>
                 <DialogDescription>
-                  Add a new customer lead to your sales pipeline.
+                  Add a new customer to your sales circle
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="customerName">Name *</Label>
-                    <Input id="customerName" placeholder="Customer name" />
+                    <Label htmlFor="customerName">Customer Name</Label>
+                    <Input
+                      id="customerName"
+                      placeholder="Enter customer name"
+                    />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="customerCompany">Company</Label>
-                    <Input id="customerCompany" placeholder="Company name" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="customerEmail">Email *</Label>
+                    <Label htmlFor="customerEmail">Email Address</Label>
                     <Input
                       id="customerEmail"
                       type="email"
-                      placeholder="email@company.com"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="customerPhone">Phone Number *</Label>
-                    <Input
-                      id="customerPhone"
-                      placeholder="+1-555-0123"
-                      type="tel"
+                      placeholder="customer@company.com"
                     />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="leadSource">Lead Source</Label>
+                    <Label htmlFor="customerPhone">Phone Number</Label>
+                    <Input id="customerPhone" placeholder="+234-XXX-XXX-XXXX" />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="customerCompany">Company</Label>
+                    <Input id="customerCompany" placeholder="Company Name" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="estimatedValue">Estimated Value (₦)</Label>
+                    <Input id="estimatedValue" type="number" placeholder="0" />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="source">Source</Label>
                     <Select>
                       <SelectTrigger>
                         <SelectValue placeholder="Select source" />
@@ -395,674 +447,556 @@ export default function SalesManagement() {
                       <SelectContent>
                         <SelectItem value="website">Website</SelectItem>
                         <SelectItem value="referral">Referral</SelectItem>
-                        <SelectItem value="social-media">
-                          Social Media
-                        </SelectItem>
-                        <SelectItem value="direct-sales">
-                          Direct Sales
-                        </SelectItem>
-                        <SelectItem value="advertising">Advertising</SelectItem>
-                        <SelectItem value="event">Event</SelectItem>
+                        <SelectItem value="linkedin">LinkedIn</SelectItem>
+                        <SelectItem value="cold-call">Cold Call</SelectItem>
+                        <SelectItem value="partnership">Partnership</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="estimatedValue">Estimated Value (₦)</Label>
-                    <Input
-                      id="estimatedValue"
-                      type="number"
-                      placeholder="0"
-                      min="0"
-                    />
-                  </div>
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="assignTo">Assign To</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select team member" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="john">John Doe</SelectItem>
-                      <SelectItem value="sarah">Sarah Wilson</SelectItem>
-                      <SelectItem value="alex">Alex Rodriguez</SelectItem>
-                      <SelectItem value="emma">Emma Thompson</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="notes">Notes</Label>
                   <Textarea
                     id="notes"
-                    placeholder="Additional information about the lead"
+                    placeholder="Add any relevant notes..."
                     rows={3}
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="tags">Tags (comma-separated)</Label>
-                  <Input
-                    id="tags"
-                    placeholder="e.g., enterprise, tech, startup"
                   />
                 </div>
               </div>
               <DialogFooter>
                 <Button
-                  type="button"
                   variant="outline"
-                  onClick={() => setIsAddCustomerOpen(false)}
+                  onClick={() => setShowAddCustomer(false)}
                 >
                   Cancel
                 </Button>
-                <Button type="submit">Add Lead</Button>
+                <Button onClick={() => setShowAddCustomer(false)}>
+                  Add Customer
+                </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
       </div>
 
-      {/* Sales Stats */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Leads</CardTitle>
-            <UserPlus className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{salesStats.totalLeads}</div>
-            <p className="text-xs text-muted-foreground">New prospects</p>
-          </CardContent>
-        </Card>
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="customers">Customers</TabsTrigger>
+          <TabsTrigger value="team-reports">Team Reports</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+        </TabsList>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Onboarding</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-primary">
-              {salesStats.onboarding}
-            </div>
-            <p className="text-xs text-muted-foreground">In progress</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Paying Customers
-            </CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-success">
-              {salesStats.payingCustomers}
-            </div>
-            <p className="text-xs text-muted-foreground">Active revenue</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Returning Customers
-            </CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-info">
-              {salesStats.returningCustomers}
-            </div>
-            <p className="text-xs text-muted-foreground">Repeat business</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Value</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {formatCurrency(salesStats.totalValue)}
-            </div>
-            <p className="text-xs text-muted-foreground">Pipeline value</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Conversion</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{conversionRate}%</div>
-            <p className="text-xs text-muted-foreground">Lead to customer</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Sales Funnel and Analytics */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="col-span-2">
-          <CardHeader>
-            <CardTitle>Sales Pipeline Trends</CardTitle>
-            <CardDescription>
-              Customer progression through sales stages
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={salesMetrics}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="leads" fill="hsl(var(--primary))" name="Leads" />
-                <Bar
-                  dataKey="onboarding"
-                  fill="hsl(var(--secondary))"
-                  name="Onboarding"
-                />
-                <Bar
-                  dataKey="paying"
-                  fill="hsl(var(--success))"
-                  name="Paying"
-                />
-                <Bar
-                  dataKey="returning"
-                  fill="hsl(var(--info))"
-                  name="Returning"
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Sales Funnel</CardTitle>
-            <CardDescription>Conversion rates by stage</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <RechartsPieChart>
-                <Pie
-                  data={salesFunnelData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={40}
-                  outerRadius={100}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {salesFunnelData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.fill} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </RechartsPieChart>
-            </ResponsiveContainer>
-            <div className="mt-4 space-y-2">
-              {salesFunnelData.map((item, index) => (
-                <div
-                  key={item.name}
-                  className="flex items-center justify-between text-sm"
-                >
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="h-3 w-3 rounded-full"
-                      style={{ backgroundColor: item.fill }}
-                    />
-                    <span>{item.name}</span>
+        <TabsContent value="overview" className="space-y-6">
+          {/* Key Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Leads
+                    </p>
+                    <div className="text-2xl font-bold">{totalLeads}</div>
                   </div>
-                  <span className="font-medium">{item.value}</span>
+                  <Target className="h-8 w-8 text-yellow-500" />
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+              </CardContent>
+            </Card>
 
-      {/* Revenue Tracking */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Revenue vs Target</CardTitle>
-          <CardDescription>Monthly revenue performance</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={revenueData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip
-                formatter={(value) => [formatCurrency(value as number), ""]}
-              />
-              <Line
-                type="monotone"
-                dataKey="revenue"
-                stroke="hsl(var(--success))"
-                strokeWidth={3}
-                name="Revenue"
-              />
-              <Line
-                type="monotone"
-                dataKey="target"
-                stroke="hsl(var(--primary))"
-                strokeWidth={2}
-                strokeDasharray="5 5"
-                name="Target"
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Onboarding
+                    </p>
+                    <div className="text-2xl font-bold">{totalOnboarding}</div>
+                  </div>
+                  <Users className="h-8 w-8 text-blue-500" />
+                </div>
+              </CardContent>
+            </Card>
 
-      {/* Customer Pipeline */}
-      <Tabs defaultValue="all" className="space-y-4">
-        <div className="flex items-center justify-between">
-          <TabsList>
-            <TabsTrigger value="all">All Customers</TabsTrigger>
-            <TabsTrigger value="leads">Leads</TabsTrigger>
-            <TabsTrigger value="onboarding">Onboarding</TabsTrigger>
-            <TabsTrigger value="paying">Paying</TabsTrigger>
-            <TabsTrigger value="returning">Returning</TabsTrigger>
-          </TabsList>
-          <div className="flex items-center space-x-4">
-            <div className="flex-1 max-w-sm">
-              <div className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search customers..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9"
-                />
-              </div>
-            </div>
-            <Select value={sourceFilter} onValueChange={setSourceFilter}>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="Source" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Sources</SelectItem>
-                <SelectItem value="Website">Website</SelectItem>
-                <SelectItem value="Referral">Referral</SelectItem>
-                <SelectItem value="Social Media">Social Media</SelectItem>
-                <SelectItem value="Direct Sales">Direct Sales</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Paying
+                    </p>
+                    <div className="text-2xl font-bold">{totalPaying}</div>
+                  </div>
+                  <DollarSign className="h-8 w-8 text-green-500" />
+                </div>
+              </CardContent>
+            </Card>
 
-        <TabsContent value="all">
-          <div className="space-y-4">
-            {filteredCustomers.map((customer) => (
-              <Card key={customer.id}>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage src="" alt={customer.name} />
-                        <AvatarFallback>
-                          {getInitials(customer.name)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="space-y-1">
-                        <h4 className="text-sm font-semibold">
-                          {customer.name}
-                        </h4>
-                        <p className="text-sm text-muted-foreground">
-                          {customer.company}
-                        </p>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            <Mail className="h-3 w-3" />
-                            {customer.email}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Phone className="h-3 w-3" />
-                            {customer.phone}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <div className="text-right">
-                        <Badge variant={getStatusColor(customer.status) as any}>
-                          {customer.status}
-                        </Badge>
-                        <div className="text-sm text-muted-foreground mt-1">
-                          {formatCurrency(customer.value)}
-                        </div>
-                      </div>
-                      <div className="text-right text-sm text-muted-foreground">
-                        <div>Assigned to: {customer.assignedTo}</div>
-                        <div>Source: {customer.source}</div>
-                        <div>Next: {formatDate(customer.nextFollowUp)}</div>
-                      </div>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem>
-                            <Eye className="mr-2 h-4 w-4" />
-                            View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Edit Customer
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() =>
-                              moveCustomerStatus(customer.id, "Onboarding")
-                            }
-                          >
-                            <MoveRight className="mr-2 h-4 w-4" />
-                            Move to Onboarding
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() =>
-                              moveCustomerStatus(customer.id, "Paying Customer")
-                            }
-                          >
-                            <MoveRight className="mr-2 h-4 w-4" />
-                            Move to Paying
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() =>
-                              moveCustomerStatus(
-                                customer.id,
-                                "Returning Customer",
-                              )
-                            }
-                          >
-                            <MoveRight className="mr-2 h-4 w-4" />
-                            Move to Returning
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive">
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Returning
+                    </p>
+                    <div className="text-2xl font-bold">{totalReturning}</div>
+                  </div>
+                  <Award className="h-8 w-8 text-purple-500" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Total Revenue
+                    </p>
+                    <div className="text-2xl font-bold">
+                      ₦{(totalRevenue / 1000000).toFixed(1)}M
                     </div>
                   </div>
-                  {customer.notes && (
-                    <div className="mt-4 text-sm text-muted-foreground">
-                      <strong>Notes:</strong> {customer.notes}
-                    </div>
-                  )}
-                  {customer.tags.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-1">
-                      {customer.tags.map((tag) => (
-                        <Badge key={tag} variant="outline" className="text-xs">
-                          {tag}
-                        </Badge>
+                  <TrendingUp className="h-8 w-8 text-green-500" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Sales Circle and Analytics */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Sales Circle</CardTitle>
+                <CardDescription>
+                  Customer distribution across sales stages
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={salesCircleData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) =>
+                        `${name} ${(percent * 100).toFixed(0)}%`
+                      }
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {salesCircleData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.fill} />
                       ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Revenue Trend</CardTitle>
+                <CardDescription>Monthly revenue performance</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={revenueData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip
+                      formatter={(value) => [
+                        `₦${value.toLocaleString()}`,
+                        "Revenue",
+                      ]}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="revenue"
+                      stroke="#3b82f6"
+                      strokeWidth={2}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="team-reports" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Team Member Sales Activity</CardTitle>
+              <CardDescription>
+                Detailed performance metrics for each team member
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {teamStats.map((member) => (
+                  <Card key={member.id} className="border border-muted">
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-12 w-12">
+                            <AvatarImage src={member.avatar} />
+                            <AvatarFallback>
+                              {member.name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <h3 className="text-lg font-semibold">
+                              {member.name}
+                            </h3>
+                            <p className="text-sm text-muted-foreground">
+                              {member.role}
+                            </p>
+                          </div>
+                        </div>
+                        <Badge
+                          variant={
+                            member.efficiency >= 80 ? "default" : "secondary"
+                          }
+                          className="text-sm"
+                        >
+                          {member.efficiency}% Efficiency
+                        </Badge>
+                      </div>
+
+                      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+                        <div className="text-center">
+                          <div className="flex items-center justify-center mb-2">
+                            <Phone className="h-5 w-5 text-blue-500" />
+                          </div>
+                          <div className="text-2xl font-bold text-blue-600">
+                            {member.coldCalls}
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            Cold Calls
+                          </p>
+                        </div>
+
+                        <div className="text-center">
+                          <div className="flex items-center justify-center mb-2">
+                            <Mail className="h-5 w-5 text-green-500" />
+                          </div>
+                          <div className="text-2xl font-bold text-green-600">
+                            {member.emailsSent}
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            Emails Sent
+                          </p>
+                        </div>
+
+                        <div className="text-center">
+                          <div className="flex items-center justify-center mb-2">
+                            <FileText className="h-5 w-5 text-orange-500" />
+                          </div>
+                          <div className="text-2xl font-bold text-orange-600">
+                            {member.proposalsSent}
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            Proposals
+                          </p>
+                        </div>
+
+                        <div className="text-center">
+                          <div className="flex items-center justify-center mb-2">
+                            <MapPin className="h-5 w-5 text-purple-500" />
+                          </div>
+                          <div className="text-2xl font-bold text-purple-600">
+                            {member.customerVisits}
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            Visits
+                          </p>
+                        </div>
+
+                        <div className="text-center">
+                          <div className="flex items-center justify-center mb-2">
+                            <UserCheck className="h-5 w-5 text-cyan-500" />
+                          </div>
+                          <div className="text-2xl font-bold text-cyan-600">
+                            {member.leadsAssigned}
+                          </div>
+                          <p className="text-xs text-muted-foreground">Leads</p>
+                        </div>
+
+                        <div className="text-center">
+                          <div className="flex items-center justify-center mb-2">
+                            <Target className="h-5 w-5 text-red-500" />
+                          </div>
+                          <div className="text-2xl font-bold text-red-600">
+                            {member.conversions}
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            Conversions
+                          </p>
+                        </div>
+
+                        <div className="text-center">
+                          <div className="flex items-center justify-center mb-2">
+                            <DollarSign className="h-5 w-5 text-emerald-500" />
+                          </div>
+                          <div className="text-2xl font-bold text-emerald-600">
+                            ₦{(member.revenue / 1000).toFixed(0)}K
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            Revenue
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Team Performance Chart */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Team Performance Comparison</CardTitle>
+              <CardDescription>
+                Activity metrics comparison across team members
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={teamPerformanceData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="coldCalls" fill="#3b82f6" name="Cold Calls" />
+                  <Bar dataKey="emails" fill="#10b981" name="Emails" />
+                  <Bar dataKey="proposals" fill="#f59e0b" name="Proposals" />
+                  <Bar dataKey="visits" fill="#8b5cf6" name="Visits" />
+                  <Bar
+                    dataKey="conversions"
+                    fill="#ef4444"
+                    name="Conversions"
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="customers" className="space-y-6">
+          {/* Search and Filter */}
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex-1">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search customers..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-full md:w-[180px]">
+                    <SelectValue placeholder="Filter by status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="Leads">Leads</SelectItem>
+                    <SelectItem value="Onboarding">Onboarding</SelectItem>
+                    <SelectItem value="Paying">Paying</SelectItem>
+                    <SelectItem value="Returning">Returning</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Customers Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredCustomers.map((customer) => (
+              <Card
+                key={customer.id}
+                className="hover:shadow-lg transition-shadow"
+              >
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <CardTitle className="text-lg">{customer.name}</CardTitle>
+                      <CardDescription>{customer.company}</CardDescription>
                     </div>
-                  )}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Move to Stage</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() =>
+                            handleStatusChange(customer.id, "Leads")
+                          }
+                        >
+                          Leads
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            handleStatusChange(customer.id, "Onboarding")
+                          }
+                        >
+                          Onboarding
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            handleStatusChange(customer.id, "Paying")
+                          }
+                        >
+                          Paying
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            handleStatusChange(customer.id, "Returning")
+                          }
+                        >
+                          Returning
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>
+                          <Edit className="h-4 w-4 mr-2" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive">
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </CardHeader>
+
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Badge className={getStatusColor(customer.status)}>
+                      {customer.status}
+                    </Badge>
+                    <span className="text-lg font-semibold text-green-600">
+                      ₦{customer.estimatedValue.toLocaleString()}
+                    </span>
+                  </div>
+
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Mail className="h-4 w-4 text-muted-foreground" />
+                      <span className="truncate">{customer.email}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-muted-foreground" />
+                      <span>{customer.phone}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-muted-foreground" />
+                      <span>Assigned to {customer.assignedTo}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      <span>
+                        Last contact:{" "}
+                        {new Date(customer.lastContact).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t">
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {customer.notes}
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
             ))}
           </div>
         </TabsContent>
 
-        {/* Similar content for other tabs but filtered by status */}
-        <TabsContent value="leads">
-          <div className="space-y-4">
-            {filteredCustomers
-              .filter((c) => c.status === "Lead")
-              .map((customer) => (
-                <Card key={customer.id}>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <Avatar className="h-10 w-10">
-                          <AvatarImage src="" alt={customer.name} />
-                          <AvatarFallback>
-                            {getInitials(customer.name)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="space-y-1">
-                          <h4 className="text-sm font-semibold">
-                            {customer.name}
-                          </h4>
-                          <p className="text-sm text-muted-foreground">
-                            {customer.company}
-                          </p>
-                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                            <span className="flex items-center gap-1">
-                              <Mail className="h-3 w-3" />
-                              {customer.email}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Phone className="h-3 w-3" />
-                              {customer.phone}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-4">
-                        <div className="text-right">
-                          <Badge
-                            variant={getStatusColor(customer.status) as any}
-                          >
-                            {customer.status}
-                          </Badge>
-                          <div className="text-sm text-muted-foreground mt-1">
-                            {formatCurrency(customer.value)}
-                          </div>
-                        </div>
-                        <Button
-                          size="sm"
-                          onClick={() =>
-                            moveCustomerStatus(customer.id, "Onboarding")
-                          }
-                        >
-                          <ArrowRight className="mr-2 h-4 w-4" />
-                          Move to Onboarding
-                        </Button>
-                      </div>
+        <TabsContent value="analytics" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Conversion Rates</CardTitle>
+                <CardDescription>
+                  Performance across sales stages
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Leads to Onboarding</span>
+                      <span className="font-medium">62%</span>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-          </div>
-        </TabsContent>
+                    <Progress value={62} className="h-2" />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Onboarding to Paying</span>
+                      <span className="font-medium">64%</span>
+                    </div>
+                    <Progress value={64} className="h-2" />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Paying to Returning</span>
+                      <span className="font-medium">50%</span>
+                    </div>
+                    <Progress value={50} className="h-2" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-        <TabsContent value="onboarding">
-          <div className="space-y-4">
-            {filteredCustomers
-              .filter((c) => c.status === "Onboarding")
-              .map((customer) => (
-                <Card key={customer.id}>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <Avatar className="h-10 w-10">
-                          <AvatarImage src="" alt={customer.name} />
-                          <AvatarFallback>
-                            {getInitials(customer.name)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="space-y-1">
-                          <h4 className="text-sm font-semibold">
-                            {customer.name}
-                          </h4>
-                          <p className="text-sm text-muted-foreground">
-                            {customer.company}
-                          </p>
-                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                            <span className="flex items-center gap-1">
-                              <Mail className="h-3 w-3" />
-                              {customer.email}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Phone className="h-3 w-3" />
-                              {customer.phone}
-                            </span>
+            <Card>
+              <CardHeader>
+                <CardTitle>Source Performance</CardTitle>
+                <CardDescription>
+                  Customer acquisition by source
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {["Website", "Referral", "LinkedIn", "Partnership"].map(
+                    (source, index) => {
+                      const percentage = [35, 28, 22, 15][index];
+                      return (
+                        <div key={source} className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span>{source}</span>
+                            <span className="font-medium">{percentage}%</span>
                           </div>
+                          <Progress value={percentage} className="h-2" />
                         </div>
-                      </div>
-                      <div className="flex items-center space-x-4">
-                        <div className="text-right">
-                          <Badge
-                            variant={getStatusColor(customer.status) as any}
-                          >
-                            {customer.status}
-                          </Badge>
-                          <div className="text-sm text-muted-foreground mt-1">
-                            {formatCurrency(customer.value)}
-                          </div>
-                        </div>
-                        <Button
-                          size="sm"
-                          onClick={() =>
-                            moveCustomerStatus(customer.id, "Paying Customer")
-                          }
-                        >
-                          <ArrowRight className="mr-2 h-4 w-4" />
-                          Move to Paying
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="paying">
-          <div className="space-y-4">
-            {filteredCustomers
-              .filter((c) => c.status === "Paying Customer")
-              .map((customer) => (
-                <Card key={customer.id}>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <Avatar className="h-10 w-10">
-                          <AvatarImage src="" alt={customer.name} />
-                          <AvatarFallback>
-                            {getInitials(customer.name)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="space-y-1">
-                          <h4 className="text-sm font-semibold">
-                            {customer.name}
-                          </h4>
-                          <p className="text-sm text-muted-foreground">
-                            {customer.company}
-                          </p>
-                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                            <span className="flex items-center gap-1">
-                              <Mail className="h-3 w-3" />
-                              {customer.email}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Phone className="h-3 w-3" />
-                              {customer.phone}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-4">
-                        <div className="text-right">
-                          <Badge
-                            variant={getStatusColor(customer.status) as any}
-                          >
-                            {customer.status}
-                          </Badge>
-                          <div className="text-sm text-muted-foreground mt-1">
-                            {formatCurrency(customer.value)}
-                          </div>
-                        </div>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() =>
-                            moveCustomerStatus(
-                              customer.id,
-                              "Returning Customer",
-                            )
-                          }
-                        >
-                          <ArrowRight className="mr-2 h-4 w-4" />
-                          Mark as Returning
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="returning">
-          <div className="space-y-4">
-            {filteredCustomers
-              .filter((c) => c.status === "Returning Customer")
-              .map((customer) => (
-                <Card key={customer.id}>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <Avatar className="h-10 w-10">
-                          <AvatarImage src="" alt={customer.name} />
-                          <AvatarFallback>
-                            {getInitials(customer.name)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="space-y-1">
-                          <h4 className="text-sm font-semibold">
-                            {customer.name}
-                          </h4>
-                          <p className="text-sm text-muted-foreground">
-                            {customer.company}
-                          </p>
-                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                            <span className="flex items-center gap-1">
-                              <Mail className="h-3 w-3" />
-                              {customer.email}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Phone className="h-3 w-3" />
-                              {customer.phone}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-4">
-                        <div className="text-right">
-                          <Badge
-                            variant={getStatusColor(customer.status) as any}
-                          >
-                            {customer.status}
-                          </Badge>
-                          <div className="text-sm text-muted-foreground mt-1">
-                            {formatCurrency(customer.value)}
-                          </div>
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          <div>Loyalty Customer</div>
-                          <div>Repeat Business</div>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                      );
+                    },
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </TabsContent>
       </Tabs>
     </div>
   );
-}
+};
+
+export default SalesManagement;
