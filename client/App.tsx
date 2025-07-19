@@ -8,6 +8,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { DashboardLayout } from "./components/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
+import Analytics from "./pages/Analytics";
+import SalesManagement from "./pages/SalesManagement";
 import Projects from "./pages/Projects";
 import Teams from "./pages/Teams";
 import Tasks from "./pages/Tasks";
@@ -65,10 +67,15 @@ const App = () => (
             path="/analytics"
             element={
               <DashboardLayout>
-                <PlaceholderPage
-                  title="Analytics"
-                  description="View comprehensive analytics and insights for your projects and teams."
-                />
+                <Analytics />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/sales"
+            element={
+              <DashboardLayout>
+                <SalesManagement />
               </DashboardLayout>
             }
           />
@@ -109,6 +116,17 @@ const App = () => (
             element={
               <DashboardLayout>
                 <Inventory />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/departments"
+            element={
+              <DashboardLayout>
+                <PlaceholderPage
+                  title="Departments"
+                  description="Manage organizational departments and structure."
+                />
               </DashboardLayout>
             }
           />
