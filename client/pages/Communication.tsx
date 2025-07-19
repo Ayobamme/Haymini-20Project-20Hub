@@ -65,6 +65,7 @@ import {
   Edit,
   Trash2,
   Eye,
+  RefreshCw,
 } from "lucide-react";
 
 const teamChats = [
