@@ -878,7 +878,190 @@ export default function SalesManagement() {
           </div>
         </TabsContent>
 
-        {/* Add similar TabsContent for other statuses */}
+        <TabsContent value="onboarding">
+          <div className="space-y-4">
+            {filteredCustomers
+              .filter((c) => c.status === "Onboarding")
+              .map((customer) => (
+                <Card key={customer.id}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src="" alt={customer.name} />
+                          <AvatarFallback>
+                            {getInitials(customer.name)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="space-y-1">
+                          <h4 className="text-sm font-semibold">
+                            {customer.name}
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            {customer.company}
+                          </p>
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                            <span className="flex items-center gap-1">
+                              <Mail className="h-3 w-3" />
+                              {customer.email}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Phone className="h-3 w-3" />
+                              {customer.phone}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <div className="text-right">
+                          <Badge
+                            variant={getStatusColor(customer.status) as any}
+                          >
+                            {customer.status}
+                          </Badge>
+                          <div className="text-sm text-muted-foreground mt-1">
+                            {formatCurrency(customer.value)}
+                          </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          onClick={() =>
+                            moveCustomerStatus(customer.id, "Paying Customer")
+                          }
+                        >
+                          <ArrowRight className="mr-2 h-4 w-4" />
+                          Move to Paying
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="paying">
+          <div className="space-y-4">
+            {filteredCustomers
+              .filter((c) => c.status === "Paying Customer")
+              .map((customer) => (
+                <Card key={customer.id}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src="" alt={customer.name} />
+                          <AvatarFallback>
+                            {getInitials(customer.name)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="space-y-1">
+                          <h4 className="text-sm font-semibold">
+                            {customer.name}
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            {customer.company}
+                          </p>
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                            <span className="flex items-center gap-1">
+                              <Mail className="h-3 w-3" />
+                              {customer.email}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Phone className="h-3 w-3" />
+                              {customer.phone}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <div className="text-right">
+                          <Badge
+                            variant={getStatusColor(customer.status) as any}
+                          >
+                            {customer.status}
+                          </Badge>
+                          <div className="text-sm text-muted-foreground mt-1">
+                            {formatCurrency(customer.value)}
+                          </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            moveCustomerStatus(
+                              customer.id,
+                              "Returning Customer",
+                            )
+                          }
+                        >
+                          <ArrowRight className="mr-2 h-4 w-4" />
+                          Mark as Returning
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="returning">
+          <div className="space-y-4">
+            {filteredCustomers
+              .filter((c) => c.status === "Returning Customer")
+              .map((customer) => (
+                <Card key={customer.id}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src="" alt={customer.name} />
+                          <AvatarFallback>
+                            {getInitials(customer.name)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="space-y-1">
+                          <h4 className="text-sm font-semibold">
+                            {customer.name}
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            {customer.company}
+                          </p>
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                            <span className="flex items-center gap-1">
+                              <Mail className="h-3 w-3" />
+                              {customer.email}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Phone className="h-3 w-3" />
+                              {customer.phone}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <div className="text-right">
+                          <Badge
+                            variant={getStatusColor(customer.status) as any}
+                          >
+                            {customer.status}
+                          </Badge>
+                          <div className="text-sm text-muted-foreground mt-1">
+                            {formatCurrency(customer.value)}
+                          </div>
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          <div>Loyalty Customer</div>
+                          <div>Repeat Business</div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+          </div>
+        </TabsContent>
       </Tabs>
     </div>
   );
