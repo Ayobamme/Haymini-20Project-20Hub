@@ -514,7 +514,7 @@ export default function Issues() {
                 >
                   Cancel
                 </Button>
-                <Button type="submit">Create Issue</Button>
+                <Button type="submit">Log Issue</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
