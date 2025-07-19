@@ -124,10 +124,7 @@ const App = () => (
             path="/departments"
             element={
               <DashboardLayout>
-                <PlaceholderPage
-                  title="Departments"
-                  description="Manage organizational departments and structure."
-                />
+                <Departments />
               </DashboardLayout>
             }
           />
