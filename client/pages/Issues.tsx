@@ -356,7 +356,7 @@ export default function Issues() {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[600px]">
               <DialogHeader>
-                <DialogTitle>Create New Issue</DialogTitle>
+                <DialogTitle>Log New Issue</DialogTitle>
                 <DialogDescription>
                   Report a new issue, bug, or feature request.
                 </DialogDescription>
