@@ -65,6 +65,7 @@ import {
   Activity,
   RefreshCw,
   Eye,
+  Clock,
 } from "lucide-react";
 
 const availableIntegrations = [
