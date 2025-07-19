@@ -69,6 +69,7 @@ import {
   X,
   ChevronDown,
   ChevronRight,
+  CalendarDays,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
@@ -211,6 +212,8 @@ const Tasks = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
+  const [startDateFilter, setStartDateFilter] = useState<Date | undefined>();
+  const [endDateFilter, setEndDateFilter] = useState<Date | undefined>();
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [showTaskDialog, setShowTaskDialog] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
@@ -365,6 +368,40 @@ const Tasks = () => {
     }
   };
 
+  const clearDateFilters = () => {
+    setStartDateFilter(undefined);
+    setEndDateFilter(undefined);
+  };
+
+  const isTaskInDateRange = (task: Task) => {
+    const taskStart = new Date(task.startDate);
+    const taskEnd = new Date(task.dueDate);
+
+    // If no date filters are set, include all tasks
+    if (!startDateFilter && !endDateFilter) return true;
+
+    // If only start date filter is set
+    if (startDateFilter && !endDateFilter) {
+      return taskStart >= startDateFilter || taskEnd >= startDateFilter;
+    }
+
+    // If only end date filter is set
+    if (!startDateFilter && endDateFilter) {
+      return taskStart <= endDateFilter || taskEnd <= endDateFilter;
+    }
+
+    // If both date filters are set
+    if (startDateFilter && endDateFilter) {
+      return (
+        (taskStart >= startDateFilter && taskStart <= endDateFilter) ||
+        (taskEnd >= startDateFilter && taskEnd <= endDateFilter) ||
+        (taskStart <= startDateFilter && taskEnd >= endDateFilter)
+      );
+    }
+
+    return true;
+  };
+
   const filteredTasks = tasks.filter((task) => {
     const matchesSearch =
       task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -375,8 +412,11 @@ const Tasks = () => {
       statusFilter === "all" || task.status === statusFilter;
     const matchesPriority =
       priorityFilter === "all" || task.priority === priorityFilter;
+    const matchesDateRange = isTaskInDateRange(task);
 
-    return matchesSearch && matchesStatus && matchesPriority;
+    return (
+      matchesSearch && matchesStatus && matchesPriority && matchesDateRange
+    );
   });
 
   return (
@@ -416,45 +456,84 @@ const Tasks = () => {
         </Dialog>
       </div>
 
-      {/* Filters and Search */}
+      {/* Enhanced Filters with Date Range */}
       <Card>
         <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search tasks..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+          <div className="space-y-4">
+            <div className="flex flex-col lg:flex-row gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search tasks..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-full lg:w-[180px]">
+                  <SelectValue placeholder="Filter by status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="Todo">Todo</SelectItem>
+                  <SelectItem value="In Progress">In Progress</SelectItem>
+                  <SelectItem value="Done">Done</SelectItem>
+                  <SelectItem value="Blocked">Blocked</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+                <SelectTrigger className="w-full lg:w-[180px]">
+                  <SelectValue placeholder="Filter by priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Priority</SelectItem>
+                  <SelectItem value="Low">Low</SelectItem>
+                  <SelectItem value="Medium">Medium</SelectItem>
+                  <SelectItem value="High">High</SelectItem>
+                  <SelectItem value="Critical">Critical</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Date Range Filters */}
+            <div className="flex flex-col lg:flex-row gap-4 items-center border-t pt-4">
+              <div className="flex items-center gap-2">
+                <CalendarDays className="h-4 w-4 text-muted-foreground" />
+                <Label className="text-sm font-medium">Date Range:</Label>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-2 items-center">
+                <DatePicker
+                  date={startDateFilter}
+                  onDateChange={setStartDateFilter}
+                  placeholder="Start date"
+                  className="w-full sm:w-[160px]"
+                />
+                <span className="text-sm text-muted-foreground">to</span>
+                <DatePicker
+                  date={endDateFilter}
+                  onDateChange={setEndDateFilter}
+                  placeholder="End date"
+                  className="w-full sm:w-[160px]"
                 />
               </div>
+              {(startDateFilter || endDateFilter) && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={clearDateFilters}
+                  className="flex items-center gap-2"
+                >
+                  <X className="h-3 w-3" />
+                  Clear Dates
+                </Button>
+              )}
+              <div className="text-sm text-muted-foreground">
+                {filteredTasks.length} of {tasks.length} tasks
+              </div>
             </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full md:w-[180px]">
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="Todo">Todo</SelectItem>
-                <SelectItem value="In Progress">In Progress</SelectItem>
-                <SelectItem value="Done">Done</SelectItem>
-                <SelectItem value="Blocked">Blocked</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-              <SelectTrigger className="w-full md:w-[180px]">
-                <SelectValue placeholder="Filter by priority" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Priority</SelectItem>
-                <SelectItem value="Low">Low</SelectItem>
-                <SelectItem value="Medium">Medium</SelectItem>
-                <SelectItem value="High">High</SelectItem>
-                <SelectItem value="Critical">Critical</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
         </CardContent>
       </Card>
