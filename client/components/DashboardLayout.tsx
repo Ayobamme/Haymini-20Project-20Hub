@@ -30,6 +30,7 @@ import {
   BarChart3,
   TrendingUp,
   Building,
+  UserCog,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -42,6 +43,7 @@ const navigation = [
     title: "Overview",
     items: [
       { title: "Dashboard", url: "/", icon: LayoutDashboard },
+      { title: "Notifications", url: "/notifications", icon: Bell },
       { title: "Reports & Analytics", url: "/analytics", icon: BarChart3 },
     ],
   },
@@ -73,6 +75,7 @@ const navigation = [
     title: "System",
     items: [
       { title: "Departments", url: "/departments", icon: Building },
+      { title: "Profile Settings", url: "/profile", icon: UserCog },
       { title: "Integrations", url: "/integrations", icon: Settings },
     ],
   },
@@ -175,11 +178,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             </div>
 
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="relative">
-                <Bell className="h-4 w-4" />
-                <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-destructive text-destructive-foreground text-xs flex items-center justify-center p-0">
-                  3
-                </Badge>
+              <Button variant="ghost" size="icon" className="relative" asChild>
+                <Link to="/notifications">
+                  <Bell className="h-4 w-4" />
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-destructive text-destructive-foreground text-xs flex items-center justify-center p-0">
+                    3
+                  </Badge>
+                </Link>
               </Button>
 
               <Avatar className="h-8 w-8">
