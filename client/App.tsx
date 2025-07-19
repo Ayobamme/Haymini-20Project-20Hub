@@ -19,6 +19,7 @@ import RiskManagement from "./pages/RiskManagement";
 import Inventory from "./pages/Inventory";
 import Communication from "./pages/Communication";
 import Integrations from "./pages/Integrations";
+import Departments from "./pages/Departments";
 import NotFound from "./pages/NotFound";
 import PlaceholderPage from "./pages/PlaceholderPage";
 
