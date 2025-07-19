@@ -87,7 +87,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               <LayoutDashboard className="h-4 w-4" />
             </div>
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-semibold">ProjectHub</span>
+              <span className="truncate font-semibold">H-Project Hub</span>
               <span className="truncate text-xs text-muted-foreground">
                 Admin Dashboard
               </span>
