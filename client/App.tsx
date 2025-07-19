@@ -15,6 +15,8 @@ import Documents from "./pages/Documents";
 import Issues from "./pages/Issues";
 import RiskManagement from "./pages/RiskManagement";
 import Inventory from "./pages/Inventory";
+import Communication from "./pages/Communication";
+import Integrations from "./pages/Integrations";
 import NotFound from "./pages/NotFound";
 import PlaceholderPage from "./pages/PlaceholderPage";
 
@@ -82,10 +84,7 @@ const App = () => (
             path="/communication"
             element={
               <DashboardLayout>
-                <PlaceholderPage
-                  title="Communication"
-                  description="Team chat, meetings, and collaboration tools."
-                />
+                <Communication />
               </DashboardLayout>
             }
           />
@@ -117,10 +116,7 @@ const App = () => (
             path="/integrations"
             element={
               <DashboardLayout>
-                <PlaceholderPage
-                  title="Integrations"
-                  description="Connect with external tools and services."
-                />
+                <Integrations />
               </DashboardLayout>
             }
           />
