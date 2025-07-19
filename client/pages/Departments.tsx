@@ -267,7 +267,7 @@ export default function Departments() {
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="deptBudget">Annual Budget ($)</Label>
+                    <Label htmlFor="deptBudget">Annual Budget (₦)</Label>
                     <Input
                       id="deptBudget"
                       type="number"
