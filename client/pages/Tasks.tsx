@@ -220,6 +220,47 @@ const Tasks = () => {
   const [newComment, setNewComment] = useState("");
   const [newChecklistItem, setNewChecklistItem] = useState("");
 
+  // Task creation form state
+  const [newTask, setNewTask] = useState({
+    title: "",
+    description: "",
+    priority: "Medium" as Task["priority"],
+    project: "",
+    assigneeEmail: "",
+    startDate: "",
+    dueDate: "",
+    estimatedHours: 0,
+    tags: [] as string[],
+    collaboratorEmails: [] as string[],
+    initialChecklist: [] as string[],
+  });
+  const [newTag, setNewTag] = useState("");
+  const [newCollaboratorEmail, setNewCollaboratorEmail] = useState("");
+  const [newChecklistItemForm, setNewChecklistItemForm] = useState("");
+
+  // Available team members for assignment
+  const availableTeamMembers = [
+    { name: "John Doe", email: "john@company.com", role: "Project Manager" },
+    { name: "Sarah Wilson", email: "sarah@company.com", role: "Lead Developer" },
+    { name: "Mike Chen", email: "mike@company.com", role: "UI/UX Designer" },
+    { name: "Alex Rodriguez", email: "alex@company.com", role: "Backend Developer" },
+    { name: "Emma Davis", email: "emma@company.com", role: "QA Engineer" },
+    { name: "David Kim", email: "david@company.com", role: "Content Strategist" },
+    { name: "Lisa Park", email: "lisa@company.com", role: "Marketing Manager" },
+    { name: "Michael Brown", email: "michael@company.com", role: "Data Engineer" },
+  ];
+
+  // Available projects
+  const availableProjects = [
+    "E-commerce Platform Redesign",
+    "Mobile App Development",
+    "Marketing Campaign Q1",
+    "Data Analytics Platform",
+    "Website Redesign",
+    "Customer Portal",
+    "Inventory Management System",
+  ];
+
   const calculateProgress = (checklist: ChecklistItem[]) => {
     if (checklist.length === 0) return 0;
     const completed = checklist.filter((item) => item.completed).length;
@@ -335,6 +376,151 @@ const Tasks = () => {
     toast({
       title: "Collaborator Added",
       description: `${email} has been added as a collaborator.`,
+    });
+  };
+
+  const addTagToNewTask = () => {
+    if (newTag.trim() && !newTask.tags.includes(newTag.trim())) {
+      setNewTask({
+        ...newTask,
+        tags: [...newTask.tags, newTag.trim()],
+      });
+      setNewTag("");
+    }
+  };
+
+  const removeTagFromNewTask = (tagToRemove: string) => {
+    setNewTask({
+      ...newTask,
+      tags: newTask.tags.filter(tag => tag !== tagToRemove),
+    });
+  };
+
+  const addCollaboratorToNewTask = () => {
+    if (newCollaboratorEmail.trim() && !newTask.collaboratorEmails.includes(newCollaboratorEmail.trim())) {
+      setNewTask({
+        ...newTask,
+        collaboratorEmails: [...newTask.collaboratorEmails, newCollaboratorEmail.trim()],
+      });
+      setNewCollaboratorEmail("");
+    }
+  };
+
+  const removeCollaboratorFromNewTask = (emailToRemove: string) => {
+    setNewTask({
+      ...newTask,
+      collaboratorEmails: newTask.collaboratorEmails.filter(email => email !== emailToRemove),
+    });
+  };
+
+  const addChecklistItemToNewTask = () => {
+    if (newChecklistItemForm.trim() && !newTask.initialChecklist.includes(newChecklistItemForm.trim())) {
+      setNewTask({
+        ...newTask,
+        initialChecklist: [...newTask.initialChecklist, newChecklistItemForm.trim()],
+      });
+      setNewChecklistItemForm("");
+    }
+  };
+
+  const removeChecklistItemFromNewTask = (itemToRemove: string) => {
+    setNewTask({
+      ...newTask,
+      initialChecklist: newTask.initialChecklist.filter(item => item !== itemToRemove),
+    });
+  };
+
+  const createTask = () => {
+    if (!newTask.title.trim()) {
+      toast({
+        title: "Title Required",
+        description: "Please enter a task title.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!newTask.assigneeEmail) {
+      toast({
+        title: "Assignee Required",
+        description: "Please select an assignee for the task.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const assignee = availableTeamMembers.find(member => member.email === newTask.assigneeEmail);
+    if (!assignee) {
+      toast({
+        title: "Invalid Assignee",
+        description: "Please select a valid team member.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const collaborators = newTask.collaboratorEmails.map(email => {
+      const member = availableTeamMembers.find(m => m.email === email);
+      return {
+        name: member?.name || email.split("@")[0],
+        email: email,
+        avatar: "",
+      };
+    });
+
+    const checklist: ChecklistItem[] = newTask.initialChecklist.map((item, index) => ({
+      id: `CL-${Date.now()}-${index}`,
+      title: item,
+      completed: false,
+    }));
+
+    const task: Task = {
+      id: `TSK-${String(tasks.length + 1).padStart(3, '0')}`,
+      title: newTask.title,
+      description: newTask.description,
+      status: "Todo",
+      priority: newTask.priority,
+      project: newTask.project,
+      assignee: {
+        name: assignee.name,
+        email: assignee.email,
+        avatar: "",
+      },
+      collaborators: collaborators,
+      reporter: "Admin User",
+      startDate: newTask.startDate || new Date().toISOString().split('T')[0],
+      dueDate: newTask.dueDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      estimatedHours: newTask.estimatedHours,
+      loggedHours: 0,
+      tags: newTask.tags,
+      checklist: checklist,
+      comments: [],
+      attachments: 0,
+      isOverdue: false,
+    };
+
+    setTasks([...tasks, task]);
+
+    // Reset form
+    setNewTask({
+      title: "",
+      description: "",
+      priority: "Medium",
+      project: "",
+      assigneeEmail: "",
+      startDate: "",
+      dueDate: "",
+      estimatedHours: 0,
+      tags: [],
+      collaboratorEmails: [],
+      initialChecklist: [],
+    });
+
+    setShowTaskDialog(false);
+
+    toast({
+      title: "Task Created",
+      description: `Task "${task.title}" has been created and assigned to ${assignee.name}.`,
     });
   };
 
