@@ -139,7 +139,7 @@ const App = () => (
               </DashboardLayout>
             }
           />
-                    <Route
+          <Route
             path="/integrations"
             element={
               <DashboardLayout>

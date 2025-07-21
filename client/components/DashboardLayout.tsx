@@ -40,7 +40,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 
 const navigation = [
-    {
+  {
     title: "Overview",
     items: [
       { title: "Dashboard", url: "/", icon: LayoutDashboard },
@@ -73,7 +73,7 @@ const navigation = [
       { title: "Inventory", url: "/inventory", icon: Package },
     ],
   },
-    {
+  {
     title: "System",
     items: [
       { title: "Departments", url: "/departments", icon: Building },
@@ -179,7 +179,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               </div>
             </div>
 
-                        <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <Button variant="ghost" size="icon" className="relative" asChild>
                 <Link to="/notifications">
                   <Bell className="h-4 w-4" />
