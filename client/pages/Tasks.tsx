@@ -241,13 +241,29 @@ const Tasks = () => {
   // Available team members for assignment
   const availableTeamMembers = [
     { name: "John Doe", email: "john@company.com", role: "Project Manager" },
-    { name: "Sarah Wilson", email: "sarah@company.com", role: "Lead Developer" },
+    {
+      name: "Sarah Wilson",
+      email: "sarah@company.com",
+      role: "Lead Developer",
+    },
     { name: "Mike Chen", email: "mike@company.com", role: "UI/UX Designer" },
-    { name: "Alex Rodriguez", email: "alex@company.com", role: "Backend Developer" },
+    {
+      name: "Alex Rodriguez",
+      email: "alex@company.com",
+      role: "Backend Developer",
+    },
     { name: "Emma Davis", email: "emma@company.com", role: "QA Engineer" },
-    { name: "David Kim", email: "david@company.com", role: "Content Strategist" },
+    {
+      name: "David Kim",
+      email: "david@company.com",
+      role: "Content Strategist",
+    },
     { name: "Lisa Park", email: "lisa@company.com", role: "Marketing Manager" },
-    { name: "Michael Brown", email: "michael@company.com", role: "Data Engineer" },
+    {
+      name: "Michael Brown",
+      email: "michael@company.com",
+      role: "Data Engineer",
+    },
   ];
 
   // Available projects
@@ -392,15 +408,21 @@ const Tasks = () => {
   const removeTagFromNewTask = (tagToRemove: string) => {
     setNewTask({
       ...newTask,
-      tags: newTask.tags.filter(tag => tag !== tagToRemove),
+      tags: newTask.tags.filter((tag) => tag !== tagToRemove),
     });
   };
 
   const addCollaboratorToNewTask = () => {
-    if (newCollaboratorEmail.trim() && !newTask.collaboratorEmails.includes(newCollaboratorEmail.trim())) {
+    if (
+      newCollaboratorEmail.trim() &&
+      !newTask.collaboratorEmails.includes(newCollaboratorEmail.trim())
+    ) {
       setNewTask({
         ...newTask,
-        collaboratorEmails: [...newTask.collaboratorEmails, newCollaboratorEmail.trim()],
+        collaboratorEmails: [
+          ...newTask.collaboratorEmails,
+          newCollaboratorEmail.trim(),
+        ],
       });
       setNewCollaboratorEmail("");
     }
@@ -409,15 +431,23 @@ const Tasks = () => {
   const removeCollaboratorFromNewTask = (emailToRemove: string) => {
     setNewTask({
       ...newTask,
-      collaboratorEmails: newTask.collaboratorEmails.filter(email => email !== emailToRemove),
+      collaboratorEmails: newTask.collaboratorEmails.filter(
+        (email) => email !== emailToRemove,
+      ),
     });
   };
 
   const addChecklistItemToNewTask = () => {
-    if (newChecklistItemForm.trim() && !newTask.initialChecklist.includes(newChecklistItemForm.trim())) {
+    if (
+      newChecklistItemForm.trim() &&
+      !newTask.initialChecklist.includes(newChecklistItemForm.trim())
+    ) {
       setNewTask({
         ...newTask,
-        initialChecklist: [...newTask.initialChecklist, newChecklistItemForm.trim()],
+        initialChecklist: [
+          ...newTask.initialChecklist,
+          newChecklistItemForm.trim(),
+        ],
       });
       setNewChecklistItemForm("");
     }
@@ -426,7 +456,9 @@ const Tasks = () => {
   const removeChecklistItemFromNewTask = (itemToRemove: string) => {
     setNewTask({
       ...newTask,
-      initialChecklist: newTask.initialChecklist.filter(item => item !== itemToRemove),
+      initialChecklist: newTask.initialChecklist.filter(
+        (item) => item !== itemToRemove,
+      ),
     });
   };
 
@@ -449,7 +481,9 @@ const Tasks = () => {
       return;
     }
 
-    const assignee = availableTeamMembers.find(member => member.email === newTask.assigneeEmail);
+    const assignee = availableTeamMembers.find(
+      (member) => member.email === newTask.assigneeEmail,
+    );
     if (!assignee) {
       toast({
         title: "Invalid Assignee",
@@ -459,8 +493,8 @@ const Tasks = () => {
       return;
     }
 
-    const collaborators = newTask.collaboratorEmails.map(email => {
-      const member = availableTeamMembers.find(m => m.email === email);
+    const collaborators = newTask.collaboratorEmails.map((email) => {
+      const member = availableTeamMembers.find((m) => m.email === email);
       return {
         name: member?.name || email.split("@")[0],
         email: email,
@@ -468,14 +502,16 @@ const Tasks = () => {
       };
     });
 
-    const checklist: ChecklistItem[] = newTask.initialChecklist.map((item, index) => ({
-      id: `CL-${Date.now()}-${index}`,
-      title: item,
-      completed: false,
-    }));
+    const checklist: ChecklistItem[] = newTask.initialChecklist.map(
+      (item, index) => ({
+        id: `CL-${Date.now()}-${index}`,
+        title: item,
+        completed: false,
+      }),
+    );
 
     const task: Task = {
-      id: `TSK-${String(tasks.length + 1).padStart(3, '0')}`,
+      id: `TSK-${String(tasks.length + 1).padStart(3, "0")}`,
       title: newTask.title,
       description: newTask.description,
       status: "Todo",
@@ -488,8 +524,12 @@ const Tasks = () => {
       },
       collaborators: collaborators,
       reporter: "Admin User",
-      startDate: newTask.startDate || new Date().toISOString().split('T')[0],
-      dueDate: newTask.dueDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      startDate: newTask.startDate || new Date().toISOString().split("T")[0],
+      dueDate:
+        newTask.dueDate ||
+        new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+          .toISOString()
+          .split("T")[0],
       estimatedHours: newTask.estimatedHours,
       loggedHours: 0,
       tags: newTask.tags,
@@ -625,7 +665,8 @@ const Tasks = () => {
             <DialogHeader>
               <DialogTitle>Create New Task</DialogTitle>
               <DialogDescription>
-                Create a comprehensive task with all details, assignments, and collaboration features
+                Create a comprehensive task with all details, assignments, and
+                collaboration features
               </DialogDescription>
             </DialogHeader>
 
@@ -645,7 +686,9 @@ const Tasks = () => {
                       id="taskTitle"
                       placeholder="Enter task title"
                       value={newTask.title}
-                      onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+                      onChange={(e) =>
+                        setNewTask({ ...newTask, title: e.target.value })
+                      }
                     />
                   </div>
 
@@ -655,7 +698,9 @@ const Tasks = () => {
                       id="taskDescription"
                       placeholder="Describe the task in detail..."
                       value={newTask.description}
-                      onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+                      onChange={(e) =>
+                        setNewTask({ ...newTask, description: e.target.value })
+                      }
                       rows={4}
                     />
                   </div>
@@ -663,7 +708,15 @@ const Tasks = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="grid gap-2">
                       <Label htmlFor="taskPriority">Priority</Label>
-                      <Select value={newTask.priority} onValueChange={(value) => setNewTask({ ...newTask, priority: value as Task["priority"] })}>
+                      <Select
+                        value={newTask.priority}
+                        onValueChange={(value) =>
+                          setNewTask({
+                            ...newTask,
+                            priority: value as Task["priority"],
+                          })
+                        }
+                      >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
@@ -678,13 +731,20 @@ const Tasks = () => {
 
                     <div className="grid gap-2">
                       <Label htmlFor="taskProject">Project</Label>
-                      <Select value={newTask.project} onValueChange={(value) => setNewTask({ ...newTask, project: value })}>
+                      <Select
+                        value={newTask.project}
+                        onValueChange={(value) =>
+                          setNewTask({ ...newTask, project: value })
+                        }
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select project" />
                         </SelectTrigger>
                         <SelectContent>
                           {availableProjects.map((project) => (
-                            <SelectItem key={project} value={project}>{project}</SelectItem>
+                            <SelectItem key={project} value={project}>
+                              {project}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -712,7 +772,11 @@ const Tasks = () => {
                     {newTask.tags.length > 0 && (
                       <div className="flex gap-2 flex-wrap mt-2">
                         {newTask.tags.map((tag) => (
-                          <Badge key={tag} variant="secondary" className="flex items-center gap-1">
+                          <Badge
+                            key={tag}
+                            variant="secondary"
+                            className="flex items-center gap-1"
+                          >
                             {tag}
                             <button
                               type="button"
@@ -733,7 +797,12 @@ const Tasks = () => {
                 <div className="grid gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="taskAssignee">Assignee *</Label>
-                    <Select value={newTask.assigneeEmail} onValueChange={(value) => setNewTask({ ...newTask, assigneeEmail: value })}>
+                    <Select
+                      value={newTask.assigneeEmail}
+                      onValueChange={(value) =>
+                        setNewTask({ ...newTask, assigneeEmail: value })
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select team member" />
                       </SelectTrigger>
@@ -743,12 +812,17 @@ const Tasks = () => {
                             <div className="flex items-center gap-2">
                               <Avatar className="h-6 w-6">
                                 <AvatarFallback className="text-xs">
-                                  {member.name.split(" ").map(n => n[0]).join("")}
+                                  {member.name
+                                    .split(" ")
+                                    .map((n) => n[0])
+                                    .join("")}
                                 </AvatarFallback>
                               </Avatar>
                               <div>
                                 <div className="font-medium">{member.name}</div>
-                                <div className="text-xs text-muted-foreground">{member.role}</div>
+                                <div className="text-xs text-muted-foreground">
+                                  {member.role}
+                                </div>
                               </div>
                             </div>
                           </SelectItem>
@@ -760,29 +834,47 @@ const Tasks = () => {
                   <div className="grid gap-2">
                     <Label>Collaborators</Label>
                     <div className="flex gap-2">
-                      <Select value={newCollaboratorEmail} onValueChange={setNewCollaboratorEmail}>
+                      <Select
+                        value={newCollaboratorEmail}
+                        onValueChange={setNewCollaboratorEmail}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Add collaborator" />
                         </SelectTrigger>
                         <SelectContent>
                           {availableTeamMembers
-                            .filter(member => member.email !== newTask.assigneeEmail && !newTask.collaboratorEmails.includes(member.email))
+                            .filter(
+                              (member) =>
+                                member.email !== newTask.assigneeEmail &&
+                                !newTask.collaboratorEmails.includes(
+                                  member.email,
+                                ),
+                            )
                             .map((member) => (
-                              <SelectItem key={member.email} value={member.email}>
+                              <SelectItem
+                                key={member.email}
+                                value={member.email}
+                              >
                                 <div className="flex items-center gap-2">
                                   <Avatar className="h-6 w-6">
                                     <AvatarFallback className="text-xs">
-                                      {member.name.split(" ").map(n => n[0]).join("")}
+                                      {member.name
+                                        .split(" ")
+                                        .map((n) => n[0])
+                                        .join("")}
                                     </AvatarFallback>
                                   </Avatar>
                                   <div>
-                                    <div className="font-medium">{member.name}</div>
-                                    <div className="text-xs text-muted-foreground">{member.role}</div>
+                                    <div className="font-medium">
+                                      {member.name}
+                                    </div>
+                                    <div className="text-xs text-muted-foreground">
+                                      {member.role}
+                                    </div>
                                   </div>
                                 </div>
                               </SelectItem>
-                            ))
-                          }
+                            ))}
                         </SelectContent>
                       </Select>
                       <Button
@@ -797,25 +889,39 @@ const Tasks = () => {
                     {newTask.collaboratorEmails.length > 0 && (
                       <div className="space-y-2 mt-2">
                         {newTask.collaboratorEmails.map((email) => {
-                          const member = availableTeamMembers.find(m => m.email === email);
+                          const member = availableTeamMembers.find(
+                            (m) => m.email === email,
+                          );
                           return (
-                            <div key={email} className="flex items-center justify-between p-2 border rounded">
+                            <div
+                              key={email}
+                              className="flex items-center justify-between p-2 border rounded"
+                            >
                               <div className="flex items-center gap-2">
                                 <Avatar className="h-6 w-6">
                                   <AvatarFallback className="text-xs">
-                                    {member?.name.split(" ").map(n => n[0]).join("") || email[0].toUpperCase()}
+                                    {member?.name
+                                      .split(" ")
+                                      .map((n) => n[0])
+                                      .join("") || email[0].toUpperCase()}
                                   </AvatarFallback>
                                 </Avatar>
                                 <div>
-                                  <div className="text-sm font-medium">{member?.name || email}</div>
-                                  <div className="text-xs text-muted-foreground">{member?.role || "External"}</div>
+                                  <div className="text-sm font-medium">
+                                    {member?.name || email}
+                                  </div>
+                                  <div className="text-xs text-muted-foreground">
+                                    {member?.role || "External"}
+                                  </div>
                                 </div>
                               </div>
                               <Button
                                 type="button"
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => removeCollaboratorFromNewTask(email)}
+                                onClick={() =>
+                                  removeCollaboratorFromNewTask(email)
+                                }
                               >
                                 <X className="h-4 w-4" />
                               </Button>
@@ -836,7 +942,9 @@ const Tasks = () => {
                       <Input
                         placeholder="Add checklist item"
                         value={newChecklistItemForm}
-                        onChange={(e) => setNewChecklistItemForm(e.target.value)}
+                        onChange={(e) =>
+                          setNewChecklistItemForm(e.target.value)
+                        }
                         onKeyPress={(e) => {
                           if (e.key === "Enter") {
                             e.preventDefault();
@@ -844,14 +952,21 @@ const Tasks = () => {
                           }
                         }}
                       />
-                      <Button type="button" onClick={addChecklistItemToNewTask} size="sm">
+                      <Button
+                        type="button"
+                        onClick={addChecklistItemToNewTask}
+                        size="sm"
+                      >
                         <Plus className="h-4 w-4" />
                       </Button>
                     </div>
                     {newTask.initialChecklist.length > 0 && (
                       <div className="space-y-2 mt-2">
                         {newTask.initialChecklist.map((item, index) => (
-                          <div key={index} className="flex items-center justify-between p-2 border rounded">
+                          <div
+                            key={index}
+                            className="flex items-center justify-between p-2 border rounded"
+                          >
                             <div className="flex items-center gap-2">
                               <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
                               <span className="text-sm">{item}</span>
@@ -860,7 +975,9 @@ const Tasks = () => {
                               type="button"
                               variant="ghost"
                               size="sm"
-                              onClick={() => removeChecklistItemFromNewTask(item)}
+                              onClick={() =>
+                                removeChecklistItemFromNewTask(item)
+                              }
                             >
                               <X className="h-4 w-4" />
                             </Button>
@@ -881,7 +998,9 @@ const Tasks = () => {
                         id="startDate"
                         type="date"
                         value={newTask.startDate}
-                        onChange={(e) => setNewTask({ ...newTask, startDate: e.target.value })}
+                        onChange={(e) =>
+                          setNewTask({ ...newTask, startDate: e.target.value })
+                        }
                       />
                     </div>
 
@@ -891,7 +1010,9 @@ const Tasks = () => {
                         id="dueDate"
                         type="date"
                         value={newTask.dueDate}
-                        onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
+                        onChange={(e) =>
+                          setNewTask({ ...newTask, dueDate: e.target.value })
+                        }
                       />
                     </div>
                   </div>
@@ -905,7 +1026,12 @@ const Tasks = () => {
                       step="0.5"
                       placeholder="0"
                       value={newTask.estimatedHours || ""}
-                      onChange={(e) => setNewTask({ ...newTask, estimatedHours: parseFloat(e.target.value) || 0 })}
+                      onChange={(e) =>
+                        setNewTask({
+                          ...newTask,
+                          estimatedHours: parseFloat(e.target.value) || 0,
+                        })
+                      }
                     />
                   </div>
 
@@ -914,31 +1040,44 @@ const Tasks = () => {
                     <div className="space-y-2 p-4 bg-muted/50 rounded-lg">
                       <div className="flex justify-between text-sm">
                         <span>Title:</span>
-                        <span className="font-medium">{newTask.title || "Untitled Task"}</span>
+                        <span className="font-medium">
+                          {newTask.title || "Untitled Task"}
+                        </span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span>Priority:</span>
-                        <Badge variant="outline" className={getPriorityColor(newTask.priority)}>
+                        <Badge
+                          variant="outline"
+                          className={getPriorityColor(newTask.priority)}
+                        >
                           {newTask.priority}
                         </Badge>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span>Assignee:</span>
                         <span className="font-medium">
-                          {availableTeamMembers.find(m => m.email === newTask.assigneeEmail)?.name || "Not assigned"}
+                          {availableTeamMembers.find(
+                            (m) => m.email === newTask.assigneeEmail,
+                          )?.name || "Not assigned"}
                         </span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span>Collaborators:</span>
-                        <span className="font-medium">{newTask.collaboratorEmails.length}</span>
+                        <span className="font-medium">
+                          {newTask.collaboratorEmails.length}
+                        </span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span>Checklist Items:</span>
-                        <span className="font-medium">{newTask.initialChecklist.length}</span>
+                        <span className="font-medium">
+                          {newTask.initialChecklist.length}
+                        </span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span>Estimated Hours:</span>
-                        <span className="font-medium">{newTask.estimatedHours}h</span>
+                        <span className="font-medium">
+                          {newTask.estimatedHours}h
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -969,7 +1108,10 @@ const Tasks = () => {
               >
                 Cancel
               </Button>
-              <Button onClick={createTask} disabled={!newTask.title.trim() || !newTask.assigneeEmail}>
+              <Button
+                onClick={createTask}
+                disabled={!newTask.title.trim() || !newTask.assigneeEmail}
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Create Task
               </Button>
