@@ -435,22 +435,358 @@ const Tasks = () => {
               Create Task
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Create New Task</DialogTitle>
               <DialogDescription>
-                Create a new task with checklist and collaboration features
+                Create a comprehensive task with all details, assignments, and collaboration features
               </DialogDescription>
             </DialogHeader>
-            {/* Task creation form would go here */}
-            <DialogFooter>
+
+            <Tabs defaultValue="details" className="w-full">
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="details">Task Details</TabsTrigger>
+                <TabsTrigger value="assignment">Assignment</TabsTrigger>
+                <TabsTrigger value="checklist">Checklist</TabsTrigger>
+                <TabsTrigger value="timeline">Timeline</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="details" className="space-y-4 mt-6">
+                <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="taskTitle">Task Title *</Label>
+                    <Input
+                      id="taskTitle"
+                      placeholder="Enter task title"
+                      value={newTask.title}
+                      onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="taskDescription">Description</Label>
+                    <Textarea
+                      id="taskDescription"
+                      placeholder="Describe the task in detail..."
+                      value={newTask.description}
+                      onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+                      rows={4}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="taskPriority">Priority</Label>
+                      <Select value={newTask.priority} onValueChange={(value) => setNewTask({ ...newTask, priority: value as Task["priority"] })}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Low">Low</SelectItem>
+                          <SelectItem value="Medium">Medium</SelectItem>
+                          <SelectItem value="High">High</SelectItem>
+                          <SelectItem value="Critical">Critical</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="grid gap-2">
+                      <Label htmlFor="taskProject">Project</Label>
+                      <Select value={newTask.project} onValueChange={(value) => setNewTask({ ...newTask, project: value })}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select project" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableProjects.map((project) => (
+                            <SelectItem key={project} value={project}>{project}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label>Tags</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Add tag"
+                        value={newTag}
+                        onChange={(e) => setNewTag(e.target.value)}
+                        onKeyPress={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            addTagToNewTask();
+                          }
+                        }}
+                      />
+                      <Button type="button" onClick={addTagToNewTask} size="sm">
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {newTask.tags.length > 0 && (
+                      <div className="flex gap-2 flex-wrap mt-2">
+                        {newTask.tags.map((tag) => (
+                          <Badge key={tag} variant="secondary" className="flex items-center gap-1">
+                            {tag}
+                            <button
+                              type="button"
+                              onClick={() => removeTagFromNewTask(tag)}
+                              className="ml-1 hover:text-destructive"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="assignment" className="space-y-4 mt-6">
+                <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="taskAssignee">Assignee *</Label>
+                    <Select value={newTask.assigneeEmail} onValueChange={(value) => setNewTask({ ...newTask, assigneeEmail: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select team member" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableTeamMembers.map((member) => (
+                          <SelectItem key={member.email} value={member.email}>
+                            <div className="flex items-center gap-2">
+                              <Avatar className="h-6 w-6">
+                                <AvatarFallback className="text-xs">
+                                  {member.name.split(" ").map(n => n[0]).join("")}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <div className="font-medium">{member.name}</div>
+                                <div className="text-xs text-muted-foreground">{member.role}</div>
+                              </div>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label>Collaborators</Label>
+                    <div className="flex gap-2">
+                      <Select value={newCollaboratorEmail} onValueChange={setNewCollaboratorEmail}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Add collaborator" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableTeamMembers
+                            .filter(member => member.email !== newTask.assigneeEmail && !newTask.collaboratorEmails.includes(member.email))
+                            .map((member) => (
+                              <SelectItem key={member.email} value={member.email}>
+                                <div className="flex items-center gap-2">
+                                  <Avatar className="h-6 w-6">
+                                    <AvatarFallback className="text-xs">
+                                      {member.name.split(" ").map(n => n[0]).join("")}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <div>
+                                    <div className="font-medium">{member.name}</div>
+                                    <div className="text-xs text-muted-foreground">{member.role}</div>
+                                  </div>
+                                </div>
+                              </SelectItem>
+                            ))
+                          }
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        type="button"
+                        onClick={addCollaboratorToNewTask}
+                        size="sm"
+                        disabled={!newCollaboratorEmail}
+                      >
+                        <UserPlus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {newTask.collaboratorEmails.length > 0 && (
+                      <div className="space-y-2 mt-2">
+                        {newTask.collaboratorEmails.map((email) => {
+                          const member = availableTeamMembers.find(m => m.email === email);
+                          return (
+                            <div key={email} className="flex items-center justify-between p-2 border rounded">
+                              <div className="flex items-center gap-2">
+                                <Avatar className="h-6 w-6">
+                                  <AvatarFallback className="text-xs">
+                                    {member?.name.split(" ").map(n => n[0]).join("") || email[0].toUpperCase()}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <div className="text-sm font-medium">{member?.name || email}</div>
+                                  <div className="text-xs text-muted-foreground">{member?.role || "External"}</div>
+                                </div>
+                              </div>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeCollaboratorFromNewTask(email)}
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="checklist" className="space-y-4 mt-6">
+                <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <Label>Initial Checklist Items</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Add checklist item"
+                        value={newChecklistItemForm}
+                        onChange={(e) => setNewChecklistItemForm(e.target.value)}
+                        onKeyPress={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            addChecklistItemToNewTask();
+                          }
+                        }}
+                      />
+                      <Button type="button" onClick={addChecklistItemToNewTask} size="sm">
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {newTask.initialChecklist.length > 0 && (
+                      <div className="space-y-2 mt-2">
+                        {newTask.initialChecklist.map((item, index) => (
+                          <div key={index} className="flex items-center justify-between p-2 border rounded">
+                            <div className="flex items-center gap-2">
+                              <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+                              <span className="text-sm">{item}</span>
+                            </div>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeChecklistItemFromNewTask(item)}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="timeline" className="space-y-4 mt-6">
+                <div className="grid gap-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="startDate">Start Date</Label>
+                      <Input
+                        id="startDate"
+                        type="date"
+                        value={newTask.startDate}
+                        onChange={(e) => setNewTask({ ...newTask, startDate: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="grid gap-2">
+                      <Label htmlFor="dueDate">Due Date</Label>
+                      <Input
+                        id="dueDate"
+                        type="date"
+                        value={newTask.dueDate}
+                        onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="estimatedHours">Estimated Hours</Label>
+                    <Input
+                      id="estimatedHours"
+                      type="number"
+                      min="0"
+                      step="0.5"
+                      placeholder="0"
+                      value={newTask.estimatedHours || ""}
+                      onChange={(e) => setNewTask({ ...newTask, estimatedHours: parseFloat(e.target.value) || 0 })}
+                    />
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label>Task Summary</Label>
+                    <div className="space-y-2 p-4 bg-muted/50 rounded-lg">
+                      <div className="flex justify-between text-sm">
+                        <span>Title:</span>
+                        <span className="font-medium">{newTask.title || "Untitled Task"}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Priority:</span>
+                        <Badge variant="outline" className={getPriorityColor(newTask.priority)}>
+                          {newTask.priority}
+                        </Badge>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Assignee:</span>
+                        <span className="font-medium">
+                          {availableTeamMembers.find(m => m.email === newTask.assigneeEmail)?.name || "Not assigned"}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Collaborators:</span>
+                        <span className="font-medium">{newTask.collaboratorEmails.length}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Checklist Items:</span>
+                        <span className="font-medium">{newTask.initialChecklist.length}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Estimated Hours:</span>
+                        <span className="font-medium">{newTask.estimatedHours}h</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
+
+            <DialogFooter className="mt-6">
               <Button
                 variant="outline"
-                onClick={() => setShowTaskDialog(false)}
+                onClick={() => {
+                  setShowTaskDialog(false);
+                  // Reset form
+                  setNewTask({
+                    title: "",
+                    description: "",
+                    priority: "Medium",
+                    project: "",
+                    assigneeEmail: "",
+                    startDate: "",
+                    dueDate: "",
+                    estimatedHours: 0,
+                    tags: [],
+                    collaboratorEmails: [],
+                    initialChecklist: [],
+                  });
+                }}
               >
                 Cancel
               </Button>
-              <Button>Create Task</Button>
+              <Button onClick={createTask} disabled={!newTask.title.trim() || !newTask.assigneeEmail}>
+                <Plus className="h-4 w-4 mr-2" />
+                Create Task
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
