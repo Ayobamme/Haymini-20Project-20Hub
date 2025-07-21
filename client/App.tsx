@@ -13,6 +13,7 @@ import SalesManagement from "./pages/SalesManagement";
 import Projects from "./pages/Projects";
 import Teams from "./pages/Teams";
 import Tasks from "./pages/Tasks";
+import OKRs from "./pages/OKRs";
 import Documents from "./pages/Documents";
 import Issues from "./pages/Issues";
 import RiskManagement from "./pages/RiskManagement";
@@ -63,6 +64,14 @@ const App = () => (
             element={
               <DashboardLayout>
                 <Tasks />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/okrs"
+            element={
+              <DashboardLayout>
+                <OKRs />
               </DashboardLayout>
             }
           />
@@ -130,7 +139,7 @@ const App = () => (
               </DashboardLayout>
             }
           />
-          <Route
+                    <Route
             path="/integrations"
             element={
               <DashboardLayout>
