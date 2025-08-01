@@ -23,6 +23,9 @@ import Integrations from "./pages/Integrations";
 import Departments from "./pages/Departments";
 import ProfileSettings from "./pages/ProfileSettings";
 import Notifications from "./pages/Notifications";
+import Attendance from "./pages/Attendance";
+import LeaveManagement from "./pages/LeaveManagement";
+import Payroll from "./pages/Payroll";
 import NotFound from "./pages/NotFound";
 import PlaceholderPage from "./pages/PlaceholderPage";
 
@@ -160,6 +163,30 @@ const App = () => (
             element={
               <DashboardLayout>
                 <Notifications />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/attendance"
+            element={
+              <DashboardLayout>
+                <Attendance />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/leave-management"
+            element={
+              <DashboardLayout>
+                <LeaveManagement />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/payroll"
+            element={
+              <DashboardLayout>
+                <Payroll />
               </DashboardLayout>
             }
           />
