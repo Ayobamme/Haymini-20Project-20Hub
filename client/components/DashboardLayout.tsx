@@ -32,6 +32,9 @@ import {
   Building,
   UserCog,
   Target,
+  Clock,
+  Calendar,
+  Calculator,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -71,6 +74,14 @@ const navigation = [
       { title: "Issues", url: "/issues", icon: AlertCircle },
       { title: "Risk Management", url: "/risks", icon: Shield },
       { title: "Inventory", url: "/inventory", icon: Package },
+    ],
+  },
+  {
+    title: "Human Resources",
+    items: [
+      { title: "Attendance", url: "/attendance", icon: Clock },
+      { title: "Leave Management", url: "/leave-management", icon: Calendar },
+      { title: "Payroll", url: "/payroll", icon: Calculator },
     ],
   },
   {
