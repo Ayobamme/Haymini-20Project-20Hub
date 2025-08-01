@@ -58,7 +58,7 @@ const navigation = [
       { title: "Projects", url: "/projects", icon: FolderKanban },
       { title: "Tasks", url: "/tasks", icon: CheckSquare },
       { title: "OKRs", url: "/okrs", icon: Target },
-      { title: "Teams", url: "/teams", icon: Users },
+      { title: "Team Members", url: "/teams", icon: Users },
     ],
   },
   {
