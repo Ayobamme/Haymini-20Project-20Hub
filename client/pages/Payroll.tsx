@@ -37,6 +37,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Calculator,
   Download,
@@ -55,6 +56,12 @@ import {
   Clock,
   CheckCircle,
   AlertTriangle,
+  Edit,
+  Save,
+  X,
+  FileSpreadsheet,
+  Upload,
+  Mail,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
@@ -68,13 +75,29 @@ interface Employee {
   state: string;
   department: string;
   position: string;
+  payFrequency: "monthly" | "weekly" | "daily" | "hourly";
   yearlyBaseSalary: number;
   hourlyRate: number;
+  weeklyRate: number;
+  dailyRate: number;
+  monthlyRate: number;
   payrollTaxRate: number;
-  socialSecurityRate: number;
+  benefitsRate: number;
   pensionContributionRate: number;
   vacationAccrualRate: number;
   annualVacationEntitlement: number;
+  allowances: {
+    transport: number;
+    housing: number;
+    meal: number;
+    medical: number;
+    other: number;
+  };
+  deductions: {
+    loan: number;
+    advance: number;
+    other: number;
+  };
 }
 
 interface PayrollRecord {
@@ -91,10 +114,10 @@ interface PayrollRecord {
   regularPay: number;
   overtimePay: number;
   bonuses: number;
-  expenseReimbursements: number;
+  allowances: number;
   grossPay: number;
   payrollTax: number;
-  socialSecurity: number;
+  benefits: number;
   pensionContribution: number;
   otherDeductions: number;
   totalDeductions: number;
@@ -127,13 +150,29 @@ const Payroll = () => {
       state: "Lagos",
       department: "Engineering",
       position: "Senior Developer",
+      payFrequency: "monthly",
       yearlyBaseSalary: 12000000,
       hourlyRate: 5000,
+      weeklyRate: 200000,
+      dailyRate: 40000,
+      monthlyRate: 1000000,
       payrollTaxRate: 24,
-      socialSecurityRate: 8,
+      benefitsRate: 8,
       pensionContributionRate: 15,
       vacationAccrualRate: 8.33,
       annualVacationEntitlement: 25,
+      allowances: {
+        transport: 50000,
+        housing: 200000,
+        meal: 30000,
+        medical: 25000,
+        other: 0,
+      },
+      deductions: {
+        loan: 0,
+        advance: 0,
+        other: 0,
+      },
     },
     {
       id: "EMP-002",
@@ -145,13 +184,29 @@ const Payroll = () => {
       state: "Lagos",
       department: "Design",
       position: "UI/UX Designer",
+      payFrequency: "monthly",
       yearlyBaseSalary: 9600000,
       hourlyRate: 4000,
+      weeklyRate: 160000,
+      dailyRate: 32000,
+      monthlyRate: 800000,
       payrollTaxRate: 21,
-      socialSecurityRate: 8,
+      benefitsRate: 8,
       pensionContributionRate: 15,
       vacationAccrualRate: 7.69,
       annualVacationEntitlement: 20,
+      allowances: {
+        transport: 40000,
+        housing: 150000,
+        meal: 25000,
+        medical: 20000,
+        other: 0,
+      },
+      deductions: {
+        loan: 50000,
+        advance: 0,
+        other: 0,
+      },
     },
   ]);
 
@@ -167,76 +222,192 @@ const Payroll = () => {
       overtimeHours: 8,
       vacationHours: 8,
       sickHours: 0,
-      regularPay: 800000,
+      regularPay: 1000000,
       overtimePay: 60000,
       bonuses: 100000,
-      expenseReimbursements: 25000,
-      grossPay: 985000,
-      payrollTax: 236400,
-      socialSecurity: 78800,
-      pensionContribution: 147750,
+      allowances: 305000,
+      grossPay: 1465000,
+      payrollTax: 351600,
+      benefits: 117200,
+      pensionContribution: 219750,
       otherDeductions: 15000,
-      totalDeductions: 477950,
-      netPay: 507050,
+      totalDeductions: 703550,
+      netPay: 761450,
       status: "paid",
       generatedDate: "2024-01-25",
       approvedBy: "Admin User",
       paidDate: "2024-01-31",
-    },
-    {
-      id: "PR-002",
-      employeeId: "EMP-002",
-      employeeName: "Sarah Wilson",
-      payPeriod: "January 2024",
-      payPeriodStart: "2024-01-01",
-      payPeriodEnd: "2024-01-31",
-      regularHours: 152,
-      overtimeHours: 0,
-      vacationHours: 8,
-      sickHours: 8,
-      regularPay: 608000,
-      overtimePay: 0,
-      bonuses: 50000,
-      expenseReimbursements: 12000,
-      grossPay: 670000,
-      payrollTax: 140700,
-      socialSecurity: 53600,
-      pensionContribution: 100500,
-      otherDeductions: 10000,
-      totalDeductions: 304800,
-      netPay: 365200,
-      status: "approved",
-      generatedDate: "2024-01-25",
-      approvedBy: "Admin User",
     },
   ]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
-  const [showPayslipDialog, setShowPayslipDialog] = useState(false);
   const [showEmployeeDialog, setShowEmployeeDialog] = useState(false);
   const [showPayrollDialog, setShowPayrollDialog] = useState(false);
+  const [showPayslipDialog, setShowPayslipDialog] = useState(false);
+  const [showExportDialog, setShowExportDialog] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+  const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  const [newEmployee, setNewEmployee] = useState<Partial<Employee>>({
+    name: "",
+    email: "",
+    contractRef: "",
+    startDate: "",
+    country: "Nigeria",
+    state: "",
+    department: "",
+    position: "",
+    payFrequency: "monthly",
+    yearlyBaseSalary: 0,
+    hourlyRate: 0,
+    weeklyRate: 0,
+    dailyRate: 0,
+    monthlyRate: 0,
+    payrollTaxRate: 21,
+    benefitsRate: 8,
+    pensionContributionRate: 15,
+    vacationAccrualRate: 8.33,
+    annualVacationEntitlement: 20,
+    allowances: {
+      transport: 0,
+      housing: 0,
+      meal: 0,
+      medical: 0,
+      other: 0,
+    },
+    deductions: {
+      loan: 0,
+      advance: 0,
+      other: 0,
+    },
+  });
+
+  const calculateRatesFromYearly = (yearly: number, frequency: string) => {
+    return {
+      hourlyRate: Math.round(yearly / (52 * 40)), // 52 weeks, 40 hours
+      weeklyRate: Math.round(yearly / 52),
+      dailyRate: Math.round(yearly / (52 * 5)), // 5 working days
+      monthlyRate: Math.round(yearly / 12),
+    };
+  };
+
+  const saveEmployee = () => {
+    if (!newEmployee.name || !newEmployee.email || !newEmployee.position) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const rates = calculateRatesFromYearly(newEmployee.yearlyBaseSalary || 0, newEmployee.payFrequency || "monthly");
+    
+    const employee: Employee = {
+      id: `EMP-${Date.now().toString().slice(-3)}`,
+      ...newEmployee,
+      ...rates,
+    } as Employee;
+
+    if (isEditMode && editingEmployee) {
+      setEmployees(employees.map(emp => emp.id === editingEmployee.id ? employee : emp));
+      toast({
+        title: "Employee Updated",
+        description: `${employee.name} has been updated successfully.`,
+      });
+    } else {
+      setEmployees([...employees, employee]);
+      toast({
+        title: "Employee Added",
+        description: `${employee.name} has been added to the payroll system.`,
+      });
+    }
+
+    setShowEmployeeDialog(false);
+    setIsEditMode(false);
+    setEditingEmployee(null);
+    setNewEmployee({
+      name: "",
+      email: "",
+      contractRef: "",
+      startDate: "",
+      country: "Nigeria",
+      state: "",
+      department: "",
+      position: "",
+      payFrequency: "monthly",
+      yearlyBaseSalary: 0,
+      hourlyRate: 0,
+      weeklyRate: 0,
+      dailyRate: 0,
+      monthlyRate: 0,
+      payrollTaxRate: 21,
+      benefitsRate: 8,
+      pensionContributionRate: 15,
+      vacationAccrualRate: 8.33,
+      annualVacationEntitlement: 20,
+      allowances: {
+        transport: 0,
+        housing: 0,
+        meal: 0,
+        medical: 0,
+        other: 0,
+      },
+      deductions: {
+        loan: 0,
+        advance: 0,
+        other: 0,
+      },
+    });
+  };
+
+  const editEmployee = (employee: Employee) => {
+    setEditingEmployee(employee);
+    setNewEmployee(employee);
+    setIsEditMode(true);
+    setShowEmployeeDialog(true);
+  };
 
   const generatePayslip = (employeeId: string) => {
     const employee = employees.find(emp => emp.id === employeeId);
     if (!employee) return;
 
-    // Get attendance data (mock calculation)
-    const regularHours = 160; // Standard month
+    let basePay = 0;
+    let hours = 0;
+
+    switch (employee.payFrequency) {
+      case "hourly":
+        hours = 160; // Standard month
+        basePay = hours * employee.hourlyRate;
+        break;
+      case "daily":
+        const workDays = 22; // Standard working days per month
+        basePay = workDays * employee.dailyRate;
+        break;
+      case "weekly":
+        const weeks = 4.33; // Average weeks per month
+        basePay = weeks * employee.weeklyRate;
+        break;
+      case "monthly":
+      default:
+        basePay = employee.monthlyRate;
+        break;
+    }
+
     const overtimeHours = Math.floor(Math.random() * 20);
-    const regularPay = regularHours * employee.hourlyRate;
     const overtimePay = overtimeHours * employee.hourlyRate * 1.5;
     const bonuses = Math.floor(Math.random() * 100000);
-    const expenseReimbursements = Math.floor(Math.random() * 50000);
+    const totalAllowances = Object.values(employee.allowances).reduce((sum, allowance) => sum + allowance, 0);
     
-    const grossPay = regularPay + overtimePay + bonuses + expenseReimbursements;
+    const grossPay = basePay + overtimePay + bonuses + totalAllowances;
     const payrollTax = grossPay * (employee.payrollTaxRate / 100);
-    const socialSecurity = grossPay * (employee.socialSecurityRate / 100);
+    const benefits = grossPay * (employee.benefitsRate / 100);
     const pensionContribution = grossPay * (employee.pensionContributionRate / 100);
-    const otherDeductions = Math.floor(Math.random() * 20000);
-    const totalDeductions = payrollTax + socialSecurity + pensionContribution + otherDeductions;
+    const totalDeductions = payrollTax + benefits + pensionContribution + 
+                           Object.values(employee.deductions).reduce((sum, deduction) => sum + deduction, 0);
     const netPay = grossPay - totalDeductions;
 
     const newPayrollRecord: PayrollRecord = {
@@ -246,19 +417,19 @@ const Payroll = () => {
       payPeriod: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
       payPeriodStart: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0],
       payPeriodEnd: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split('T')[0],
-      regularHours,
+      regularHours: hours,
       overtimeHours,
       vacationHours: 0,
       sickHours: 0,
-      regularPay,
+      regularPay: basePay,
       overtimePay,
       bonuses,
-      expenseReimbursements,
+      allowances: totalAllowances,
       grossPay,
       payrollTax,
-      socialSecurity,
+      benefits,
       pensionContribution,
-      otherDeductions,
+      otherDeductions: Object.values(employee.deductions).reduce((sum, deduction) => sum + deduction, 0),
       totalDeductions,
       netPay,
       status: "draft",
@@ -303,6 +474,20 @@ const Payroll = () => {
     });
   };
 
+  const exportToExcel = () => {
+    toast({
+      title: "Exporting to Excel",
+      description: "Payroll data is being exported to Excel format...",
+    });
+  };
+
+  const exportToGoogleSheets = () => {
+    toast({
+      title: "Exporting to Google Sheets",
+      description: "Payroll data is being exported to Google Sheets...",
+    });
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "draft": return "bg-gray-100 text-gray-800";
@@ -339,7 +524,7 @@ const Payroll = () => {
     totalNetPay: payrollRecords.reduce((sum, record) => sum + record.netPay, 0),
     totalTaxes: payrollRecords.reduce((sum, record) => sum + record.payrollTax, 0),
     averagePay: payrollRecords.length > 0 ? payrollRecords.reduce((sum, record) => sum + record.netPay, 0) / payrollRecords.length : 0,
-    payrollCost: payrollRecords.reduce((sum, record) => sum + record.grossPay + (record.grossPay * 0.15), 0), // Including employer contributions
+    payrollCost: payrollRecords.reduce((sum, record) => sum + record.grossPay + (record.grossPay * 0.15), 0),
   };
 
   return (
@@ -352,10 +537,41 @@ const Payroll = () => {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            Export Payroll
-          </Button>
+          <Dialog open={showExportDialog} onOpenChange={setShowExportDialog}>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Download className="h-4 w-4 mr-2" />
+                Export Payroll
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Export Payroll Data</DialogTitle>
+                <DialogDescription>
+                  Choose your preferred export format
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <Button onClick={exportToExcel} className="justify-start">
+                  <FileSpreadsheet className="h-4 w-4 mr-2" />
+                  Export to Excel
+                </Button>
+                <Button onClick={exportToGoogleSheets} className="justify-start">
+                  <FileSpreadsheet className="h-4 w-4 mr-2" />
+                  Export to Google Sheets
+                </Button>
+                <Button variant="outline" className="justify-start">
+                  <Upload className="h-4 w-4 mr-2" />
+                  Upload to Cloud Storage
+                </Button>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setShowExportDialog(false)}>
+                  Cancel
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
           <Dialog open={showPayrollDialog} onOpenChange={setShowPayrollDialog}>
             <DialogTrigger asChild>
               <Button>
@@ -365,7 +581,7 @@ const Payroll = () => {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Run Monthly Payroll</DialogTitle>
+                <DialogTitle>Run Payroll Process</DialogTitle>
                 <DialogDescription>
                   Generate payslips for all employees for the current pay period
                 </DialogDescription>
@@ -470,7 +686,7 @@ const Payroll = () => {
       <Tabs defaultValue="payroll" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="payroll">Payroll Records</TabsTrigger>
-          <TabsTrigger value="employees">Employee Information</TabsTrigger>
+          <TabsTrigger value="employees">Employee Management</TabsTrigger>
           <TabsTrigger value="payslips">Generate Payslips</TabsTrigger>
           <TabsTrigger value="reports">Reports & Analytics</TabsTrigger>
         </TabsList>
@@ -636,20 +852,352 @@ const Payroll = () => {
         <TabsContent value="employees" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Employee Payroll Information</CardTitle>
-              <CardDescription>
-                Employee details, salary information, and tax configurations
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Employee Management</CardTitle>
+                  <CardDescription>
+                    Manage employee information, pay structures, and benefit configurations
+                  </CardDescription>
+                </div>
+                <Dialog open={showEmployeeDialog} onOpenChange={setShowEmployeeDialog}>
+                  <DialogTrigger asChild>
+                    <Button>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Employee
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>{isEditMode ? "Edit Employee" : "Add New Employee"}</DialogTitle>
+                      <DialogDescription>
+                        Configure employee details, pay structure, and benefit settings
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-6 py-4">
+                      {/* Basic Information */}
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold">Basic Information</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="name">Full Name *</Label>
+                            <Input
+                              id="name"
+                              value={newEmployee.name}
+                              onChange={(e) => setNewEmployee({...newEmployee, name: e.target.value})}
+                              placeholder="Enter full name"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="email">Email Address *</Label>
+                            <Input
+                              id="email"
+                              type="email"
+                              value={newEmployee.email}
+                              onChange={(e) => setNewEmployee({...newEmployee, email: e.target.value})}
+                              placeholder="Enter email address"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="contractRef">Contract Reference</Label>
+                            <Input
+                              id="contractRef"
+                              value={newEmployee.contractRef}
+                              onChange={(e) => setNewEmployee({...newEmployee, contractRef: e.target.value})}
+                              placeholder="Contract reference"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="startDate">Start Date</Label>
+                            <Input
+                              id="startDate"
+                              type="date"
+                              value={newEmployee.startDate}
+                              onChange={(e) => setNewEmployee({...newEmployee, startDate: e.target.value})}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="department">Department *</Label>
+                            <Select value={newEmployee.department} onValueChange={(value) => setNewEmployee({...newEmployee, department: value})}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select department" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="Engineering">Engineering</SelectItem>
+                                <SelectItem value="Design">Design</SelectItem>
+                                <SelectItem value="Marketing">Marketing</SelectItem>
+                                <SelectItem value="Sales">Sales</SelectItem>
+                                <SelectItem value="HR">Human Resources</SelectItem>
+                                <SelectItem value="Finance">Finance</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label htmlFor="position">Position *</Label>
+                            <Input
+                              id="position"
+                              value={newEmployee.position}
+                              onChange={(e) => setNewEmployee({...newEmployee, position: e.target.value})}
+                              placeholder="Job position"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <Separator />
+
+                      {/* Pay Structure */}
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold">Pay Structure</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="payFrequency">Pay Frequency</Label>
+                            <Select value={newEmployee.payFrequency} onValueChange={(value) => setNewEmployee({...newEmployee, payFrequency: value as any})}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select pay frequency" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="hourly">Hourly</SelectItem>
+                                <SelectItem value="daily">Daily</SelectItem>
+                                <SelectItem value="weekly">Weekly</SelectItem>
+                                <SelectItem value="monthly">Monthly</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label htmlFor="yearlyBaseSalary">Annual Base Salary (₦)</Label>
+                            <Input
+                              id="yearlyBaseSalary"
+                              type="number"
+                              value={newEmployee.yearlyBaseSalary}
+                              onChange={(e) => {
+                                const yearly = parseInt(e.target.value) || 0;
+                                const rates = calculateRatesFromYearly(yearly, newEmployee.payFrequency || "monthly");
+                                setNewEmployee({...newEmployee, yearlyBaseSalary: yearly, ...rates});
+                              }}
+                              placeholder="Annual salary"
+                            />
+                          </div>
+                          <div>
+                            <Label>Hourly Rate (₦)</Label>
+                            <Input
+                              type="number"
+                              value={newEmployee.hourlyRate}
+                              onChange={(e) => setNewEmployee({...newEmployee, hourlyRate: parseInt(e.target.value) || 0})}
+                              placeholder="Auto-calculated"
+                            />
+                          </div>
+                          <div>
+                            <Label>Daily Rate (₦)</Label>
+                            <Input
+                              type="number"
+                              value={newEmployee.dailyRate}
+                              onChange={(e) => setNewEmployee({...newEmployee, dailyRate: parseInt(e.target.value) || 0})}
+                              placeholder="Auto-calculated"
+                            />
+                          </div>
+                          <div>
+                            <Label>Weekly Rate (₦)</Label>
+                            <Input
+                              type="number"
+                              value={newEmployee.weeklyRate}
+                              onChange={(e) => setNewEmployee({...newEmployee, weeklyRate: parseInt(e.target.value) || 0})}
+                              placeholder="Auto-calculated"
+                            />
+                          </div>
+                          <div>
+                            <Label>Monthly Rate (₦)</Label>
+                            <Input
+                              type="number"
+                              value={newEmployee.monthlyRate}
+                              onChange={(e) => setNewEmployee({...newEmployee, monthlyRate: parseInt(e.target.value) || 0})}
+                              placeholder="Auto-calculated"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <Separator />
+
+                      {/* Tax and Benefits */}
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold">Tax & Benefits Configuration</h3>
+                        <div className="grid grid-cols-3 gap-4">
+                          <div>
+                            <Label htmlFor="payrollTaxRate">PAYE Tax Rate (%)</Label>
+                            <Input
+                              id="payrollTaxRate"
+                              type="number"
+                              step="0.1"
+                              value={newEmployee.payrollTaxRate}
+                              onChange={(e) => setNewEmployee({...newEmployee, payrollTaxRate: parseFloat(e.target.value) || 0})}
+                              placeholder="Tax rate"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="benefitsRate">Benefits Rate (%)</Label>
+                            <Input
+                              id="benefitsRate"
+                              type="number"
+                              step="0.1"
+                              value={newEmployee.benefitsRate}
+                              onChange={(e) => setNewEmployee({...newEmployee, benefitsRate: parseFloat(e.target.value) || 0})}
+                              placeholder="Benefits rate"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="pensionContributionRate">Pension Rate (%)</Label>
+                            <Input
+                              id="pensionContributionRate"
+                              type="number"
+                              step="0.1"
+                              value={newEmployee.pensionContributionRate}
+                              onChange={(e) => setNewEmployee({...newEmployee, pensionContributionRate: parseFloat(e.target.value) || 0})}
+                              placeholder="Pension rate"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <Separator />
+
+                      {/* Allowances */}
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold">Allowances (₦)</h3>
+                        <div className="grid grid-cols-3 gap-4">
+                          <div>
+                            <Label>Transport Allowance</Label>
+                            <Input
+                              type="number"
+                              value={newEmployee.allowances?.transport}
+                              onChange={(e) => setNewEmployee({
+                                ...newEmployee, 
+                                allowances: {...newEmployee.allowances!, transport: parseInt(e.target.value) || 0}
+                              })}
+                              placeholder="Transport allowance"
+                            />
+                          </div>
+                          <div>
+                            <Label>Housing Allowance</Label>
+                            <Input
+                              type="number"
+                              value={newEmployee.allowances?.housing}
+                              onChange={(e) => setNewEmployee({
+                                ...newEmployee, 
+                                allowances: {...newEmployee.allowances!, housing: parseInt(e.target.value) || 0}
+                              })}
+                              placeholder="Housing allowance"
+                            />
+                          </div>
+                          <div>
+                            <Label>Meal Allowance</Label>
+                            <Input
+                              type="number"
+                              value={newEmployee.allowances?.meal}
+                              onChange={(e) => setNewEmployee({
+                                ...newEmployee, 
+                                allowances: {...newEmployee.allowances!, meal: parseInt(e.target.value) || 0}
+                              })}
+                              placeholder="Meal allowance"
+                            />
+                          </div>
+                          <div>
+                            <Label>Medical Allowance</Label>
+                            <Input
+                              type="number"
+                              value={newEmployee.allowances?.medical}
+                              onChange={(e) => setNewEmployee({
+                                ...newEmployee, 
+                                allowances: {...newEmployee.allowances!, medical: parseInt(e.target.value) || 0}
+                              })}
+                              placeholder="Medical allowance"
+                            />
+                          </div>
+                          <div>
+                            <Label>Other Allowances</Label>
+                            <Input
+                              type="number"
+                              value={newEmployee.allowances?.other}
+                              onChange={(e) => setNewEmployee({
+                                ...newEmployee, 
+                                allowances: {...newEmployee.allowances!, other: parseInt(e.target.value) || 0}
+                              })}
+                              placeholder="Other allowances"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <Separator />
+
+                      {/* Deductions */}
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold">Deductions (₦)</h3>
+                        <div className="grid grid-cols-3 gap-4">
+                          <div>
+                            <Label>Loan Deduction</Label>
+                            <Input
+                              type="number"
+                              value={newEmployee.deductions?.loan}
+                              onChange={(e) => setNewEmployee({
+                                ...newEmployee, 
+                                deductions: {...newEmployee.deductions!, loan: parseInt(e.target.value) || 0}
+                              })}
+                              placeholder="Loan deduction"
+                            />
+                          </div>
+                          <div>
+                            <Label>Salary Advance</Label>
+                            <Input
+                              type="number"
+                              value={newEmployee.deductions?.advance}
+                              onChange={(e) => setNewEmployee({
+                                ...newEmployee, 
+                                deductions: {...newEmployee.deductions!, advance: parseInt(e.target.value) || 0}
+                              })}
+                              placeholder="Salary advance"
+                            />
+                          </div>
+                          <div>
+                            <Label>Other Deductions</Label>
+                            <Input
+                              type="number"
+                              value={newEmployee.deductions?.other}
+                              onChange={(e) => setNewEmployee({
+                                ...newEmployee, 
+                                deductions: {...newEmployee.deductions!, other: parseInt(e.target.value) || 0}
+                              })}
+                              placeholder="Other deductions"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => {
+                        setShowEmployeeDialog(false);
+                        setIsEditMode(false);
+                        setEditingEmployee(null);
+                      }}>
+                        Cancel
+                      </Button>
+                      <Button onClick={saveEmployee}>
+                        <Save className="h-4 w-4 mr-2" />
+                        {isEditMode ? "Update" : "Save"} Employee
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Employee</TableHead>
-                    <TableHead>Contract Info</TableHead>
-                    <TableHead>Salary</TableHead>
-                    <TableHead>Tax Rates</TableHead>
-                    <TableHead>Benefits</TableHead>
+                    <TableHead>Pay Structure</TableHead>
+                    <TableHead>Tax & Benefits</TableHead>
+                    <TableHead>Allowances</TableHead>
+                    <TableHead>Deductions</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -672,39 +1220,57 @@ const Payroll = () => {
                       </TableCell>
                       <TableCell>
                         <div className="text-sm">
-                          <div>ID: {employee.id}</div>
-                          <div>Contract: {employee.contractRef}</div>
-                          <div>Start: {new Date(employee.startDate).toLocaleDateString()}</div>
-                          <div>{employee.state}, {employee.country}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm">
-                          <div className="font-medium">₦{employee.yearlyBaseSalary.toLocaleString()}/year</div>
-                          <div className="text-muted-foreground">₦{employee.hourlyRate.toLocaleString()}/hour</div>
+                          <div className="font-medium capitalize">{employee.payFrequency} Pay</div>
+                          <div className="text-muted-foreground">
+                            {employee.payFrequency === "hourly" && `₦${employee.hourlyRate.toLocaleString()}/hour`}
+                            {employee.payFrequency === "daily" && `₦${employee.dailyRate.toLocaleString()}/day`}
+                            {employee.payFrequency === "weekly" && `₦${employee.weeklyRate.toLocaleString()}/week`}
+                            {employee.payFrequency === "monthly" && `₦${employee.monthlyRate.toLocaleString()}/month`}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            ₦{employee.yearlyBaseSalary.toLocaleString()}/year
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="text-sm">
                           <div>Tax: {employee.payrollTaxRate}%</div>
-                          <div>Social Security: {employee.socialSecurityRate}%</div>
+                          <div>Benefits: {employee.benefitsRate}%</div>
                           <div>Pension: {employee.pensionContributionRate}%</div>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="text-sm">
-                          <div>Vacation: {employee.annualVacationEntitlement} days</div>
-                          <div>Accrual: {employee.vacationAccrualRate}%</div>
+                          <div>Transport: ₦{employee.allowances.transport.toLocaleString()}</div>
+                          <div>Housing: ₦{employee.allowances.housing.toLocaleString()}</div>
+                          <div>Meal: ₦{employee.allowances.meal.toLocaleString()}</div>
+                          <div>Medical: ₦{employee.allowances.medical.toLocaleString()}</div>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => generatePayslip(employee.id)}
-                        >
-                          Generate Payslip
-                        </Button>
+                        <div className="text-sm">
+                          <div>Loan: ₦{employee.deductions.loan.toLocaleString()}</div>
+                          <div>Advance: ₦{employee.deductions.advance.toLocaleString()}</div>
+                          <div>Other: ₦{employee.deductions.other.toLocaleString()}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => editEmployee(employee)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => generatePayslip(employee.id)}
+                          >
+                            <Receipt className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -735,12 +1301,12 @@ const Payroll = () => {
                         </Avatar>
                         <div>
                           <div className="font-medium">{employee.name}</div>
-                          <div className="text-sm text-muted-foreground">{employee.position} • {employee.department}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {employee.position} • {employee.department} • {employee.payFrequency} pay
+                          </div>
                         </div>
                       </div>
-                      <Button
-                        onClick={() => generatePayslip(employee.id)}
-                      >
+                      <Button onClick={() => generatePayslip(employee.id)}>
                         <Receipt className="h-4 w-4 mr-2" />
                         Generate Payslip
                       </Button>
@@ -754,7 +1320,7 @@ const Payroll = () => {
               <CardHeader>
                 <CardTitle>Payroll Calculations</CardTitle>
                 <CardDescription>
-                  Automatic calculations based on attendance
+                  Automatic calculations based on pay frequency
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -762,10 +1328,10 @@ const Payroll = () => {
                   <div className="space-y-2">
                     <div className="font-medium">Gross Pay Calculation:</div>
                     <div className="pl-4 space-y-1 text-muted-foreground">
-                      <div>• Regular Hours × Hourly Rate</div>
-                      <div>• Overtime Hours × 1.5 × Hourly Rate</div>
+                      <div>• Base Pay (per frequency)</div>
+                      <div>• Overtime Hours × 1.5 × Rate</div>
                       <div>• + Bonuses & Allowances</div>
-                      <div>• + Expense Reimbursements</div>
+                      <div>• + All Configured Allowances</div>
                     </div>
                   </div>
 
@@ -775,9 +1341,9 @@ const Payroll = () => {
                     <div className="font-medium">Deductions:</div>
                     <div className="pl-4 space-y-1 text-muted-foreground">
                       <div>• Payroll Tax (PAYE)</div>
-                      <div>• Social Security Contributions</div>
+                      <div>• Benefits Contributions</div>
                       <div>• Pension Contributions</div>
-                      <div>• Other Deductions</div>
+                      <div>• Loan & Advance Deductions</div>
                     </div>
                   </div>
 
@@ -852,7 +1418,7 @@ const Payroll = () => {
                       <span className="font-medium">₦{(payrollSummary.totalTaxes / 1000000).toFixed(2)}M</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span>Social Security</span>
+                      <span>Benefits Contributions</span>
                       <span className="font-medium">₦{((payrollSummary.totalGrossPay * 0.08) / 1000000).toFixed(2)}M</span>
                     </div>
                     <div className="flex justify-between text-sm">
@@ -887,17 +1453,17 @@ const Payroll = () => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Button variant="outline" className="justify-start h-auto p-4">
+                <Button variant="outline" className="justify-start h-auto p-4" onClick={exportToExcel}>
                   <div className="text-left">
                     <div className="font-medium">Monthly Payroll Summary</div>
-                    <div className="text-sm text-muted-foreground">Complete payroll breakdown</div>
+                    <div className="text-sm text-muted-foreground">Export to Excel</div>
                   </div>
                 </Button>
 
-                <Button variant="outline" className="justify-start h-auto p-4">
+                <Button variant="outline" className="justify-start h-auto p-4" onClick={exportToGoogleSheets}>
                   <div className="text-left">
                     <div className="font-medium">Tax Withholding Report</div>
-                    <div className="text-sm text-muted-foreground">PAYE and deductions summary</div>
+                    <div className="text-sm text-muted-foreground">Export to Google Sheets</div>
                   </div>
                 </Button>
 
@@ -946,6 +1512,19 @@ const Payroll = () => {
                   <Label className="text-sm font-medium">Position</Label>
                   <p className="text-sm">{selectedEmployee.position}</p>
                 </div>
+                <div>
+                  <Label className="text-sm font-medium">Pay Frequency</Label>
+                  <p className="text-sm capitalize">{selectedEmployee.payFrequency}</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Pay Rate</Label>
+                  <p className="text-sm">
+                    {selectedEmployee.payFrequency === "hourly" && `₦${selectedEmployee.hourlyRate.toLocaleString()}/hour`}
+                    {selectedEmployee.payFrequency === "daily" && `₦${selectedEmployee.dailyRate.toLocaleString()}/day`}
+                    {selectedEmployee.payFrequency === "weekly" && `₦${selectedEmployee.weeklyRate.toLocaleString()}/week`}
+                    {selectedEmployee.payFrequency === "monthly" && `₦${selectedEmployee.monthlyRate.toLocaleString()}/month`}
+                  </p>
+                </div>
               </div>
 
               <Separator />
@@ -955,15 +1534,23 @@ const Payroll = () => {
                 <div className="space-y-1 text-sm">
                   <div className="flex justify-between">
                     <span>Basic Salary</span>
-                    <span>₦{(selectedEmployee.yearlyBaseSalary / 12).toLocaleString()}</span>
+                    <span>₦{selectedEmployee.monthlyRate.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Overtime</span>
-                    <span>₦0</span>
+                    <span>Transport Allowance</span>
+                    <span>₦{selectedEmployee.allowances.transport.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Housing Allowance</span>
+                    <span>₦{selectedEmployee.allowances.housing.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Meal Allowance</span>
+                    <span>₦{selectedEmployee.allowances.meal.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between font-medium border-t pt-1">
                     <span>Gross Pay</span>
-                    <span>₦{(selectedEmployee.yearlyBaseSalary / 12).toLocaleString()}</span>
+                    <span>₦{(selectedEmployee.monthlyRate + Object.values(selectedEmployee.allowances).reduce((sum, allowance) => sum + allowance, 0)).toLocaleString()}</span>
                   </div>
                 </div>
               </div>
@@ -973,15 +1560,25 @@ const Payroll = () => {
                 <div className="space-y-1 text-sm">
                   <div className="flex justify-between">
                     <span>PAYE Tax ({selectedEmployee.payrollTaxRate}%)</span>
-                    <span>₦{((selectedEmployee.yearlyBaseSalary / 12) * (selectedEmployee.payrollTaxRate / 100)).toLocaleString()}</span>
+                    <span>₦{(selectedEmployee.monthlyRate * (selectedEmployee.payrollTaxRate / 100)).toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Benefits ({selectedEmployee.benefitsRate}%)</span>
+                    <span>₦{(selectedEmployee.monthlyRate * (selectedEmployee.benefitsRate / 100)).toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Pension ({selectedEmployee.pensionContributionRate}%)</span>
-                    <span>₦{((selectedEmployee.yearlyBaseSalary / 12) * (selectedEmployee.pensionContributionRate / 100)).toLocaleString()}</span>
+                    <span>₦{(selectedEmployee.monthlyRate * (selectedEmployee.pensionContributionRate / 100)).toLocaleString()}</span>
                   </div>
+                  {selectedEmployee.deductions.loan > 0 && (
+                    <div className="flex justify-between">
+                      <span>Loan Deduction</span>
+                      <span>₦{selectedEmployee.deductions.loan.toLocaleString()}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between font-medium border-t pt-1">
                     <span>Total Deductions</span>
-                    <span>₦{((selectedEmployee.yearlyBaseSalary / 12) * ((selectedEmployee.payrollTaxRate + selectedEmployee.pensionContributionRate) / 100)).toLocaleString()}</span>
+                    <span>₦{(selectedEmployee.monthlyRate * ((selectedEmployee.payrollTaxRate + selectedEmployee.benefitsRate + selectedEmployee.pensionContributionRate) / 100) + Object.values(selectedEmployee.deductions).reduce((sum, deduction) => sum + deduction, 0)).toLocaleString()}</span>
                   </div>
                 </div>
               </div>
@@ -991,7 +1588,7 @@ const Payroll = () => {
               <div className="flex justify-between font-bold text-lg">
                 <span>Net Pay</span>
                 <span className="text-green-600">
-                  ₦{((selectedEmployee.yearlyBaseSalary / 12) * (1 - ((selectedEmployee.payrollTaxRate + selectedEmployee.pensionContributionRate) / 100))).toLocaleString()}
+                  ₦{(selectedEmployee.monthlyRate + Object.values(selectedEmployee.allowances).reduce((sum, allowance) => sum + allowance, 0) - (selectedEmployee.monthlyRate * ((selectedEmployee.payrollTaxRate + selectedEmployee.benefitsRate + selectedEmployee.pensionContributionRate) / 100) + Object.values(selectedEmployee.deductions).reduce((sum, deduction) => sum + deduction, 0))).toLocaleString()}
                 </span>
               </div>
             </div>
