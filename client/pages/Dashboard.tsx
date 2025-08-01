@@ -241,7 +241,8 @@ export default function Dashboard() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
           <p className="text-muted-foreground">
-            Welcome back! Here's what's happening with your projects and team members.
+            Welcome back! Here's what's happening with your projects and team
+            members.
           </p>
         </div>
         <div className="flex items-center space-x-2">
@@ -266,7 +267,9 @@ export default function Dashboard() {
                     <Input
                       id="name"
                       value={inviteData.name}
-                      onChange={(e) => setInviteData({...inviteData, name: e.target.value})}
+                      onChange={(e) =>
+                        setInviteData({ ...inviteData, name: e.target.value })
+                      }
                       placeholder="Enter full name"
                     />
                   </div>
@@ -276,13 +279,20 @@ export default function Dashboard() {
                       id="email"
                       type="email"
                       value={inviteData.email}
-                      onChange={(e) => setInviteData({...inviteData, email: e.target.value})}
+                      onChange={(e) =>
+                        setInviteData({ ...inviteData, email: e.target.value })
+                      }
                       placeholder="Enter email address"
                     />
                   </div>
                   <div>
                     <Label htmlFor="department">Department</Label>
-                    <Select value={inviteData.department} onValueChange={(value) => setInviteData({...inviteData, department: value})}>
+                    <Select
+                      value={inviteData.department}
+                      onValueChange={(value) =>
+                        setInviteData({ ...inviteData, department: value })
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select department" />
                       </SelectTrigger>
@@ -301,7 +311,12 @@ export default function Dashboard() {
                     <Input
                       id="position"
                       value={inviteData.position}
-                      onChange={(e) => setInviteData({...inviteData, position: e.target.value})}
+                      onChange={(e) =>
+                        setInviteData({
+                          ...inviteData,
+                          position: e.target.value,
+                        })
+                      }
                       placeholder="Job position"
                     />
                   </div>
@@ -311,14 +326,19 @@ export default function Dashboard() {
                   <Textarea
                     id="message"
                     value={inviteData.message}
-                    onChange={(e) => setInviteData({...inviteData, message: e.target.value})}
+                    onChange={(e) =>
+                      setInviteData({ ...inviteData, message: e.target.value })
+                    }
                     placeholder="Add a personal welcome message..."
                     rows={3}
                   />
                 </div>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setShowInviteDialog(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowInviteDialog(false)}
+                >
                   Cancel
                 </Button>
                 <Button onClick={sendInvitation}>
@@ -358,7 +378,9 @@ export default function Dashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{hrSummaryData.totalEmployees}</div>
+            <div className="text-2xl font-bold">
+              {hrSummaryData.totalEmployees}
+            </div>
             <p className="text-xs text-muted-foreground">
               <span className="text-green-600">+3</span> new this month
             </p>
@@ -371,22 +393,34 @@ export default function Dashboard() {
             <UserCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{hrSummaryData.presentToday}</div>
+            <div className="text-2xl font-bold">
+              {hrSummaryData.presentToday}
+            </div>
             <p className="text-xs text-muted-foreground">
-              <span className="text-green-600">{hrSummaryData.averageAttendanceRate}%</span> attendance rate
+              <span className="text-green-600">
+                {hrSummaryData.averageAttendanceRate}%
+              </span>{" "}
+              attendance rate
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Monthly Payroll</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Monthly Payroll
+            </CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₦{(hrSummaryData.monthlyPayrollCost / 1000000).toFixed(1)}M</div>
+            <div className="text-2xl font-bold">
+              ₦{(hrSummaryData.monthlyPayrollCost / 1000000).toFixed(1)}M
+            </div>
             <p className="text-xs text-muted-foreground">
-              <span className="text-blue-600">{hrSummaryData.pendingLeaveRequests}</span> pending leave requests
+              <span className="text-blue-600">
+                {hrSummaryData.pendingLeaveRequests}
+              </span>{" "}
+              pending leave requests
             </p>
           </CardContent>
         </Card>
@@ -396,13 +430,20 @@ export default function Dashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">On Leave Today</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              On Leave Today
+            </CardTitle>
             <CalendarDays className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{hrSummaryData.onLeaveToday}</div>
+            <div className="text-2xl font-bold text-blue-600">
+              {hrSummaryData.onLeaveToday}
+            </div>
             <p className="text-xs text-muted-foreground">
-              Top type: <span className="text-blue-600">{hrSummaryData.topLeaveType}</span>
+              Top type:{" "}
+              <span className="text-blue-600">
+                {hrSummaryData.topLeaveType}
+              </span>
             </p>
           </CardContent>
         </Card>
@@ -413,7 +454,9 @@ export default function Dashboard() {
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{hrSummaryData.lateToday}</div>
+            <div className="text-2xl font-bold text-yellow-600">
+              {hrSummaryData.lateToday}
+            </div>
             <p className="text-xs text-muted-foreground">
               <span className="text-green-600">-50%</span> from yesterday
             </p>
@@ -422,24 +465,30 @@ export default function Dashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Leaves</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Pending Leaves
+            </CardTitle>
             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">{hrSummaryData.pendingLeaveRequests}</div>
-            <p className="text-xs text-muted-foreground">
-              Requires approval
-            </p>
+            <div className="text-2xl font-bold text-orange-600">
+              {hrSummaryData.pendingLeaveRequests}
+            </div>
+            <p className="text-xs text-muted-foreground">Requires approval</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Attendance Rate</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Attendance Rate
+            </CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{hrSummaryData.averageAttendanceRate}%</div>
+            <div className="text-2xl font-bold text-green-600">
+              {hrSummaryData.averageAttendanceRate}%
+            </div>
             <p className="text-xs text-muted-foreground">
               <span className="text-green-600">+2%</span> from last month
             </p>
@@ -563,7 +612,7 @@ export default function Dashboard() {
               <YAxis />
               <Tooltip
                 formatter={(value) => [
-                  `₦${(value as number / 1000000).toFixed(1)}M`,
+                  `₦${((value as number) / 1000000).toFixed(1)}M`,
                   "",
                 ]}
               />
@@ -597,9 +646,7 @@ export default function Dashboard() {
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
               <CardTitle>Department Attendance</CardTitle>
-              <CardDescription>
-                Attendance rates by department
-              </CardDescription>
+              <CardDescription>Attendance rates by department</CardDescription>
             </div>
             <Button variant="ghost" size="sm" asChild>
               <Link to="/attendance">View Details</Link>
@@ -612,10 +659,18 @@ export default function Dashboard() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Building className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm font-medium">{dept.department}</span>
+                      <span className="text-sm font-medium">
+                        {dept.department}
+                      </span>
                     </div>
                     <Badge
-                      variant={dept.rate >= 95 ? "default" : dept.rate >= 90 ? "secondary" : "destructive"}
+                      variant={
+                        dept.rate >= 95
+                          ? "default"
+                          : dept.rate >= 90
+                            ? "secondary"
+                            : "destructive"
+                      }
                     >
                       {dept.rate}%
                     </Badge>
@@ -757,7 +812,11 @@ export default function Dashboard() {
                 <span>Create Project</span>
               </Link>
             </Button>
-            <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => setShowInviteDialog(true)}>
+            <Button
+              variant="outline"
+              className="h-20 flex-col gap-2"
+              onClick={() => setShowInviteDialog(true)}
+            >
               <UserPlus className="h-6 w-6" />
               <span>Invite Team Member</span>
             </Button>

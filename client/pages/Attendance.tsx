@@ -108,7 +108,9 @@ interface AttendanceReport {
 }
 
 const Attendance = () => {
-  const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>([
+  const [attendanceRecords, setAttendanceRecords] = useState<
+    AttendanceRecord[]
+  >([
     {
       id: "ATT-001",
       employeeId: "EMP-001",
@@ -168,7 +170,7 @@ const Attendance = () => {
       deviceType: "Manual",
       isLeaveApproved: true,
       leaveType: "vacation",
-      notes: "Annual leave - Approved"
+      notes: "Annual leave - Approved",
     },
     {
       id: "ATT-005",
@@ -185,7 +187,7 @@ const Attendance = () => {
       deviceType: "Manual",
       isLeaveApproved: true,
       leaveType: "sick",
-      notes: "Sick leave - Medical certificate provided"
+      notes: "Sick leave - Medical certificate provided",
     },
   ]);
 
@@ -216,7 +218,7 @@ const Attendance = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-    to: new Date()
+    to: new Date(),
   });
   const [filterDepartment, setFilterDepartment] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
@@ -224,8 +226,10 @@ const Attendance = () => {
   const [showVisitorDialog, setShowVisitorDialog] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
   const [showExportDialog, setShowExportDialog] = useState(false);
-  const [reportType, setReportType] = useState<"daily" | "weekly" | "monthly" | "quarterly" | "yearly">("monthly");
-  
+  const [reportType, setReportType] = useState<
+    "daily" | "weekly" | "monthly" | "quarterly" | "yearly"
+  >("monthly");
+
   const [newVisitor, setNewVisitor] = useState({
     visitorName: "",
     company: "",
@@ -233,13 +237,20 @@ const Attendance = () => {
     hostEmployee: "",
   });
 
-  const departments = ["Engineering", "Design", "Marketing", "Sales", "HR", "Finance"];
+  const departments = [
+    "Engineering",
+    "Design",
+    "Marketing",
+    "Sales",
+    "HR",
+    "Finance",
+  ];
   const employees = [
     "John Doe",
-    "Sarah Wilson", 
+    "Sarah Wilson",
     "Mike Chen",
     "Alex Rodriguez",
-    "Emma Davis"
+    "Emma Davis",
   ];
 
   const generateVisitorQR = () => {
@@ -252,17 +263,22 @@ const Attendance = () => {
       return;
     }
 
-    const qrCode = `QR-VIS-${Date.now()}-${new Date().toISOString().split('T')[0]}`;
+    const qrCode = `QR-VIS-${Date.now()}-${new Date().toISOString().split("T")[0]}`;
     const newVisitorRecord: VisitorRecord = {
       id: `VIS-${Date.now()}`,
       ...newVisitor,
-      checkIn: new Date().toLocaleTimeString('en-US', { hour12: false }),
+      checkIn: new Date().toLocaleTimeString("en-US", { hour12: false }),
       qrCode,
       status: "checked-in",
     };
 
     setVisitorRecords([...visitorRecords, newVisitorRecord]);
-    setNewVisitor({ visitorName: "", company: "", purpose: "", hostEmployee: "" });
+    setNewVisitor({
+      visitorName: "",
+      company: "",
+      purpose: "",
+      hostEmployee: "",
+    });
     setShowVisitorDialog(false);
 
     toast({
@@ -273,7 +289,7 @@ const Attendance = () => {
 
   const generateAttendanceReport = (type: string) => {
     const reports: AttendanceReport[] = [];
-    
+
     // Mock report generation based on type
     switch (type) {
       case "daily":
@@ -311,7 +327,10 @@ const Attendance = () => {
           const date = new Date();
           date.setMonth(date.getMonth() - i);
           reports.push({
-            period: date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+            period: date.toLocaleDateString("en-US", {
+              month: "long",
+              year: "numeric",
+            }),
             totalEmployees: 50,
             presentDays: 900 + Math.floor(Math.random() * 100),
             absentDays: 50 + Math.floor(Math.random() * 20),
@@ -325,7 +344,7 @@ const Attendance = () => {
       case "quarterly":
         for (let i = 0; i < 4; i++) {
           reports.push({
-            period: `Q${4-i} 2024`,
+            period: `Q${4 - i} 2024`,
             totalEmployees: 50,
             presentDays: 2700 + Math.floor(Math.random() * 300),
             absentDays: 150 + Math.floor(Math.random() * 50),
@@ -339,7 +358,7 @@ const Attendance = () => {
       case "yearly":
         for (let i = 0; i < 3; i++) {
           reports.push({
-            period: `${2024-i}`,
+            period: `${2024 - i}`,
             totalEmployees: 50,
             presentDays: 10800 + Math.floor(Math.random() * 1000),
             absentDays: 600 + Math.floor(Math.random() * 200),
@@ -351,7 +370,7 @@ const Attendance = () => {
         }
         break;
     }
-    
+
     return reports;
   };
 
@@ -360,7 +379,7 @@ const Attendance = () => {
       title: "Exporting to Excel",
       description: `${filename} is being exported to Excel format...`,
     });
-    
+
     // In a real implementation, you would use a library like xlsx or sheet.js
     // to generate the actual Excel file
     setTimeout(() => {
@@ -376,7 +395,7 @@ const Attendance = () => {
       title: "Exporting to Google Sheets",
       description: `${filename} is being exported to Google Sheets...`,
     });
-    
+
     // In a real implementation, you would use Google Sheets API
     setTimeout(() => {
       toast({
@@ -388,53 +407,92 @@ const Attendance = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "present": return "bg-green-100 text-green-800";
-      case "late": return "bg-yellow-100 text-yellow-800";
-      case "absent": return "bg-red-100 text-red-800";
-      case "partial": return "bg-orange-100 text-orange-800";
-      case "on_leave": return "bg-blue-100 text-blue-800";
-      case "vacation": return "bg-purple-100 text-purple-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "present":
+        return "bg-green-100 text-green-800";
+      case "late":
+        return "bg-yellow-100 text-yellow-800";
+      case "absent":
+        return "bg-red-100 text-red-800";
+      case "partial":
+        return "bg-orange-100 text-orange-800";
+      case "on_leave":
+        return "bg-blue-100 text-blue-800";
+      case "vacation":
+        return "bg-purple-100 text-purple-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "present": return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case "late": return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
-      case "absent": return <XCircle className="h-4 w-4 text-red-500" />;
-      case "partial": return <Timer className="h-4 w-4 text-orange-500" />;
-      case "on_leave": return <CalendarDays className="h-4 w-4 text-blue-500" />;
-      case "vacation": return <CalendarIcon className="h-4 w-4 text-purple-500" />;
-      default: return <Clock className="h-4 w-4 text-gray-500" />;
+      case "present":
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case "late":
+        return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
+      case "absent":
+        return <XCircle className="h-4 w-4 text-red-500" />;
+      case "partial":
+        return <Timer className="h-4 w-4 text-orange-500" />;
+      case "on_leave":
+        return <CalendarDays className="h-4 w-4 text-blue-500" />;
+      case "vacation":
+        return <CalendarIcon className="h-4 w-4 text-purple-500" />;
+      default:
+        return <Clock className="h-4 w-4 text-gray-500" />;
     }
   };
 
   const getDeviceIcon = (deviceType: string) => {
     switch (deviceType) {
-      case "RFID": return <CreditCard className="h-4 w-4 text-blue-500" />;
-      case "NFC": return <Nfc className="h-4 w-4 text-green-500" />;
-      case "QR": return <QrCode className="h-4 w-4 text-purple-500" />;
-      case "Manual": return <Smartphone className="h-4 w-4 text-gray-500" />;
-      default: return <Clock className="h-4 w-4 text-gray-500" />;
+      case "RFID":
+        return <CreditCard className="h-4 w-4 text-blue-500" />;
+      case "NFC":
+        return <Nfc className="h-4 w-4 text-green-500" />;
+      case "QR":
+        return <QrCode className="h-4 w-4 text-purple-500" />;
+      case "Manual":
+        return <Smartphone className="h-4 w-4 text-gray-500" />;
+      default:
+        return <Clock className="h-4 w-4 text-gray-500" />;
     }
   };
 
-  const filteredRecords = attendanceRecords.filter(record => {
-    const matchesSearch = record.employeeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         record.department.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDepartment = filterDepartment === "all" || record.department === filterDepartment;
-    const matchesStatus = filterStatus === "all" || record.status === filterStatus;
-    const matchesDate = record.date === selectedDate.toISOString().split('T')[0];
-    
+  const filteredRecords = attendanceRecords.filter((record) => {
+    const matchesSearch =
+      record.employeeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      record.department.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesDepartment =
+      filterDepartment === "all" || record.department === filterDepartment;
+    const matchesStatus =
+      filterStatus === "all" || record.status === filterStatus;
+    const matchesDate =
+      record.date === selectedDate.toISOString().split("T")[0];
+
     return matchesSearch && matchesDepartment && matchesStatus && matchesDate;
   });
 
   const todayStats = {
-    present: attendanceRecords.filter(r => r.status === "present" && r.date === new Date().toISOString().split('T')[0]).length,
-    late: attendanceRecords.filter(r => r.status === "late" && r.date === new Date().toISOString().split('T')[0]).length,
-    absent: attendanceRecords.filter(r => r.status === "absent" && r.date === new Date().toISOString().split('T')[0]).length,
-    onLeave: attendanceRecords.filter(r => (r.status === "on_leave" || r.status === "vacation") && r.date === new Date().toISOString().split('T')[0]).length,
+    present: attendanceRecords.filter(
+      (r) =>
+        r.status === "present" &&
+        r.date === new Date().toISOString().split("T")[0],
+    ).length,
+    late: attendanceRecords.filter(
+      (r) =>
+        r.status === "late" &&
+        r.date === new Date().toISOString().split("T")[0],
+    ).length,
+    absent: attendanceRecords.filter(
+      (r) =>
+        r.status === "absent" &&
+        r.date === new Date().toISOString().split("T")[0],
+    ).length,
+    onLeave: attendanceRecords.filter(
+      (r) =>
+        (r.status === "on_leave" || r.status === "vacation") &&
+        r.date === new Date().toISOString().split("T")[0],
+    ).length,
     totalEmployees: 50,
   };
 
@@ -442,7 +500,9 @@ const Attendance = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Attendance Management</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Attendance Management
+          </h1>
           <p className="text-muted-foreground">
             Monitor staff attendance with RFID, NFC, and QR code systems
           </p>
@@ -465,7 +525,10 @@ const Attendance = () => {
               <div className="space-y-4">
                 <div>
                   <Label>Report Type</Label>
-                  <Select value={reportType} onValueChange={(value) => setReportType(value as any)}>
+                  <Select
+                    value={reportType}
+                    onValueChange={(value) => setReportType(value as any)}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -473,7 +536,9 @@ const Attendance = () => {
                       <SelectItem value="daily">Daily Report</SelectItem>
                       <SelectItem value="weekly">Weekly Report</SelectItem>
                       <SelectItem value="monthly">Monthly Report</SelectItem>
-                      <SelectItem value="quarterly">Quarterly Report</SelectItem>
+                      <SelectItem value="quarterly">
+                        Quarterly Report
+                      </SelectItem>
                       <SelectItem value="yearly">Yearly Report</SelectItem>
                     </SelectContent>
                   </Select>
@@ -486,37 +551,49 @@ const Attendance = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Departments</SelectItem>
-                      {departments.map(dept => (
-                        <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+                      {departments.map((dept) => (
+                        <SelectItem key={dept} value={dept}>
+                          {dept}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <Button onClick={() => {
-                    const reports = generateAttendanceReport(reportType);
-                    exportToExcel(reports, `attendance-report-${reportType}`);
-                  }}>
+                  <Button
+                    onClick={() => {
+                      const reports = generateAttendanceReport(reportType);
+                      exportToExcel(reports, `attendance-report-${reportType}`);
+                    }}
+                  >
                     <FileSpreadsheet className="h-4 w-4 mr-2" />
                     Export to Excel
                   </Button>
-                  <Button onClick={() => {
-                    const reports = generateAttendanceReport(reportType);
-                    exportToGoogleSheets(reports, `attendance-report-${reportType}`);
-                  }}>
+                  <Button
+                    onClick={() => {
+                      const reports = generateAttendanceReport(reportType);
+                      exportToGoogleSheets(
+                        reports,
+                        `attendance-report-${reportType}`,
+                      );
+                    }}
+                  >
                     <FileSpreadsheet className="h-4 w-4 mr-2" />
                     Export to Google Sheets
                   </Button>
                 </div>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setShowReportDialog(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowReportDialog(false)}
+                >
                   Cancel
                 </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          
+
           <Dialog open={showExportDialog} onOpenChange={setShowExportDialog}>
             <DialogTrigger asChild>
               <Button variant="outline">
@@ -539,18 +616,28 @@ const Attendance = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="attendance">Attendance Records</SelectItem>
+                      <SelectItem value="attendance">
+                        Attendance Records
+                      </SelectItem>
                       <SelectItem value="visitors">Visitor Records</SelectItem>
                       <SelectItem value="summary">Summary Report</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <Button onClick={() => exportToExcel(filteredRecords, "attendance-data")}>
+                  <Button
+                    onClick={() =>
+                      exportToExcel(filteredRecords, "attendance-data")
+                    }
+                  >
                     <FileSpreadsheet className="h-4 w-4 mr-2" />
                     Export to Excel
                   </Button>
-                  <Button onClick={() => exportToGoogleSheets(filteredRecords, "attendance-data")}>
+                  <Button
+                    onClick={() =>
+                      exportToGoogleSheets(filteredRecords, "attendance-data")
+                    }
+                  >
                     <FileSpreadsheet className="h-4 w-4 mr-2" />
                     Export to Google Sheets
                   </Button>
@@ -561,7 +648,10 @@ const Attendance = () => {
                 </Button>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setShowExportDialog(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowExportDialog(false)}
+                >
                   Cancel
                 </Button>
               </DialogFooter>
@@ -588,7 +678,12 @@ const Attendance = () => {
                   <Input
                     id="visitorName"
                     value={newVisitor.visitorName}
-                    onChange={(e) => setNewVisitor({...newVisitor, visitorName: e.target.value})}
+                    onChange={(e) =>
+                      setNewVisitor({
+                        ...newVisitor,
+                        visitorName: e.target.value,
+                      })
+                    }
                     placeholder="Enter visitor name"
                   />
                 </div>
@@ -597,7 +692,9 @@ const Attendance = () => {
                   <Input
                     id="company"
                     value={newVisitor.company}
-                    onChange={(e) => setNewVisitor({...newVisitor, company: e.target.value})}
+                    onChange={(e) =>
+                      setNewVisitor({ ...newVisitor, company: e.target.value })
+                    }
                     placeholder="Company name"
                   />
                 </div>
@@ -606,26 +703,38 @@ const Attendance = () => {
                   <Input
                     id="purpose"
                     value={newVisitor.purpose}
-                    onChange={(e) => setNewVisitor({...newVisitor, purpose: e.target.value})}
+                    onChange={(e) =>
+                      setNewVisitor({ ...newVisitor, purpose: e.target.value })
+                    }
                     placeholder="Meeting, interview, etc."
                   />
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="hostEmployee">Host Employee *</Label>
-                  <Select value={newVisitor.hostEmployee} onValueChange={(value) => setNewVisitor({...newVisitor, hostEmployee: value})}>
+                  <Select
+                    value={newVisitor.hostEmployee}
+                    onValueChange={(value) =>
+                      setNewVisitor({ ...newVisitor, hostEmployee: value })
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select host employee" />
                     </SelectTrigger>
                     <SelectContent>
-                      {employees.map(employee => (
-                        <SelectItem key={employee} value={employee}>{employee}</SelectItem>
+                      {employees.map((employee) => (
+                        <SelectItem key={employee} value={employee}>
+                          {employee}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setShowVisitorDialog(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowVisitorDialog(false)}
+                >
                   Cancel
                 </Button>
                 <Button onClick={generateVisitorQR}>
@@ -644,8 +753,12 @@ const Attendance = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Present Today</p>
-                <div className="text-2xl font-bold text-green-600">{todayStats.present}</div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Present Today
+                </p>
+                <div className="text-2xl font-bold text-green-600">
+                  {todayStats.present}
+                </div>
               </div>
               <CheckCircle className="h-8 w-8 text-green-500" />
             </div>
@@ -656,8 +769,12 @@ const Attendance = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Late Arrivals</p>
-                <div className="text-2xl font-bold text-yellow-600">{todayStats.late}</div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Late Arrivals
+                </p>
+                <div className="text-2xl font-bold text-yellow-600">
+                  {todayStats.late}
+                </div>
               </div>
               <AlertTriangle className="h-8 w-8 text-yellow-500" />
             </div>
@@ -668,8 +785,12 @@ const Attendance = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Absent</p>
-                <div className="text-2xl font-bold text-red-600">{todayStats.absent}</div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Absent
+                </p>
+                <div className="text-2xl font-bold text-red-600">
+                  {todayStats.absent}
+                </div>
               </div>
               <XCircle className="h-8 w-8 text-red-500" />
             </div>
@@ -680,8 +801,12 @@ const Attendance = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">On Leave</p>
-                <div className="text-2xl font-bold text-blue-600">{todayStats.onLeave}</div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  On Leave
+                </p>
+                <div className="text-2xl font-bold text-blue-600">
+                  {todayStats.onLeave}
+                </div>
               </div>
               <CalendarDays className="h-8 w-8 text-blue-500" />
             </div>
@@ -692,9 +817,16 @@ const Attendance = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Attendance Rate</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Attendance Rate
+                </p>
                 <div className="text-2xl font-bold text-green-600">
-                  {Math.round(((todayStats.present + todayStats.late) / todayStats.totalEmployees) * 100)}%
+                  {Math.round(
+                    ((todayStats.present + todayStats.late) /
+                      todayStats.totalEmployees) *
+                      100,
+                  )}
+                  %
                 </div>
               </div>
               <UserCheck className="h-8 w-8 text-green-500" />
@@ -727,14 +859,19 @@ const Attendance = () => {
                     />
                   </div>
                 </div>
-                <Select value={filterDepartment} onValueChange={setFilterDepartment}>
+                <Select
+                  value={filterDepartment}
+                  onValueChange={setFilterDepartment}
+                >
                   <SelectTrigger className="w-full lg:w-[180px]">
                     <SelectValue placeholder="Filter by department" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Departments</SelectItem>
-                    {departments.map(dept => (
-                      <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+                    {departments.map((dept) => (
+                      <SelectItem key={dept} value={dept}>
+                        {dept}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -759,9 +896,12 @@ const Attendance = () => {
           {/* Attendance Table */}
           <Card>
             <CardHeader>
-              <CardTitle>Daily Attendance - {selectedDate.toDateString()}</CardTitle>
+              <CardTitle>
+                Daily Attendance - {selectedDate.toDateString()}
+              </CardTitle>
               <CardDescription>
-                Real-time attendance tracking with RFID, NFC, QR systems, and leave integration
+                Real-time attendance tracking with RFID, NFC, QR systems, and
+                leave integration
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -786,12 +926,19 @@ const Attendance = () => {
                         <div className="flex items-center gap-3">
                           <Avatar className="h-8 w-8">
                             <AvatarFallback>
-                              {record.employeeName.split(' ').map(n => n[0]).join('')}
+                              {record.employeeName
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")}
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <div className="font-medium">{record.employeeName}</div>
-                            <div className="text-sm text-muted-foreground">{record.employeeId}</div>
+                            <div className="font-medium">
+                              {record.employeeName}
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              {record.employeeId}
+                            </div>
                           </div>
                         </div>
                       </TableCell>
@@ -812,10 +959,15 @@ const Attendance = () => {
                             <Clock className="h-4 w-4 text-muted-foreground" />
                             {record.clockOut}
                           </div>
-                        ) : record.status === "on_leave" || record.status === "vacation" ? (
-                          <span className="text-muted-foreground">On Leave</span>
+                        ) : record.status === "on_leave" ||
+                          record.status === "vacation" ? (
+                          <span className="text-muted-foreground">
+                            On Leave
+                          </span>
                         ) : (
-                          <span className="text-muted-foreground">Not clocked out</span>
+                          <span className="text-muted-foreground">
+                            Not clocked out
+                          </span>
                         )}
                       </TableCell>
                       <TableCell>
@@ -832,7 +984,7 @@ const Attendance = () => {
                         <div className="flex items-center gap-2">
                           {getStatusIcon(record.status)}
                           <Badge className={getStatusColor(record.status)}>
-                            {record.status.replace('_', ' ')}
+                            {record.status.replace("_", " ")}
                           </Badge>
                           {record.isLeaveApproved && (
                             <Badge variant="outline" className="text-xs">
@@ -859,7 +1011,10 @@ const Attendance = () => {
                       </TableCell>
                       <TableCell>
                         {record.notes && (
-                          <div className="text-sm text-muted-foreground max-w-[200px] truncate" title={record.notes}>
+                          <div
+                            className="text-sm text-muted-foreground max-w-[200px] truncate"
+                            title={record.notes}
+                          >
                             {record.notes}
                           </div>
                         )}
@@ -897,7 +1052,9 @@ const Attendance = () => {
                 <TableBody>
                   {visitorRecords.map((visitor) => (
                     <TableRow key={visitor.id}>
-                      <TableCell className="font-medium">{visitor.visitorName}</TableCell>
+                      <TableCell className="font-medium">
+                        {visitor.visitorName}
+                      </TableCell>
                       <TableCell>{visitor.company}</TableCell>
                       <TableCell>{visitor.purpose}</TableCell>
                       <TableCell>{visitor.hostEmployee}</TableCell>
@@ -914,7 +1071,9 @@ const Attendance = () => {
                             {visitor.checkOut}
                           </div>
                         ) : (
-                          <span className="text-muted-foreground">Still visiting</span>
+                          <span className="text-muted-foreground">
+                            Still visiting
+                          </span>
                         )}
                       </TableCell>
                       <TableCell>
@@ -926,7 +1085,13 @@ const Attendance = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge className={visitor.status === "checked-in" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}>
+                        <Badge
+                          className={
+                            visitor.status === "checked-in"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-gray-100 text-gray-800"
+                          }
+                        >
                           {visitor.status}
                         </Badge>
                       </TableCell>
@@ -943,7 +1108,9 @@ const Attendance = () => {
             <Card className="lg:col-span-1">
               <CardHeader>
                 <CardTitle>Select Date</CardTitle>
-                <CardDescription>Choose a date to view attendance</CardDescription>
+                <CardDescription>
+                  Choose a date to view attendance
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <Calendar
@@ -959,7 +1126,8 @@ const Attendance = () => {
               <CardHeader>
                 <CardTitle>Attendance Calendar View</CardTitle>
                 <CardDescription>
-                  Visual representation of attendance patterns with leave integration
+                  Visual representation of attendance patterns with leave
+                  integration
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -973,7 +1141,7 @@ const Attendance = () => {
                     <div>Sat</div>
                     <div>Sun</div>
                   </div>
-                  
+
                   <div className="grid grid-cols-7 gap-2">
                     {Array.from({ length: 31 }, (_, i) => (
                       <div
@@ -982,10 +1150,22 @@ const Attendance = () => {
                       >
                         <div className="font-medium">{i + 1}</div>
                         <div className="mt-1 flex justify-center gap-1 flex-wrap">
-                          <div className="w-2 h-2 bg-green-500 rounded-full" title="Present"></div>
-                          <div className="w-2 h-2 bg-yellow-500 rounded-full" title="Late"></div>
-                          <div className="w-2 h-2 bg-red-500 rounded-full" title="Absent"></div>
-                          <div className="w-2 h-2 bg-blue-500 rounded-full" title="On Leave"></div>
+                          <div
+                            className="w-2 h-2 bg-green-500 rounded-full"
+                            title="Present"
+                          ></div>
+                          <div
+                            className="w-2 h-2 bg-yellow-500 rounded-full"
+                            title="Late"
+                          ></div>
+                          <div
+                            className="w-2 h-2 bg-red-500 rounded-full"
+                            title="Absent"
+                          ></div>
+                          <div
+                            className="w-2 h-2 bg-blue-500 rounded-full"
+                            title="On Leave"
+                          ></div>
                         </div>
                       </div>
                     ))}
@@ -1038,21 +1218,27 @@ const Attendance = () => {
                     <span className="text-sm">January 2024</span>
                     <div className="flex items-center gap-2">
                       <TrendingUp className="h-4 w-4 text-green-500" />
-                      <span className="text-sm font-medium text-green-600">+5.2%</span>
+                      <span className="text-sm font-medium text-green-600">
+                        +5.2%
+                      </span>
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm">December 2023</span>
                     <div className="flex items-center gap-2">
                       <TrendingUp className="h-4 w-4 text-red-500" />
-                      <span className="text-sm font-medium text-red-600">-2.1%</span>
+                      <span className="text-sm font-medium text-red-600">
+                        -2.1%
+                      </span>
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm">November 2023</span>
                     <div className="flex items-center gap-2">
                       <TrendingUp className="h-4 w-4 text-green-500" />
-                      <span className="text-sm font-medium text-green-600">+1.8%</span>
+                      <span className="text-sm font-medium text-green-600">
+                        +1.8%
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -1069,12 +1255,15 @@ const Attendance = () => {
               <CardContent>
                 <div className="space-y-4">
                   {departments.map((dept) => (
-                    <div key={dept} className="flex justify-between items-center">
+                    <div
+                      key={dept}
+                      className="flex justify-between items-center"
+                    >
                       <span className="text-sm">{dept}</span>
                       <div className="flex items-center gap-2">
                         <div className="w-20 bg-muted rounded-full h-2">
-                          <div 
-                            className="bg-blue-500 h-2 rounded-full" 
+                          <div
+                            className="bg-blue-500 h-2 rounded-full"
                             style={{ width: `${85 + Math.random() * 10}%` }}
                           ></div>
                         </div>
@@ -1098,32 +1287,50 @@ const Attendance = () => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Button variant="outline" className="justify-start h-auto p-4" onClick={() => {
-                  const reports = generateAttendanceReport("daily");
-                  exportToExcel(reports, "daily-attendance-report");
-                }}>
+                <Button
+                  variant="outline"
+                  className="justify-start h-auto p-4"
+                  onClick={() => {
+                    const reports = generateAttendanceReport("daily");
+                    exportToExcel(reports, "daily-attendance-report");
+                  }}
+                >
                   <div className="text-left">
                     <div className="font-medium">Daily Report</div>
-                    <div className="text-sm text-muted-foreground">Last 7 days attendance</div>
+                    <div className="text-sm text-muted-foreground">
+                      Last 7 days attendance
+                    </div>
                   </div>
                 </Button>
 
-                <Button variant="outline" className="justify-start h-auto p-4" onClick={() => {
-                  const reports = generateAttendanceReport("monthly");
-                  exportToGoogleSheets(reports, "monthly-attendance-report");
-                }}>
+                <Button
+                  variant="outline"
+                  className="justify-start h-auto p-4"
+                  onClick={() => {
+                    const reports = generateAttendanceReport("monthly");
+                    exportToGoogleSheets(reports, "monthly-attendance-report");
+                  }}
+                >
                   <div className="text-left">
                     <div className="font-medium">Monthly Report</div>
-                    <div className="text-sm text-muted-foreground">Current month summary</div>
+                    <div className="text-sm text-muted-foreground">
+                      Current month summary
+                    </div>
                   </div>
                 </Button>
 
-                <Button variant="outline" className="justify-start h-auto p-4" onClick={() => {
-                  exportToExcel(attendanceRecords, "all-attendance-records");
-                }}>
+                <Button
+                  variant="outline"
+                  className="justify-start h-auto p-4"
+                  onClick={() => {
+                    exportToExcel(attendanceRecords, "all-attendance-records");
+                  }}
+                >
                   <div className="text-left">
                     <div className="font-medium">Full Export</div>
-                    <div className="text-sm text-muted-foreground">All attendance data</div>
+                    <div className="text-sm text-muted-foreground">
+                      All attendance data
+                    </div>
                   </div>
                 </Button>
               </div>
