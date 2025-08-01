@@ -184,7 +184,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="search"
-                  placeholder="Search projects, tasks, teams..."
+                  placeholder="Search projects, tasks, team members..."
                   className="pl-9 bg-background"
                 />
               </div>
