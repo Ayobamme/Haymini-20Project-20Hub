@@ -9,8 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Dialog,
   DialogContent,
@@ -29,48 +28,46 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Progress } from "@/components/ui/progress";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Plus,
-  Search,
-  MoreHorizontal,
-  Edit,
-  Trash2,
   Target,
   Users,
-  TrendingUp,
+  Calendar,
+  BarChart3,
+  Edit,
   MessageSquare,
-  CheckCircle2,
-  Activity,
-  Eye,
-  User,
+  AtSign,
+  CheckCircle,
+  Clock,
+  AlertTriangle,
+  TrendingUp,
   Building,
+  User,
+  FileText,
+  Download,
+  Filter,
+  Search,
 } from "lucide-react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
 import { toast } from "@/hooks/use-toast";
 
 interface Milestone {
   id: string;
   title: string;
+  description: string;
+  targetDate: string;
   completed: boolean;
-  dueDate: string;
+  completedDate?: string;
 }
 
 interface KeyResult {
@@ -80,151 +77,363 @@ interface KeyResult {
   targetValue: number;
   currentValue: number;
   unit: string;
-  dueDate: string;
+  weight: number;
   milestones: Milestone[];
-}
-
-interface Comment {
-  id: string;
-  author: string;
-  avatar?: string;
-  content: string;
-  timestamp: Date;
 }
 
 interface OKR {
   id: string;
   title: string;
   description: string;
-  type: "team" | "individual";
-  assignedTo: string;
-  assigneeName: string;
+  objective: string;
+  keyResults: KeyResult[];
+  assignedTo: string[];
+  assignedTeams: string[];
+  assignedDepartments: string[];
   quarter: string;
   year: number;
-  status: "draft" | "active" | "completed" | "paused";
-  priority: "low" | "medium" | "high" | "critical";
-  keyResults: KeyResult[];
+  startDate: string;
+  endDate: string;
+  status: "draft" | "active" | "completed" | "cancelled";
+  progress: number;
   comments: Comment[];
   createdBy: string;
-  createdAt: Date;
-  updatedAt: Date;
-  tags: string[];
+  createdDate: string;
+  lastUpdated: string;
+}
+
+interface Comment {
+  id: string;
+  author: string;
+  content: string;
+  taggedUsers: string[];
+  timestamp: string;
+}
+
+interface KPI {
+  id: string;
+  name: string;
+  description: string;
+  targetValue: number;
+  currentValue: number;
+  unit: string;
+  category: "individual" | "team" | "department";
+  assignedTo: string;
+  period: "daily" | "weekly" | "monthly" | "quarterly" | "yearly";
+  trend: "up" | "down" | "stable";
+  lastUpdated: string;
 }
 
 const OKRs = () => {
-  const [okrs, setOKRs] = useState<OKR[]>([
+  const [okrs, setOkrs] = useState<OKR[]>([
     {
       id: "OKR-001",
       title: "Increase Customer Satisfaction",
-      description: "Improve overall customer satisfaction scores and reduce churn rate for Q1 2024",
-      type: "team",
-      assignedTo: "customer-support",
-      assigneeName: "Customer Support Team",
-      quarter: "Q1",
-      year: 2024,
-      status: "active",
-      priority: "high",
+      description: "Improve overall customer satisfaction scores and reduce response times",
+      objective: "Achieve 95% customer satisfaction rating",
       keyResults: [
         {
           id: "KR-001",
-          title: "Achieve 90% Customer Satisfaction Score",
-          description: "Improve CSAT score from 85% to 90%",
-          targetValue: 90,
+          title: "Customer Satisfaction Score",
+          description: "Achieve 95% customer satisfaction rating",
+          targetValue: 95,
           currentValue: 87,
           unit: "%",
-          dueDate: "2024-03-31",
+          weight: 40,
           milestones: [
-            { id: "M-001", title: "Implement feedback system", completed: true, dueDate: "2024-02-15" },
-            { id: "M-002", title: "Train support team", completed: true, dueDate: "2024-02-28" },
-            { id: "M-003", title: "Launch customer portal", completed: false, dueDate: "2024-03-15" },
+            {
+              id: "MS-001",
+              title: "Implement new feedback system",
+              description: "Deploy customer feedback collection system",
+              targetDate: "2024-02-15",
+              completed: true,
+              completedDate: "2024-02-10",
+            },
+            {
+              id: "MS-002",
+              title: "Train support team",
+              description: "Complete customer service training for all support staff",
+              targetDate: "2024-03-01",
+              completed: false,
+            },
           ],
         },
         {
           id: "KR-002",
-          title: "Reduce Response Time to 2 Hours",
-          description: "Decrease average response time from 4 hours to 2 hours",
+          title: "Response Time",
+          description: "Reduce average response time to under 2 hours",
           targetValue: 2,
-          currentValue: 2.5,
+          currentValue: 3.5,
           unit: "hours",
-          dueDate: "2024-03-31",
-          milestones: [
-            { id: "M-004", title: "Optimize ticket routing", completed: true, dueDate: "2024-02-10" },
-            { id: "M-005", title: "Add more support agents", completed: false, dueDate: "2024-03-01" },
-          ],
+          weight: 35,
+          milestones: [],
         },
       ],
+      assignedTo: ["john.doe", "sarah.wilson"],
+      assignedTeams: ["Customer Success"],
+      assignedDepartments: ["Customer Support"],
+      quarter: "Q1",
+      year: 2024,
+      startDate: "2024-01-01",
+      endDate: "2024-03-31",
+      status: "active",
+      progress: 65,
       comments: [
         {
           id: "C-001",
           author: "Admin User",
-          content: "Great progress on the satisfaction score! Keep up the good work.",
-          timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
+          content: "Great progress on the feedback system! @john.doe please update on training progress.",
+          taggedUsers: ["john.doe"],
+          timestamp: "2024-01-15T10:30:00Z",
         },
       ],
       createdBy: "Admin User",
-      createdAt: new Date("2024-01-01"),
-      updatedAt: new Date(Date.now() - 1 * 60 * 60 * 1000),
-      tags: ["customer", "satisfaction", "support"],
-    },
-    {
-      id: "OKR-002",
-      title: "Develop Mobile App MVP",
-      description: "Complete development of mobile application MVP with core features",
-      type: "individual",
-      assignedTo: "sarah@company.com",
-      assigneeName: "Sarah Wilson",
-      quarter: "Q1",
-      year: 2024,
-      status: "active",
-      priority: "critical",
-      keyResults: [
-        {
-          id: "KR-003",
-          title: "Complete 100% of Core Features",
-          description: "Implement all essential features for MVP",
-          targetValue: 100,
-          currentValue: 75,
-          unit: "%",
-          dueDate: "2024-03-31",
-          milestones: [
-            { id: "M-006", title: "User authentication", completed: true, dueDate: "2024-02-05" },
-            { id: "M-007", title: "Core dashboard", completed: true, dueDate: "2024-02-20" },
-            { id: "M-008", title: "Payment integration", completed: false, dueDate: "2024-03-10" },
-            { id: "M-009", title: "Testing and QA", completed: false, dueDate: "2024-03-25" },
-          ],
-        },
-      ],
-      comments: [],
-      createdBy: "Admin User",
-      createdAt: new Date("2024-01-15"),
-      updatedAt: new Date(Date.now() - 30 * 60 * 1000),
-      tags: ["mobile", "development", "mvp"],
+      createdDate: "2024-01-01",
+      lastUpdated: "2024-01-15",
     },
   ]);
 
+  const [kpis, setKpis] = useState<KPI[]>([
+    {
+      id: "KPI-001",
+      name: "Customer Satisfaction",
+      description: "Overall customer satisfaction percentage",
+      targetValue: 95,
+      currentValue: 87,
+      unit: "%",
+      category: "department",
+      assignedTo: "Customer Support",
+      period: "monthly",
+      trend: "up",
+      lastUpdated: "2024-01-15",
+    },
+    {
+      id: "KPI-002",
+      name: "Response Time",
+      description: "Average customer response time",
+      targetValue: 2,
+      currentValue: 3.5,
+      unit: "hours",
+      category: "team",
+      assignedTo: "Customer Success",
+      period: "weekly",
+      trend: "down",
+      lastUpdated: "2024-01-15",
+    },
+  ]);
+
+  const [showOKRDialog, setShowOKRDialog] = useState(false);
+  const [showKPIDialog, setShowKPIDialog] = useState(false);
+  const [showCommentDialog, setShowCommentDialog] = useState(false);
+  const [selectedOKR, setSelectedOKR] = useState<OKR | null>(null);
+  const [editingOKR, setEditingOKR] = useState<OKR | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [typeFilter, setTypeFilter] = useState("all");
-  const [selectedOKR, setSelectedOKR] = useState<OKR | null>(null);
-  const [showCreateOKR, setShowCreateOKR] = useState(false);
-  const [newComment, setNewComment] = useState("");
+  const [quarterFilter, setQuarterFilter] = useState("all");
+
+  const [newOKR, setNewOKR] = useState<Partial<OKR>>({
+    title: "",
+    description: "",
+    objective: "",
+    keyResults: [],
+    assignedTo: [],
+    assignedTeams: [],
+    assignedDepartments: [],
+    quarter: "Q1",
+    year: 2024,
+    startDate: "",
+    endDate: "",
+    status: "draft",
+  });
+
+  const [newComment, setNewComment] = useState({
+    content: "",
+    taggedUsers: [] as string[],
+  });
+
+  const [newKeyResult, setNewKeyResult] = useState<Partial<KeyResult>>({
+    title: "",
+    description: "",
+    targetValue: 0,
+    currentValue: 0,
+    unit: "",
+    weight: 0,
+    milestones: [],
+  });
+
+  const teamMembers = [
+    { id: "john.doe", name: "John Doe", department: "Engineering" },
+    { id: "sarah.wilson", name: "Sarah Wilson", department: "Design" },
+    { id: "mike.chen", name: "Mike Chen", department: "Marketing" },
+    { id: "alex.rodriguez", name: "Alex Rodriguez", department: "Sales" },
+  ];
+
+  const teams = ["Engineering", "Design", "Marketing", "Sales", "Customer Success"];
+  const departments = ["Engineering", "Design", "Marketing", "Sales", "Customer Support", "HR", "Finance"];
 
   const calculateOKRProgress = (okr: OKR) => {
-    if (okr.keyResults.length === 0) return 0;
-    const totalProgress = okr.keyResults.reduce((sum, kr) => {
-      return sum + (kr.currentValue / kr.targetValue) * 100;
+    const totalWeight = okr.keyResults.reduce((sum, kr) => sum + kr.weight, 0);
+    const weightedProgress = okr.keyResults.reduce((sum, kr) => {
+      const progress = (kr.currentValue / kr.targetValue) * 100;
+      return sum + (progress * kr.weight / 100);
     }, 0);
-    return Math.min(100, Math.round(totalProgress / okr.keyResults.length));
+    return totalWeight > 0 ? (weightedProgress / totalWeight) * 100 : 0;
   };
 
-  const calculateKeyResultProgress = (keyResult: KeyResult) => {
-    return Math.min(100, Math.round((keyResult.currentValue / keyResult.targetValue) * 100));
+  const saveOKR = () => {
+    if (!newOKR.title || !newOKR.objective || !newOKR.startDate || !newOKR.endDate) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const okr: OKR = {
+      id: editingOKR ? editingOKR.id : `OKR-${Date.now().toString().slice(-3)}`,
+      ...newOKR,
+      keyResults: newOKR.keyResults || [],
+      assignedTo: newOKR.assignedTo || [],
+      assignedTeams: newOKR.assignedTeams || [],
+      assignedDepartments: newOKR.assignedDepartments || [],
+      progress: 0,
+      comments: editingOKR?.comments || [],
+      createdBy: "Admin User",
+      createdDate: editingOKR?.createdDate || new Date().toISOString().split('T')[0],
+      lastUpdated: new Date().toISOString().split('T')[0],
+    } as OKR;
+
+    okr.progress = calculateOKRProgress(okr);
+
+    if (editingOKR) {
+      setOkrs(okrs.map(o => o.id === editingOKR.id ? okr : o));
+      toast({
+        title: "OKR Updated",
+        description: `OKR "${okr.title}" has been updated successfully.`,
+      });
+    } else {
+      setOkrs([...okrs, okr]);
+      toast({
+        title: "OKR Created",
+        description: `OKR "${okr.title}" has been created successfully.`,
+      });
+    }
+
+    setShowOKRDialog(false);
+    setEditingOKR(null);
+    setNewOKR({
+      title: "",
+      description: "",
+      objective: "",
+      keyResults: [],
+      assignedTo: [],
+      assignedTeams: [],
+      assignedDepartments: [],
+      quarter: "Q1",
+      year: 2024,
+      startDate: "",
+      endDate: "",
+      status: "draft",
+    });
   };
 
-  const calculateMilestoneProgress = (milestones: Milestone[]) => {
-    if (milestones.length === 0) return 0;
-    const completed = milestones.filter(m => m.completed).length;
-    return Math.round((completed / milestones.length) * 100);
+  const addKeyResult = () => {
+    if (!newKeyResult.title || !newKeyResult.targetValue) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in key result title and target value.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const keyResult: KeyResult = {
+      id: `KR-${Date.now().toString().slice(-3)}`,
+      ...newKeyResult,
+      milestones: [],
+    } as KeyResult;
+
+    setNewOKR({
+      ...newOKR,
+      keyResults: [...(newOKR.keyResults || []), keyResult],
+    });
+
+    setNewKeyResult({
+      title: "",
+      description: "",
+      targetValue: 0,
+      currentValue: 0,
+      unit: "",
+      weight: 0,
+      milestones: [],
+    });
+  };
+
+  const addComment = () => {
+    if (!newComment.content || !selectedOKR) return;
+
+    const comment: Comment = {
+      id: `C-${Date.now()}`,
+      author: "Admin User",
+      content: newComment.content,
+      taggedUsers: newComment.taggedUsers,
+      timestamp: new Date().toISOString(),
+    };
+
+    const updatedOKR = {
+      ...selectedOKR,
+      comments: [...selectedOKR.comments, comment],
+      lastUpdated: new Date().toISOString().split('T')[0],
+    };
+
+    setOkrs(okrs.map(okr => okr.id === selectedOKR.id ? updatedOKR : okr));
+    setSelectedOKR(updatedOKR);
+
+    setNewComment({ content: "", taggedUsers: [] });
+    
+    toast({
+      title: "Comment Added",
+      description: "Your comment has been added to the OKR.",
+    });
+  };
+
+  const editOKR = (okr: OKR) => {
+    setEditingOKR(okr);
+    setNewOKR(okr);
+    setShowOKRDialog(true);
+  };
+
+  const generateKPIs = () => {
+    const newKPIs: KPI[] = [];
+
+    okrs.forEach(okr => {
+      okr.keyResults.forEach(kr => {
+        const kpi: KPI = {
+          id: `KPI-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          name: kr.title,
+          description: kr.description,
+          targetValue: kr.targetValue,
+          currentValue: kr.currentValue,
+          unit: kr.unit,
+          category: okr.assignedDepartments.length > 0 ? "department" :
+                   okr.assignedTeams.length > 0 ? "team" : "individual",
+          assignedTo: okr.assignedDepartments[0] || okr.assignedTeams[0] || okr.assignedTo[0] || "",
+          period: "monthly",
+          trend: kr.currentValue >= kr.targetValue * 0.8 ? "up" : 
+                 kr.currentValue >= kr.targetValue * 0.5 ? "stable" : "down",
+          lastUpdated: new Date().toISOString().split('T')[0],
+        };
+        newKPIs.push(kpi);
+      });
+    });
+
+    setKpis([...kpis, ...newKPIs]);
+    
+    toast({
+      title: "KPIs Generated",
+      description: `Generated ${newKPIs.length} KPIs from active OKRs.`,
+    });
   };
 
   const getStatusColor = (status: string) => {
@@ -232,92 +441,27 @@ const OKRs = () => {
       case "draft": return "bg-gray-100 text-gray-800";
       case "active": return "bg-blue-100 text-blue-800";
       case "completed": return "bg-green-100 text-green-800";
-      case "paused": return "bg-yellow-100 text-yellow-800";
+      case "cancelled": return "bg-red-100 text-red-800";
       default: return "bg-gray-100 text-gray-800";
     }
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "low": return "bg-green-100 text-green-800 border-green-200";
-      case "medium": return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "high": return "bg-orange-100 text-orange-800 border-orange-200";
-      case "critical": return "bg-red-100 text-red-800 border-red-200";
-      default: return "bg-gray-100 text-gray-800 border-gray-200";
+  const getTrendIcon = (trend: string) => {
+    switch (trend) {
+      case "up": return <TrendingUp className="h-4 w-4 text-green-500" />;
+      case "down": return <AlertTriangle className="h-4 w-4 text-red-500" />;
+      case "stable": return <Clock className="h-4 w-4 text-yellow-500" />;
+      default: return <Clock className="h-4 w-4 text-gray-500" />;
     }
   };
 
-  const addComment = (okrId: string) => {
-    if (!newComment.trim()) return;
-
-    const comment: Comment = {
-      id: `C-${Date.now()}`,
-      author: "Admin User",
-      content: newComment.trim(),
-      timestamp: new Date(),
-    };
-
-    setOKRs(okrs.map(okr => 
-      okr.id === okrId 
-        ? { ...okr, comments: [...okr.comments, comment] }
-        : okr
-    ));
-
-    setNewComment("");
-    toast({
-      title: "Comment Added",
-      description: "Your comment has been added to the OKR.",
-    });
-  };
-
-  const toggleMilestone = (okrId: string, keyResultId: string, milestoneId: string) => {
-    setOKRs(okrs.map(okr => {
-      if (okr.id === okrId) {
-        const updatedKeyResults = okr.keyResults.map(kr => {
-          if (kr.id === keyResultId) {
-            const updatedMilestones = kr.milestones.map(m => 
-              m.id === milestoneId ? { ...m, completed: !m.completed } : m
-            );
-            return { ...kr, milestones: updatedMilestones };
-          }
-          return kr;
-        });
-        return { ...okr, keyResults: updatedKeyResults };
-      }
-      return okr;
-    }));
-
-    toast({
-      title: "Milestone Updated",
-      description: "Milestone status has been updated.",
-    });
-  };
-
-  // KPI Data
-  const kpiData = {
-    totalOKRs: okrs.length,
-    activeOKRs: okrs.filter(o => o.status === "active").length,
-    completedOKRs: okrs.filter(o => o.status === "completed").length,
-    averageProgress: Math.round(okrs.reduce((sum, o) => sum + calculateOKRProgress(o), 0) / okrs.length),
-    teamOKRs: okrs.filter(o => o.type === "team").length,
-    individualOKRs: okrs.filter(o => o.type === "individual").length,
-  };
-
-  const progressData = okrs.map(okr => ({
-    name: okr.title.substring(0, 20) + "...",
-    progress: calculateOKRProgress(okr),
-    status: okr.status,
-  }));
-
   const filteredOKRs = okrs.filter(okr => {
     const matchesSearch = okr.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         okr.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         okr.assigneeName.toLowerCase().includes(searchTerm.toLowerCase());
-    
+                         okr.objective.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || okr.status === statusFilter;
-    const matchesType = typeFilter === "all" || okr.type === typeFilter;
+    const matchesQuarter = quarterFilter === "all" || okr.quarter === quarterFilter;
     
-    return matchesSearch && matchesStatus && matchesType;
+    return matchesSearch && matchesStatus && matchesQuarter;
   });
 
   return (
@@ -326,94 +470,331 @@ const OKRs = () => {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">OKRs Management</h1>
           <p className="text-muted-foreground">
-            Create and track Objectives and Key Results for teams and individuals
+            Manage Objectives and Key Results with team assignments and KPI generation
           </p>
         </div>
-        <Button onClick={() => setShowCreateOKR(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Create OKR
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={generateKPIs}>
+            <BarChart3 className="h-4 w-4 mr-2" />
+            Generate KPIs
+          </Button>
+          <Dialog open={showOKRDialog} onOpenChange={setShowOKRDialog}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Create OKR
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>{editingOKR ? "Edit OKR" : "Create New OKR"}</DialogTitle>
+                <DialogDescription>
+                  Define objectives, key results, and assign to team members
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="col-span-2">
+                    <Label htmlFor="title">OKR Title *</Label>
+                    <Input
+                      id="title"
+                      value={newOKR.title}
+                      onChange={(e) => setNewOKR({...newOKR, title: e.target.value})}
+                      placeholder="Enter OKR title"
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <Label htmlFor="objective">Main Objective *</Label>
+                    <Textarea
+                      id="objective"
+                      value={newOKR.objective}
+                      onChange={(e) => setNewOKR({...newOKR, objective: e.target.value})}
+                      placeholder="Define the main objective..."
+                      rows={3}
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea
+                      id="description"
+                      value={newOKR.description}
+                      onChange={(e) => setNewOKR({...newOKR, description: e.target.value})}
+                      placeholder="Provide additional context..."
+                      rows={2}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="quarter">Quarter</Label>
+                    <Select value={newOKR.quarter} onValueChange={(value) => setNewOKR({...newOKR, quarter: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select quarter" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Q1">Q1 2024</SelectItem>
+                        <SelectItem value="Q2">Q2 2024</SelectItem>
+                        <SelectItem value="Q3">Q3 2024</SelectItem>
+                        <SelectItem value="Q4">Q4 2024</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="status">Status</Label>
+                    <Select value={newOKR.status} onValueChange={(value) => setNewOKR({...newOKR, status: value as any})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="draft">Draft</SelectItem>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
+                        <SelectItem value="cancelled">Cancelled</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="startDate">Start Date *</Label>
+                    <Input
+                      id="startDate"
+                      type="date"
+                      value={newOKR.startDate}
+                      onChange={(e) => setNewOKR({...newOKR, startDate: e.target.value})}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="endDate">End Date *</Label>
+                    <Input
+                      id="endDate"
+                      type="date"
+                      value={newOKR.endDate}
+                      onChange={(e) => setNewOKR({...newOKR, endDate: e.target.value})}
+                    />
+                  </div>
+                </div>
+
+                {/* Team Assignment */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Assignment</h3>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <Label>Team Members</Label>
+                      <div className="border rounded p-3 max-h-32 overflow-y-auto">
+                        {teamMembers.map(member => (
+                          <div key={member.id} className="flex items-center space-x-2 mb-2">
+                            <Checkbox
+                              checked={newOKR.assignedTo?.includes(member.id)}
+                              onCheckedChange={(checked) => {
+                                const assignedTo = newOKR.assignedTo || [];
+                                if (checked) {
+                                  setNewOKR({...newOKR, assignedTo: [...assignedTo, member.id]});
+                                } else {
+                                  setNewOKR({...newOKR, assignedTo: assignedTo.filter(id => id !== member.id)});
+                                }
+                              }}
+                            />
+                            <Label className="text-sm">{member.name}</Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <Label>Teams</Label>
+                      <div className="border rounded p-3 max-h-32 overflow-y-auto">
+                        {teams.map(team => (
+                          <div key={team} className="flex items-center space-x-2 mb-2">
+                            <Checkbox
+                              checked={newOKR.assignedTeams?.includes(team)}
+                              onCheckedChange={(checked) => {
+                                const assignedTeams = newOKR.assignedTeams || [];
+                                if (checked) {
+                                  setNewOKR({...newOKR, assignedTeams: [...assignedTeams, team]});
+                                } else {
+                                  setNewOKR({...newOKR, assignedTeams: assignedTeams.filter(t => t !== team)});
+                                }
+                              }}
+                            />
+                            <Label className="text-sm">{team}</Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <Label>Departments</Label>
+                      <div className="border rounded p-3 max-h-32 overflow-y-auto">
+                        {departments.map(dept => (
+                          <div key={dept} className="flex items-center space-x-2 mb-2">
+                            <Checkbox
+                              checked={newOKR.assignedDepartments?.includes(dept)}
+                              onCheckedChange={(checked) => {
+                                const assignedDepartments = newOKR.assignedDepartments || [];
+                                if (checked) {
+                                  setNewOKR({...newOKR, assignedDepartments: [...assignedDepartments, dept]});
+                                } else {
+                                  setNewOKR({...newOKR, assignedDepartments: assignedDepartments.filter(d => d !== dept)});
+                                }
+                              }}
+                            />
+                            <Label className="text-sm">{dept}</Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Key Results */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Key Results</h3>
+                  <div className="border rounded p-4">
+                    <h4 className="font-medium mb-3">Add Key Result</h4>
+                    <div className="grid grid-cols-2 gap-3 mb-3">
+                      <Input
+                        placeholder="Key Result Title"
+                        value={newKeyResult.title}
+                        onChange={(e) => setNewKeyResult({...newKeyResult, title: e.target.value})}
+                      />
+                      <Input
+                        placeholder="Description"
+                        value={newKeyResult.description}
+                        onChange={(e) => setNewKeyResult({...newKeyResult, description: e.target.value})}
+                      />
+                      <Input
+                        type="number"
+                        placeholder="Target Value"
+                        value={newKeyResult.targetValue}
+                        onChange={(e) => setNewKeyResult({...newKeyResult, targetValue: parseFloat(e.target.value) || 0})}
+                      />
+                      <Input
+                        type="number"
+                        placeholder="Current Value"
+                        value={newKeyResult.currentValue}
+                        onChange={(e) => setNewKeyResult({...newKeyResult, currentValue: parseFloat(e.target.value) || 0})}
+                      />
+                      <Input
+                        placeholder="Unit (%, hours, etc.)"
+                        value={newKeyResult.unit}
+                        onChange={(e) => setNewKeyResult({...newKeyResult, unit: e.target.value})}
+                      />
+                      <Input
+                        type="number"
+                        placeholder="Weight (%)"
+                        value={newKeyResult.weight}
+                        onChange={(e) => setNewKeyResult({...newKeyResult, weight: parseFloat(e.target.value) || 0})}
+                      />
+                    </div>
+                    <Button onClick={addKeyResult} size="sm">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Key Result
+                    </Button>
+                  </div>
+
+                  {/* Display Added Key Results */}
+                  {newOKR.keyResults && newOKR.keyResults.length > 0 && (
+                    <div className="space-y-2">
+                      <h4 className="font-medium">Added Key Results:</h4>
+                      {newOKR.keyResults.map((kr, index) => (
+                        <div key={index} className="border rounded p-3">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <div className="font-medium">{kr.title}</div>
+                              <div className="text-sm text-muted-foreground">{kr.description}</div>
+                              <div className="text-sm">
+                                Target: {kr.targetValue} {kr.unit} | Current: {kr.currentValue} {kr.unit} | Weight: {kr.weight}%
+                              </div>
+                            </div>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                const updatedKRs = newOKR.keyResults?.filter((_, i) => i !== index) || [];
+                                setNewOKR({...newOKR, keyResults: updatedKRs});
+                              }}
+                            >
+                              Remove
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => {
+                  setShowOKRDialog(false);
+                  setEditingOKR(null);
+                }}>
+                  Cancel
+                </Button>
+                <Button onClick={saveOKR}>
+                  {editingOKR ? "Update" : "Create"} OKR
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
-      <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="okrs">OKRs</TabsTrigger>
-          <TabsTrigger value="progress">Progress</TabsTrigger>
-          <TabsTrigger value="kpis">KPIs</TabsTrigger>
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total OKRs</p>
+                <div className="text-2xl font-bold">{okrs.length}</div>
+              </div>
+              <Target className="h-8 w-8 text-blue-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Active OKRs</p>
+                <div className="text-2xl font-bold text-green-600">
+                  {okrs.filter(okr => okr.status === "active").length}
+                </div>
+              </div>
+              <CheckCircle className="h-8 w-8 text-green-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Average Progress</p>
+                <div className="text-2xl font-bold text-blue-600">
+                  {Math.round(okrs.reduce((sum, okr) => sum + okr.progress, 0) / okrs.length)}%
+                </div>
+              </div>
+              <BarChart3 className="h-8 w-8 text-blue-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Generated KPIs</p>
+                <div className="text-2xl font-bold text-purple-600">{kpis.length}</div>
+              </div>
+              <TrendingUp className="h-8 w-8 text-purple-500" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Tabs defaultValue="okrs" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="okrs">OKRs Overview</TabsTrigger>
+          <TabsTrigger value="kpis">KPIs Dashboard</TabsTrigger>
+          <TabsTrigger value="progress">Progress Tracking</TabsTrigger>
         </TabsList>
-
-        <TabsContent value="overview" className="space-y-6">
-          {/* KPI Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-            <Card>
-              <CardContent className="p-4 text-center">
-                <Target className="h-8 w-8 mx-auto mb-2 text-blue-500" />
-                <div className="text-2xl font-bold">{kpiData.totalOKRs}</div>
-                <div className="text-xs text-muted-foreground">Total OKRs</div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardContent className="p-4 text-center">
-                <Activity className="h-8 w-8 mx-auto mb-2 text-green-500" />
-                <div className="text-2xl font-bold">{kpiData.activeOKRs}</div>
-                <div className="text-xs text-muted-foreground">Active</div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardContent className="p-4 text-center">
-                <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-emerald-500" />
-                <div className="text-2xl font-bold">{kpiData.completedOKRs}</div>
-                <div className="text-xs text-muted-foreground">Completed</div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardContent className="p-4 text-center">
-                <TrendingUp className="h-8 w-8 mx-auto mb-2 text-orange-500" />
-                <div className="text-2xl font-bold">{kpiData.averageProgress}%</div>
-                <div className="text-xs text-muted-foreground">Avg Progress</div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardContent className="p-4 text-center">
-                <Users className="h-8 w-8 mx-auto mb-2 text-purple-500" />
-                <div className="text-2xl font-bold">{kpiData.teamOKRs}</div>
-                <div className="text-xs text-muted-foreground">Team OKRs</div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardContent className="p-4 text-center">
-                <User className="h-8 w-8 mx-auto mb-2 text-cyan-500" />
-                <div className="text-2xl font-bold">{kpiData.individualOKRs}</div>
-                <div className="text-xs text-muted-foreground">Individual</div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Progress Chart */}
-          <Card>
-            <CardHeader>
-              <CardTitle>OKR Progress Overview</CardTitle>
-              <CardDescription>Progress tracking across all active OKRs</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={progressData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="progress" fill="#3b82f6" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
         <TabsContent value="okrs" className="space-y-6">
           {/* Filters */}
@@ -440,161 +821,157 @@ const OKRs = () => {
                     <SelectItem value="draft">Draft</SelectItem>
                     <SelectItem value="active">Active</SelectItem>
                     <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="paused">Paused</SelectItem>
+                    <SelectItem value="cancelled">Cancelled</SelectItem>
                   </SelectContent>
                 </Select>
-                <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <Select value={quarterFilter} onValueChange={setQuarterFilter}>
                   <SelectTrigger className="w-full lg:w-[180px]">
-                    <SelectValue placeholder="Filter by type" />
+                    <SelectValue placeholder="Filter by quarter" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Types</SelectItem>
-                    <SelectItem value="team">Team</SelectItem>
-                    <SelectItem value="individual">Individual</SelectItem>
+                    <SelectItem value="all">All Quarters</SelectItem>
+                    <SelectItem value="Q1">Q1 2024</SelectItem>
+                    <SelectItem value="Q2">Q2 2024</SelectItem>
+                    <SelectItem value="Q3">Q3 2024</SelectItem>
+                    <SelectItem value="Q4">Q4 2024</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </CardContent>
           </Card>
 
-          {/* OKRs Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {filteredOKRs.map((okr) => {
-              const progress = calculateOKRProgress(okr);
-              return (
-                <Card key={okr.id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <CardTitle className="text-lg">{okr.title}</CardTitle>
-                          {okr.type === "team" ? (
-                            <Building className="h-4 w-4 text-muted-foreground" />
-                          ) : (
-                            <User className="h-4 w-4 text-muted-foreground" />
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Badge className={getStatusColor(okr.status)}>
-                            {okr.status}
-                          </Badge>
-                          <Badge variant="outline" className={getPriorityColor(okr.priority)}>
-                            {okr.priority}
-                          </Badge>
-                          <Badge variant="secondary">{okr.quarter} {okr.year}</Badge>
-                        </div>
-                      </div>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => setSelectedOKR(okr)}>
-                            <Eye className="h-4 w-4 mr-2" />
-                            View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Edit className="h-4 w-4 mr-2" />
-                            Edit OKR
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive">
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Delete OKR
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </CardHeader>
-
-                  <CardContent className="space-y-4">
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {okr.description}
-                    </p>
-
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-sm">
-                        <span>Overall Progress</span>
-                        <span className="font-medium">{progress}%</span>
-                      </div>
-                      <Progress value={progress} className="h-2" />
-                    </div>
-
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-sm">
-                        <span>Assigned to</span>
-                        <span className="font-medium">{okr.assigneeName}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span>Key Results</span>
-                        <span className="font-medium">{okr.keyResults.length}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span>Comments</span>
-                        <span className="font-medium">{okr.comments.length}</span>
-                      </div>
-                    </div>
-
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full"
-                      onClick={() => setSelectedOKR(okr)}
-                    >
-                      View Details
-                    </Button>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="progress" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {okrs.map((okr) => (
+          {/* OKRs List */}
+          <div className="grid gap-6">
+            {filteredOKRs.map((okr) => (
               <Card key={okr.id}>
                 <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>{okr.title}</span>
-                    <Badge className={getStatusColor(okr.status)}>{okr.status}</Badge>
-                  </CardTitle>
-                  <CardDescription>{okr.assigneeName}</CardDescription>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <CardTitle className="text-lg">{okr.title}</CardTitle>
+                        <Badge className={getStatusColor(okr.status)}>
+                          {okr.status}
+                        </Badge>
+                        <Badge variant="outline">{okr.quarter} {okr.year}</Badge>
+                      </div>
+                      <CardDescription className="text-base">
+                        {okr.objective}
+                      </CardDescription>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setSelectedOKR(okr);
+                          setShowCommentDialog(true);
+                        }}
+                      >
+                        <MessageSquare className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => editOKR(okr)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  {okr.keyResults.map((kr) => {
-                    const krProgress = calculateKeyResultProgress(kr);
-                    const milestoneProgress = calculateMilestoneProgress(kr.milestones);
-                    
-                    return (
-                      <div key={kr.id} className="space-y-3 p-4 border rounded-lg">
-                        <div className="flex items-center justify-between">
-                          <h4 className="font-medium text-sm">{kr.title}</h4>
-                          <span className="text-xs text-muted-foreground">
-                            {kr.currentValue}/{kr.targetValue} {kr.unit}
-                          </span>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-xs">
-                            <span>Progress</span>
-                            <span>{krProgress}%</span>
+                <CardContent>
+                  <div className="space-y-4">
+                    {/* Progress */}
+                    <div>
+                      <div className="flex justify-between text-sm mb-2">
+                        <span>Overall Progress</span>
+                        <span className="font-medium">{Math.round(okr.progress)}%</span>
+                      </div>
+                      <Progress value={okr.progress} className="h-2" />
+                    </div>
+
+                    {/* Key Results */}
+                    <div>
+                      <h4 className="font-medium mb-3">Key Results</h4>
+                      <div className="space-y-3">
+                        {okr.keyResults.map((kr) => (
+                          <div key={kr.id} className="border rounded p-3">
+                            <div className="flex justify-between items-start mb-2">
+                              <div className="flex-1">
+                                <div className="font-medium text-sm">{kr.title}</div>
+                                <div className="text-xs text-muted-foreground">{kr.description}</div>
+                              </div>
+                              <div className="text-sm font-medium">
+                                {kr.currentValue}/{kr.targetValue} {kr.unit}
+                              </div>
+                            </div>
+                            <Progress value={(kr.currentValue / kr.targetValue) * 100} className="h-1" />
                           </div>
-                          <Progress value={krProgress} className="h-1" />
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-xs">
-                            <span>Milestones</span>
-                            <span>{milestoneProgress}%</span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Assignments */}
+                    <div className="flex flex-wrap gap-4 text-sm">
+                      {okr.assignedTo.length > 0 && (
+                        <div className="flex items-center gap-2">
+                          <User className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-muted-foreground">Members:</span>
+                          <div className="flex gap-1">
+                            {okr.assignedTo.map(memberId => {
+                              const member = teamMembers.find(m => m.id === memberId);
+                              return member ? (
+                                <Badge key={memberId} variant="outline" className="text-xs">
+                                  {member.name}
+                                </Badge>
+                              ) : null;
+                            })}
                           </div>
-                          <Progress value={milestoneProgress} className="h-1" />
+                        </div>
+                      )}
+                      
+                      {okr.assignedTeams.length > 0 && (
+                        <div className="flex items-center gap-2">
+                          <Users className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-muted-foreground">Teams:</span>
+                          <div className="flex gap-1">
+                            {okr.assignedTeams.map(team => (
+                              <Badge key={team} variant="outline" className="text-xs">
+                                {team}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {okr.assignedDepartments.length > 0 && (
+                        <div className="flex items-center gap-2">
+                          <Building className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-muted-foreground">Departments:</span>
+                          <div className="flex gap-1">
+                            {okr.assignedDepartments.map(dept => (
+                              <Badge key={dept} variant="outline" className="text-xs">
+                                {dept}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Comments Preview */}
+                    {okr.comments.length > 0 && (
+                      <div className="border-t pt-3">
+                        <div className="text-sm text-muted-foreground mb-2">
+                          Latest Comment ({okr.comments.length} total)
+                        </div>
+                        <div className="text-sm">
+                          <span className="font-medium">{okr.comments[okr.comments.length - 1].author}:</span>
+                          <span className="ml-2">{okr.comments[okr.comments.length - 1].content}</span>
                         </div>
                       </div>
-                    );
-                  })}
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -602,283 +979,214 @@ const OKRs = () => {
         </TabsContent>
 
         <TabsContent value="kpis" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>OKR Distribution</CardTitle>
-                <CardDescription>Breakdown by status and type</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Active OKRs</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-20 bg-muted rounded-full h-2">
-                        <div 
-                          className="bg-green-500 h-2 rounded-full" 
-                          style={{ width: `${(kpiData.activeOKRs / kpiData.totalOKRs) * 100}%` }}
-                        />
-                      </div>
-                      <span className="text-sm font-medium">{kpiData.activeOKRs}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Team OKRs</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-20 bg-muted rounded-full h-2">
-                        <div 
-                          className="bg-blue-500 h-2 rounded-full" 
-                          style={{ width: `${(kpiData.teamOKRs / kpiData.totalOKRs) * 100}%` }}
-                        />
-                      </div>
-                      <span className="text-sm font-medium">{kpiData.teamOKRs}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Individual OKRs</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-20 bg-muted rounded-full h-2">
-                        <div 
-                          className="bg-purple-500 h-2 rounded-full" 
-                          style={{ width: `${(kpiData.individualOKRs / kpiData.totalOKRs) * 100}%` }}
-                        />
-                      </div>
-                      <span className="text-sm font-medium">{kpiData.individualOKRs}</span>
-                    </div>
-                  </div>
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>KPIs Dashboard</CardTitle>
+                  <CardDescription>
+                    Key Performance Indicators generated from OKRs
+                  </CardDescription>
                 </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Progress Analytics</CardTitle>
-                <CardDescription>Key performance indicators</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-green-600">{kpiData.averageProgress}%</div>
-                    <div className="text-sm text-muted-foreground">Average Progress</div>
+                <Button onClick={generateKPIs}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Refresh KPIs
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4">
+                {kpis.map((kpi) => (
+                  <div key={kpi.id} className="border rounded p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h4 className="font-medium">{kpi.name}</h4>
+                          <Badge variant="outline" className="capitalize">
+                            {kpi.category}
+                          </Badge>
+                          {getTrendIcon(kpi.trend)}
+                        </div>
+                        <p className="text-sm text-muted-foreground">{kpi.description}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Assigned to: {kpi.assignedTo} • {kpi.period}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-medium">
+                          {kpi.currentValue}/{kpi.targetValue} {kpi.unit}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {Math.round((kpi.currentValue / kpi.targetValue) * 100)}%
+                        </div>
+                      </div>
+                    </div>
+                    <Progress value={(kpi.currentValue / kpi.targetValue) * 100} className="h-2" />
                   </div>
-                  
-                  <Separator />
-                  
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>On Track OKRs</span>
-                      <span className="font-medium text-green-600">
-                        {okrs.filter(o => calculateOKRProgress(o) >= 70).length}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span>At Risk OKRs</span>
-                      <span className="font-medium text-yellow-600">
-                        {okrs.filter(o => calculateOKRProgress(o) >= 40 && calculateOKRProgress(o) < 70).length}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span>Behind OKRs</span>
-                      <span className="font-medium text-red-600">
-                        {okrs.filter(o => calculateOKRProgress(o) < 40).length}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="progress" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Progress Tracking</CardTitle>
+              <CardDescription>
+                Detailed progress analysis across all OKRs
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>OKR</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Progress</TableHead>
+                    <TableHead>Key Results</TableHead>
+                    <TableHead>Assigned To</TableHead>
+                    <TableHead>Last Updated</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {okrs.map((okr) => (
+                    <TableRow key={okr.id}>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{okr.title}</div>
+                          <div className="text-sm text-muted-foreground">{okr.quarter} {okr.year}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={getStatusColor(okr.status)}>
+                          {okr.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Progress value={okr.progress} className="h-2 w-20" />
+                          <span className="text-sm font-medium">{Math.round(okr.progress)}%</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm">
+                          {okr.keyResults.length} key results
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-col gap-1">
+                          {okr.assignedTo.length > 0 && (
+                            <div className="text-xs">
+                              {okr.assignedTo.length} members
+                            </div>
+                          )}
+                          {okr.assignedTeams.length > 0 && (
+                            <div className="text-xs">
+                              {okr.assignedTeams.length} teams
+                            </div>
+                          )}
+                          {okr.assignedDepartments.length > 0 && (
+                            <div className="text-xs">
+                              {okr.assignedDepartments.length} departments
+                            </div>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm text-muted-foreground">
+                          {new Date(okr.lastUpdated).toLocaleDateString()}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
 
-      {/* OKR Detail Dialog */}
-      <Dialog open={selectedOKR !== null} onOpenChange={() => setSelectedOKR(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      {/* Comment Dialog */}
+      <Dialog open={showCommentDialog} onOpenChange={setShowCommentDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>OKR Comments & Discussion</DialogTitle>
+            <DialogDescription>
+              Add comments and tag team members for collaboration
+            </DialogDescription>
+          </DialogHeader>
           {selectedOKR && (
-            <>
-              <DialogHeader>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <DialogTitle className="text-xl">{selectedOKR.title}</DialogTitle>
-                    <DialogDescription>{selectedOKR.description}</DialogDescription>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge className={getStatusColor(selectedOKR.status)}>
-                      {selectedOKR.status}
-                    </Badge>
-                    <Badge variant="outline" className={getPriorityColor(selectedOKR.priority)}>
-                      {selectedOKR.priority}
-                    </Badge>
-                  </div>
-                </div>
-              </DialogHeader>
-
-              <Tabs defaultValue="details" className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="details">Details</TabsTrigger>
-                  <TabsTrigger value="milestones">Milestones</TabsTrigger>
-                  <TabsTrigger value="comments">Comments</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="details" className="space-y-4 mt-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label className="text-sm font-medium">Assigned To</Label>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {selectedOKR.assigneeName} ({selectedOKR.type})
-                      </p>
+            <div className="space-y-4">
+              <div className="max-h-64 overflow-y-auto space-y-3">
+                {selectedOKR.comments.map((comment) => (
+                  <div key={comment.id} className="border rounded p-3">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="font-medium text-sm">{comment.author}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {new Date(comment.timestamp).toLocaleString()}
+                      </div>
                     </div>
-                    <div>
-                      <Label className="text-sm font-medium">Timeline</Label>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {selectedOKR.quarter} {selectedOKR.year}
-                      </p>
-                    </div>
+                    <div className="text-sm">{comment.content}</div>
+                    {comment.taggedUsers.length > 0 && (
+                      <div className="flex gap-1 mt-2">
+                        {comment.taggedUsers.map(userId => {
+                          const member = teamMembers.find(m => m.id === userId);
+                          return member ? (
+                            <Badge key={userId} variant="outline" className="text-xs">
+                              @{member.name}
+                            </Badge>
+                          ) : null;
+                        })}
+                      </div>
+                    )}
                   </div>
-
-                  <div className="space-y-4">
-                    <Label className="text-sm font-medium">Key Results</Label>
-                    {selectedOKR.keyResults.map((kr) => {
-                      const progress = calculateKeyResultProgress(kr);
-                      return (
-                        <Card key={kr.id} className="border border-muted">
-                          <CardContent className="p-4">
-                            <div className="space-y-3">
-                              <div className="flex items-start justify-between">
-                                <div>
-                                  <h4 className="font-medium">{kr.title}</h4>
-                                  <p className="text-sm text-muted-foreground">{kr.description}</p>
-                                </div>
-                                <Badge variant="outline">
-                                  {kr.currentValue}/{kr.targetValue} {kr.unit}
-                                </Badge>
-                              </div>
-                              
-                              <div className="space-y-2">
-                                <div className="flex justify-between text-sm">
-                                  <span>Progress</span>
-                                  <span>{progress}%</span>
-                                </div>
-                                <Progress value={progress} className="h-2" />
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      );
-                    })}
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="milestones" className="space-y-4 mt-6">
-                  {selectedOKR.keyResults.map((kr) => (
-                    <Card key={kr.id} className="border border-muted">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-base">{kr.title}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-2">
-                          {kr.milestones.map((milestone) => (
-                            <div key={milestone.id} className="flex items-center space-x-3 p-2 rounded-lg hover:bg-muted/50">
-                              <Checkbox
-                                checked={milestone.completed}
-                                onCheckedChange={() => toggleMilestone(selectedOKR.id, kr.id, milestone.id)}
-                              />
-                              <div className="flex-1">
-                                <span className={`text-sm ${milestone.completed ? "line-through text-muted-foreground" : ""}`}>
-                                  {milestone.title}
-                                </span>
-                                <div className="text-xs text-muted-foreground">
-                                  Due: {new Date(milestone.dueDate).toLocaleDateString()}
-                                </div>
-                              </div>
-                              {milestone.completed && (
-                                <CheckCircle2 className="h-4 w-4 text-green-500" />
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </TabsContent>
-
-                <TabsContent value="comments" className="space-y-4 mt-6">
-                  <div className="space-y-4 max-h-60 overflow-y-auto">
-                    {selectedOKR.comments.map((comment) => (
-                      <div key={comment.id} className="flex gap-3">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={comment.avatar} />
-                          <AvatarFallback className="text-xs">
-                            {comment.author.split(" ").map(n => n[0]).join("")}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 space-y-1">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium">{comment.author}</span>
-                            <span className="text-xs text-muted-foreground">
-                              {comment.timestamp.toLocaleString()}
-                            </span>
-                          </div>
-                          <p className="text-sm text-muted-foreground">{comment.content}</p>
-                        </div>
+                ))}
+              </div>
+              
+              <div className="space-y-3">
+                <Textarea
+                  placeholder="Add a comment..."
+                  value={newComment.content}
+                  onChange={(e) => setNewComment({...newComment, content: e.target.value})}
+                  rows={3}
+                />
+                <div>
+                  <Label className="text-sm">Tag Team Members</Label>
+                  <div className="border rounded p-3 max-h-32 overflow-y-auto">
+                    {teamMembers.map(member => (
+                      <div key={member.id} className="flex items-center space-x-2 mb-2">
+                        <Checkbox
+                          checked={newComment.taggedUsers.includes(member.id)}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setNewComment({
+                                ...newComment,
+                                taggedUsers: [...newComment.taggedUsers, member.id]
+                              });
+                            } else {
+                              setNewComment({
+                                ...newComment,
+                                taggedUsers: newComment.taggedUsers.filter(id => id !== member.id)
+                              });
+                            }
+                          }}
+                        />
+                        <Label className="text-sm">{member.name}</Label>
                       </div>
                     ))}
                   </div>
-
-                  <div className="space-y-2">
-                    <Textarea
-                      placeholder="Add a comment..."
-                      value={newComment}
-                      onChange={(e) => setNewComment(e.target.value)}
-                      rows={3}
-                    />
-                    <Button
-                      size="sm"
-                      onClick={() => addComment(selectedOKR.id)}
-                      disabled={!newComment.trim()}
-                    >
-                      <MessageSquare className="h-4 w-4 mr-2" />
-                      Add Comment
-                    </Button>
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </>
+                </div>
+              </div>
+            </div>
           )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Create OKR Dialog */}
-      <Dialog open={showCreateOKR} onOpenChange={setShowCreateOKR}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Create New OKR</DialogTitle>
-            <DialogDescription>
-              Create a new objective with key results for teams or individuals
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            <p className="text-center text-muted-foreground py-8">
-              OKR creation form will be implemented here.
-            </p>
-          </div>
-          
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowCreateOKR(false)}>
+            <Button variant="outline" onClick={() => setShowCommentDialog(false)}>
               Cancel
             </Button>
-            <Button onClick={() => {
-              toast({
-                title: "OKR Creation",
-                description: "OKR creation functionality coming soon!",
-              });
-              setShowCreateOKR(false);
-            }}>
-              <Target className="h-4 w-4 mr-2" />
-              Create OKR
+            <Button onClick={addComment}>
+              <MessageSquare className="h-4 w-4 mr-2" />
+              Add Comment
             </Button>
           </DialogFooter>
         </DialogContent>
