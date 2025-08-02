@@ -222,6 +222,7 @@ const Attendance = () => {
   });
   const [filterDepartment, setFilterDepartment] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [filterPeriod, setFilterPeriod] = useState<"daily" | "weekly" | "monthly">("daily");
   const [searchTerm, setSearchTerm] = useState("");
   const [showVisitorDialog, setShowVisitorDialog] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
