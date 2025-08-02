@@ -467,10 +467,33 @@ const Attendance = () => {
       filterDepartment === "all" || record.department === filterDepartment;
     const matchesStatus =
       filterStatus === "all" || record.status === filterStatus;
-    const matchesDate =
-      record.date === selectedDate.toISOString().split("T")[0];
 
-    return matchesSearch && matchesDepartment && matchesStatus && matchesDate;
+    // Enhanced date filtering for different periods
+    const recordDate = new Date(record.date);
+    const selectedDateObj = new Date(selectedDate);
+
+    let matchesPeriod = false;
+
+    switch (filterPeriod) {
+      case "daily":
+        matchesPeriod = record.date === selectedDate.toISOString().split("T")[0];
+        break;
+      case "weekly":
+        // Get start of week (Monday)
+        const startOfWeek = new Date(selectedDateObj);
+        startOfWeek.setDate(selectedDateObj.getDate() - selectedDateObj.getDay() + 1);
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+        matchesPeriod = recordDate >= startOfWeek && recordDate <= endOfWeek;
+        break;
+      case "monthly":
+        matchesPeriod = recordDate.getMonth() === selectedDateObj.getMonth() &&
+                       recordDate.getFullYear() === selectedDateObj.getFullYear();
+        break;
+    }
+
+    return matchesSearch && matchesDepartment && matchesStatus && matchesPeriod;
   });
 
   const todayStats = {
