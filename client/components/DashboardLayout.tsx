@@ -95,7 +95,6 @@ const navigation = [
   {
     title: "System",
     items: [
-      { title: "Departments", url: "/departments", icon: Building },
       { title: "Reports & Analytics", url: "/analytics", icon: BarChart3 },
       { title: "Integrations", url: "/integrations", icon: Settings },
     ],
