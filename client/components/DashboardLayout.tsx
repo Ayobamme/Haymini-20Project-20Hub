@@ -56,9 +56,7 @@ import { useState } from "react";
 const navigation = [
   {
     title: "Overview",
-    items: [
-      { title: "Dashboard", url: "/", icon: LayoutDashboard },
-    ],
+    items: [{ title: "Dashboard", url: "/", icon: LayoutDashboard }],
   },
   {
     title: "Teams Management",
@@ -112,7 +110,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [notifications] = useState([
     { id: 1, title: "New project assigned", time: "2 min ago", unread: true },
     { id: 2, title: "Payroll processed", time: "1 hour ago", unread: true },
-    { id: 3, title: "Leave request approved", time: "3 hours ago", unread: false },
+    {
+      id: 3,
+      title: "Leave request approved",
+      time: "3 hours ago",
+      unread: false,
+    },
   ]);
 
   return (
@@ -191,9 +194,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="relative">
                     <Bell className="h-4 w-4" />
-                    {notifications.filter(n => n.unread).length > 0 && (
+                    {notifications.filter((n) => n.unread).length > 0 && (
                       <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-destructive text-destructive-foreground text-xs flex items-center justify-center p-0">
-                        {notifications.filter(n => n.unread).length}
+                        {notifications.filter((n) => n.unread).length}
                       </Badge>
                     )}
                   </Button>
@@ -207,16 +210,23 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   {notifications.map((notification) => (
-                    <DropdownMenuItem key={notification.id} className="flex flex-col items-start p-3">
+                    <DropdownMenuItem
+                      key={notification.id}
+                      className="flex flex-col items-start p-3"
+                    >
                       <div className="flex items-center justify-between w-full">
-                        <span className={`text-sm ${notification.unread ? 'font-semibold' : ''}`}>
+                        <span
+                          className={`text-sm ${notification.unread ? "font-semibold" : ""}`}
+                        >
                           {notification.title}
                         </span>
                         {notification.unread && (
                           <div className="w-2 h-2 bg-blue-500 rounded-full" />
                         )}
                       </div>
-                      <span className="text-xs text-muted-foreground">{notification.time}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {notification.time}
+                      </span>
                     </DropdownMenuItem>
                   ))}
                   <DropdownMenuSeparator />
@@ -231,7 +241,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               {/* Profile Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                  <Button
+                    variant="ghost"
+                    className="relative h-8 w-8 rounded-full"
+                  >
                     <Avatar className="h-8 w-8">
                       <AvatarImage src="" alt="Admin" />
                       <AvatarFallback className="bg-primary text-primary-foreground text-sm">
@@ -243,7 +256,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">Admin User</p>
+                      <p className="text-sm font-medium leading-none">
+                        Admin User
+                      </p>
                       <p className="text-xs leading-none text-muted-foreground">
                         admin@hprojecthub.com
                       </p>
@@ -263,9 +278,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    Log out
-                  </DropdownMenuItem>
+                  <DropdownMenuItem>Log out</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
