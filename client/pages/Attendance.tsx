@@ -931,7 +931,9 @@ const Attendance = () => {
           <Card>
             <CardHeader>
               <CardTitle>
-                Daily Attendance - {selectedDate.toDateString()}
+                {filterPeriod === "daily" && `Daily Attendance - ${selectedDate.toDateString()}`}
+                {filterPeriod === "weekly" && `Weekly Attendance - Week of ${selectedDate.toDateString()}`}
+                {filterPeriod === "monthly" && `Monthly Attendance - ${selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`}
               </CardTitle>
               <CardDescription>
                 Real-time attendance tracking with RFID, NFC, QR systems, and
