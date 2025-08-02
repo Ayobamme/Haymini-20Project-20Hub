@@ -66,6 +66,7 @@ const navigation = [
       { title: "Tasks", url: "/tasks", icon: CheckSquare },
       { title: "OKRs", url: "/okrs", icon: Target },
       { title: "Team Members", url: "/teams", icon: Users },
+      { title: "Departments", url: "/departments", icon: Building },
     ],
   },
   {
