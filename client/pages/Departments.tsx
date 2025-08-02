@@ -258,8 +258,11 @@ const Departments = () => {
   const [showEmployeeDialog, setShowEmployeeDialog] = useState(false);
   const [showBudgetDialog, setShowBudgetDialog] = useState(false);
   const [showTeamDialog, setShowTeamDialog] = useState(false);
-  const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
-  const [editingDepartment, setEditingDepartment] = useState<Department | null>(null);
+  const [selectedDepartment, setSelectedDepartment] =
+    useState<Department | null>(null);
+  const [editingDepartment, setEditingDepartment] = useState<Department | null>(
+    null,
+  );
   const [isEditMode, setIsEditMode] = useState(false);
 
   const [newDepartment, setNewDepartment] = useState<Partial<Department>>({
@@ -307,7 +310,9 @@ const Departments = () => {
     }
 
     const department: Department = {
-      id: editingDepartment ? editingDepartment.id : `DEPT-${Date.now().toString().slice(-3)}`,
+      id: editingDepartment
+        ? editingDepartment.id
+        : `DEPT-${Date.now().toString().slice(-3)}`,
       ...newDepartment,
       employees: editingDepartment?.employees || [],
       teams: editingDepartment?.teams || [],
@@ -330,7 +335,11 @@ const Departments = () => {
     } as Department;
 
     if (editingDepartment) {
-      setDepartments(departments.map(dept => dept.id === editingDepartment.id ? department : dept));
+      setDepartments(
+        departments.map((dept) =>
+          dept.id === editingDepartment.id ? department : dept,
+        ),
+      );
       toast({
         title: "Department Updated",
         description: `${department.name} has been updated successfully.`,
@@ -376,7 +385,11 @@ const Departments = () => {
       employees: [...selectedDepartment.employees, employee],
     };
 
-    setDepartments(departments.map(dept => dept.id === selectedDepartment.id ? updatedDepartment : dept));
+    setDepartments(
+      departments.map((dept) =>
+        dept.id === selectedDepartment.id ? updatedDepartment : dept,
+      ),
+    );
     setSelectedDepartment(updatedDepartment);
 
     toast({
@@ -396,7 +409,11 @@ const Departments = () => {
   };
 
   const addBudgetEntry = () => {
-    if (!selectedDepartment || !newBudgetEntry.description || !newBudgetEntry.amount) {
+    if (
+      !selectedDepartment ||
+      !newBudgetEntry.description ||
+      !newBudgetEntry.amount
+    ) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields.",
@@ -408,7 +425,7 @@ const Departments = () => {
     const budgetEntry: BudgetEntry = {
       id: `BDG-${Date.now()}`,
       ...newBudgetEntry,
-      date: newBudgetEntry.date || new Date().toISOString().split('T')[0],
+      date: newBudgetEntry.date || new Date().toISOString().split("T")[0],
       approvedBy: "Admin User",
     } as BudgetEntry;
 
@@ -431,7 +448,11 @@ const Departments = () => {
       budget: updatedBudget,
     };
 
-    setDepartments(departments.map(dept => dept.id === selectedDepartment.id ? updatedDepartment : dept));
+    setDepartments(
+      departments.map((dept) =>
+        dept.id === selectedDepartment.id ? updatedDepartment : dept,
+      ),
+    );
     setSelectedDepartment(updatedDepartment);
 
     toast({
@@ -450,11 +471,11 @@ const Departments = () => {
   };
 
   const deleteDepartment = (departmentId: string) => {
-    const department = departments.find(dept => dept.id === departmentId);
+    const department = departments.find((dept) => dept.id === departmentId);
     if (!department) return;
 
-    setDepartments(departments.filter(dept => dept.id !== departmentId));
-    
+    setDepartments(departments.filter((dept) => dept.id !== departmentId));
+
     toast({
       title: "Department Deleted",
       description: `${department.name} has been deleted successfully.`,
@@ -470,21 +491,26 @@ const Departments = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "active": return "bg-green-100 text-green-800";
-      case "inactive": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "active":
+        return "bg-green-100 text-green-800";
+      case "inactive":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
-  const getBudgetUtilization = (budget: Department['budget']) => {
+  const getBudgetUtilization = (budget: Department["budget"]) => {
     return budget.allocated > 0 ? (budget.spent / budget.allocated) * 100 : 0;
   };
 
-  const filteredDepartments = departments.filter(dept => {
-    const matchesSearch = dept.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         dept.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || dept.status === statusFilter;
-    
+  const filteredDepartments = departments.filter((dept) => {
+    const matchesSearch =
+      dept.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      dept.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus =
+      statusFilter === "all" || dept.status === statusFilter;
+
     return matchesSearch && matchesStatus;
   });
 
@@ -492,13 +518,18 @@ const Departments = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Departments Management</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Departments Management
+          </h1>
           <p className="text-muted-foreground">
             Manage departments, teams, employees, and budgets
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Dialog open={showDepartmentDialog} onOpenChange={setShowDepartmentDialog}>
+          <Dialog
+            open={showDepartmentDialog}
+            onOpenChange={setShowDepartmentDialog}
+          >
             <DialogTrigger asChild>
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
@@ -507,7 +538,9 @@ const Departments = () => {
             </DialogTrigger>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
-                <DialogTitle>{isEditMode ? "Edit Department" : "Create New Department"}</DialogTitle>
+                <DialogTitle>
+                  {isEditMode ? "Edit Department" : "Create New Department"}
+                </DialogTitle>
                 <DialogDescription>
                   Set up department details and organizational structure
                 </DialogDescription>
@@ -519,7 +552,12 @@ const Departments = () => {
                     <Input
                       id="name"
                       value={newDepartment.name}
-                      onChange={(e) => setNewDepartment({...newDepartment, name: e.target.value})}
+                      onChange={(e) =>
+                        setNewDepartment({
+                          ...newDepartment,
+                          name: e.target.value,
+                        })
+                      }
                       placeholder="Enter department name"
                     />
                   </div>
@@ -528,7 +566,12 @@ const Departments = () => {
                     <Input
                       id="location"
                       value={newDepartment.location}
-                      onChange={(e) => setNewDepartment({...newDepartment, location: e.target.value})}
+                      onChange={(e) =>
+                        setNewDepartment({
+                          ...newDepartment,
+                          location: e.target.value,
+                        })
+                      }
                       placeholder="Office location"
                     />
                   </div>
@@ -537,7 +580,12 @@ const Departments = () => {
                     <Textarea
                       id="description"
                       value={newDepartment.description}
-                      onChange={(e) => setNewDepartment({...newDepartment, description: e.target.value})}
+                      onChange={(e) =>
+                        setNewDepartment({
+                          ...newDepartment,
+                          description: e.target.value,
+                        })
+                      }
                       placeholder="Department description and objectives..."
                       rows={3}
                     />
@@ -548,12 +596,25 @@ const Departments = () => {
                       id="establishedDate"
                       type="date"
                       value={newDepartment.establishedDate}
-                      onChange={(e) => setNewDepartment({...newDepartment, establishedDate: e.target.value})}
+                      onChange={(e) =>
+                        setNewDepartment({
+                          ...newDepartment,
+                          establishedDate: e.target.value,
+                        })
+                      }
                     />
                   </div>
                   <div>
                     <Label htmlFor="status">Status</Label>
-                    <Select value={newDepartment.status} onValueChange={(value) => setNewDepartment({...newDepartment, status: value as any})}>
+                    <Select
+                      value={newDepartment.status}
+                      onValueChange={(value) =>
+                        setNewDepartment({
+                          ...newDepartment,
+                          status: value as any,
+                        })
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select status" />
                       </SelectTrigger>
@@ -566,11 +627,14 @@ const Departments = () => {
                 </div>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => {
-                  setShowDepartmentDialog(false);
-                  setEditingDepartment(null);
-                  setIsEditMode(false);
-                }}>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowDepartmentDialog(false);
+                    setEditingDepartment(null);
+                    setIsEditMode(false);
+                  }}
+                >
                   Cancel
                 </Button>
                 <Button onClick={saveDepartment}>
@@ -588,7 +652,9 @@ const Departments = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Departments</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Total Departments
+                </p>
                 <div className="text-2xl font-bold">{departments.length}</div>
               </div>
               <Building className="h-8 w-8 text-blue-500" />
@@ -600,9 +666,14 @@ const Departments = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Employees</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Total Employees
+                </p>
                 <div className="text-2xl font-bold">
-                  {departments.reduce((sum, dept) => sum + dept.employees.length, 0)}
+                  {departments.reduce(
+                    (sum, dept) => sum + dept.employees.length,
+                    0,
+                  )}
                 </div>
               </div>
               <Users className="h-8 w-8 text-green-500" />
@@ -614,9 +685,18 @@ const Departments = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Budget</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Total Budget
+                </p>
                 <div className="text-2xl font-bold">
-                  ₦{(departments.reduce((sum, dept) => sum + dept.budget.allocated, 0) / 1000000).toFixed(1)}M
+                  ₦
+                  {(
+                    departments.reduce(
+                      (sum, dept) => sum + dept.budget.allocated,
+                      0,
+                    ) / 1000000
+                  ).toFixed(1)}
+                  M
                 </div>
               </div>
               <DollarSign className="h-8 w-8 text-purple-500" />
@@ -628,9 +708,17 @@ const Departments = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Avg Productivity</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Avg Productivity
+                </p>
                 <div className="text-2xl font-bold text-blue-600">
-                  {Math.round(departments.reduce((sum, dept) => sum + dept.kpis.productivity, 0) / departments.length)}%
+                  {Math.round(
+                    departments.reduce(
+                      (sum, dept) => sum + dept.kpis.productivity,
+                      0,
+                    ) / departments.length,
+                  )}
+                  %
                 </div>
               </div>
               <BarChart3 className="h-8 w-8 text-blue-500" />
@@ -686,7 +774,10 @@ const Departments = () => {
                   </CardDescription>
                   <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
                     <span>📍 {department.location}</span>
-                    <span>📅 Est. {new Date(department.establishedDate).getFullYear()}</span>
+                    <span>
+                      📅 Est.{" "}
+                      {new Date(department.establishedDate).getFullYear()}
+                    </span>
                     <span>👥 {department.employees.length} employees</span>
                   </div>
                 </div>
@@ -722,20 +813,40 @@ const Departments = () => {
                   <div className="flex justify-between items-center mb-3">
                     <h4 className="font-medium">Budget Overview</h4>
                     <div className="text-sm font-medium">
-                      ₦{(department.budget.remaining / 1000000).toFixed(1)}M remaining
+                      ₦{(department.budget.remaining / 1000000).toFixed(1)}M
+                      remaining
                     </div>
                   </div>
                   <div className="space-y-3">
                     <div className="flex justify-between text-sm">
-                      <span>Allocated: ₦{(department.budget.allocated / 1000000).toFixed(1)}M</span>
-                      <span>Spent: ₦{(department.budget.spent / 1000000).toFixed(1)}M</span>
+                      <span>
+                        Allocated: ₦
+                        {(department.budget.allocated / 1000000).toFixed(1)}M
+                      </span>
+                      <span>
+                        Spent: ₦{(department.budget.spent / 1000000).toFixed(1)}
+                        M
+                      </span>
                     </div>
-                    <Progress value={getBudgetUtilization(department.budget)} className="h-2" />
+                    <Progress
+                      value={getBudgetUtilization(department.budget)}
+                      className="h-2"
+                    />
                     <div className="grid grid-cols-4 gap-2 text-xs text-muted-foreground">
-                      <div>Daily: ₦{(department.budget.daily / 1000).toFixed(0)}K</div>
-                      <div>Weekly: ₦{(department.budget.weekly / 1000).toFixed(0)}K</div>
-                      <div>Monthly: ₦{(department.budget.monthly / 1000000).toFixed(1)}M</div>
-                      <div>Quarterly: ₦{(department.budget.quarterly / 1000000).toFixed(1)}M</div>
+                      <div>
+                        Daily: ₦{(department.budget.daily / 1000).toFixed(0)}K
+                      </div>
+                      <div>
+                        Weekly: ₦{(department.budget.weekly / 1000).toFixed(0)}K
+                      </div>
+                      <div>
+                        Monthly: ₦
+                        {(department.budget.monthly / 1000000).toFixed(1)}M
+                      </div>
+                      <div>
+                        Quarterly: ₦
+                        {(department.budget.quarterly / 1000000).toFixed(1)}M
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -745,16 +856,28 @@ const Departments = () => {
                   <h4 className="font-medium mb-3">Performance KPIs</h4>
                   <div className="grid grid-cols-3 gap-4">
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600">{department.kpis.productivity}%</div>
-                      <div className="text-xs text-muted-foreground">Productivity</div>
+                      <div className="text-2xl font-bold text-blue-600">
+                        {department.kpis.productivity}%
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Productivity
+                      </div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-green-600">{department.kpis.satisfaction}%</div>
-                      <div className="text-xs text-muted-foreground">Satisfaction</div>
+                      <div className="text-2xl font-bold text-green-600">
+                        {department.kpis.satisfaction}%
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Satisfaction
+                      </div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-purple-600">{department.kpis.retention}%</div>
-                      <div className="text-xs text-muted-foreground">Retention</div>
+                      <div className="text-2xl font-bold text-purple-600">
+                        {department.kpis.retention}%
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Retention
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -803,15 +926,20 @@ const Departments = () => {
 
       {/* Department Details Dialog */}
       {selectedDepartment && (
-        <Dialog open={!!selectedDepartment} onOpenChange={() => setSelectedDepartment(null)}>
+        <Dialog
+          open={!!selectedDepartment}
+          onOpenChange={() => setSelectedDepartment(null)}
+        >
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{selectedDepartment.name} - Department Details</DialogTitle>
+              <DialogTitle>
+                {selectedDepartment.name} - Department Details
+              </DialogTitle>
               <DialogDescription>
                 Comprehensive view of department information and management
               </DialogDescription>
             </DialogHeader>
-            
+
             <Tabs defaultValue="overview" className="w-full">
               <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -823,28 +951,40 @@ const Departments = () => {
               <TabsContent value="overview" className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label className="text-sm font-medium">Department Name</Label>
-                    <p className="text-sm text-muted-foreground">{selectedDepartment.name}</p>
+                    <Label className="text-sm font-medium">
+                      Department Name
+                    </Label>
+                    <p className="text-sm text-muted-foreground">
+                      {selectedDepartment.name}
+                    </p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium">Status</Label>
-                    <Badge className={getStatusColor(selectedDepartment.status)}>
+                    <Badge
+                      className={getStatusColor(selectedDepartment.status)}
+                    >
                       {selectedDepartment.status}
                     </Badge>
                   </div>
                   <div>
                     <Label className="text-sm font-medium">Location</Label>
-                    <p className="text-sm text-muted-foreground">{selectedDepartment.location}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {selectedDepartment.location}
+                    </p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium">Established</Label>
                     <p className="text-sm text-muted-foreground">
-                      {new Date(selectedDepartment.establishedDate).toLocaleDateString()}
+                      {new Date(
+                        selectedDepartment.establishedDate,
+                      ).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="col-span-2">
                     <Label className="text-sm font-medium">Description</Label>
-                    <p className="text-sm text-muted-foreground">{selectedDepartment.description}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {selectedDepartment.description}
+                    </p>
                   </div>
                 </div>
               </TabsContent>
@@ -874,18 +1014,27 @@ const Departments = () => {
                           <div className="flex items-center gap-3">
                             <Avatar className="h-8 w-8">
                               <AvatarFallback>
-                                {employee.name.split(' ').map(n => n[0]).join('')}
+                                {employee.name
+                                  .split(" ")
+                                  .map((n) => n[0])
+                                  .join("")}
                               </AvatarFallback>
                             </Avatar>
                             <div>
                               <div className="font-medium">{employee.name}</div>
-                              <div className="text-sm text-muted-foreground">{employee.email}</div>
+                              <div className="text-sm text-muted-foreground">
+                                {employee.email}
+                              </div>
                             </div>
                           </div>
                         </TableCell>
                         <TableCell>{employee.position}</TableCell>
-                        <TableCell>₦{employee.salary.toLocaleString()}</TableCell>
-                        <TableCell>{new Date(employee.startDate).toLocaleDateString()}</TableCell>
+                        <TableCell>
+                          ₦{employee.salary.toLocaleString()}
+                        </TableCell>
+                        <TableCell>
+                          {new Date(employee.startDate).toLocaleDateString()}
+                        </TableCell>
                         <TableCell>
                           <Badge className={getStatusColor(employee.status)}>
                             {employee.status}
@@ -912,9 +1061,18 @@ const Departments = () => {
                         <div className="flex justify-between items-start">
                           <div>
                             <h5 className="font-medium">{team.name}</h5>
-                            <p className="text-sm text-muted-foreground">{team.description}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {team.description}
+                            </p>
                             <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
-                              <span>👤 Lead: {selectedDepartment.employees.find(emp => emp.id === team.leadId)?.name}</span>
+                              <span>
+                                👤 Lead:{" "}
+                                {
+                                  selectedDepartment.employees.find(
+                                    (emp) => emp.id === team.leadId,
+                                  )?.name
+                                }
+                              </span>
                               <span>👥 {team.memberIds.length} members</span>
                               <span>📋 {team.projectIds.length} projects</span>
                             </div>
@@ -937,42 +1095,68 @@ const Departments = () => {
                     Add Entry
                   </Button>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <Card>
                     <CardContent className="p-4">
                       <div className="text-2xl font-bold text-green-600">
-                        ₦{(selectedDepartment.budget.allocated / 1000000).toFixed(1)}M
+                        ₦
+                        {(
+                          selectedDepartment.budget.allocated / 1000000
+                        ).toFixed(1)}
+                        M
                       </div>
-                      <div className="text-sm text-muted-foreground">Total Allocated</div>
+                      <div className="text-sm text-muted-foreground">
+                        Total Allocated
+                      </div>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardContent className="p-4">
                       <div className="text-2xl font-bold text-red-600">
-                        ₦{(selectedDepartment.budget.spent / 1000000).toFixed(1)}M
+                        ₦
+                        {(selectedDepartment.budget.spent / 1000000).toFixed(1)}
+                        M
                       </div>
-                      <div className="text-sm text-muted-foreground">Total Spent</div>
+                      <div className="text-sm text-muted-foreground">
+                        Total Spent
+                      </div>
                     </CardContent>
                   </Card>
                 </div>
 
                 <div className="grid grid-cols-4 gap-2">
                   <div className="text-center">
-                    <div className="font-medium">₦{(selectedDepartment.budget.daily / 1000).toFixed(0)}K</div>
+                    <div className="font-medium">
+                      ₦{(selectedDepartment.budget.daily / 1000).toFixed(0)}K
+                    </div>
                     <div className="text-xs text-muted-foreground">Daily</div>
                   </div>
                   <div className="text-center">
-                    <div className="font-medium">₦{(selectedDepartment.budget.weekly / 1000).toFixed(0)}K</div>
+                    <div className="font-medium">
+                      ₦{(selectedDepartment.budget.weekly / 1000).toFixed(0)}K
+                    </div>
                     <div className="text-xs text-muted-foreground">Weekly</div>
                   </div>
                   <div className="text-center">
-                    <div className="font-medium">₦{(selectedDepartment.budget.monthly / 1000000).toFixed(1)}M</div>
+                    <div className="font-medium">
+                      ₦
+                      {(selectedDepartment.budget.monthly / 1000000).toFixed(1)}
+                      M
+                    </div>
                     <div className="text-xs text-muted-foreground">Monthly</div>
                   </div>
                   <div className="text-center">
-                    <div className="font-medium">₦{(selectedDepartment.budget.quarterly / 1000000).toFixed(1)}M</div>
-                    <div className="text-xs text-muted-foreground">Quarterly</div>
+                    <div className="font-medium">
+                      ₦
+                      {(selectedDepartment.budget.quarterly / 1000000).toFixed(
+                        1,
+                      )}
+                      M
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Quarterly
+                    </div>
                   </div>
                 </div>
 
@@ -992,16 +1176,24 @@ const Departments = () => {
                         <TableCell>{entry.description}</TableCell>
                         <TableCell>
                           <Badge variant="outline" className="capitalize">
-                            {entry.type.replace('_', ' ')}
+                            {entry.type.replace("_", " ")}
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <div className={`flex items-center gap-1 ${entry.amount > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            {entry.amount > 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
+                          <div
+                            className={`flex items-center gap-1 ${entry.amount > 0 ? "text-green-600" : "text-red-600"}`}
+                          >
+                            {entry.amount > 0 ? (
+                              <TrendingUp className="h-4 w-4" />
+                            ) : (
+                              <TrendingDown className="h-4 w-4" />
+                            )}
                             ₦{Math.abs(entry.amount).toLocaleString()}
                           </div>
                         </TableCell>
-                        <TableCell>{new Date(entry.date).toLocaleDateString()}</TableCell>
+                        <TableCell>
+                          {new Date(entry.date).toLocaleDateString()}
+                        </TableCell>
                         <TableCell>{entry.approvedBy}</TableCell>
                       </TableRow>
                     ))}
@@ -1021,7 +1213,9 @@ const Departments = () => {
       <Dialog open={showEmployeeDialog} onOpenChange={setShowEmployeeDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Employee to {selectedDepartment?.name}</DialogTitle>
+            <DialogTitle>
+              Add Employee to {selectedDepartment?.name}
+            </DialogTitle>
             <DialogDescription>
               Add a new employee to this department
             </DialogDescription>
@@ -1033,7 +1227,9 @@ const Departments = () => {
                 <Input
                   id="empName"
                   value={newEmployee.name}
-                  onChange={(e) => setNewEmployee({...newEmployee, name: e.target.value})}
+                  onChange={(e) =>
+                    setNewEmployee({ ...newEmployee, name: e.target.value })
+                  }
                   placeholder="Enter full name"
                 />
               </div>
@@ -1043,7 +1239,9 @@ const Departments = () => {
                   id="empEmail"
                   type="email"
                   value={newEmployee.email}
-                  onChange={(e) => setNewEmployee({...newEmployee, email: e.target.value})}
+                  onChange={(e) =>
+                    setNewEmployee({ ...newEmployee, email: e.target.value })
+                  }
                   placeholder="Enter email address"
                 />
               </div>
@@ -1052,7 +1250,9 @@ const Departments = () => {
                 <Input
                   id="empPosition"
                   value={newEmployee.position}
-                  onChange={(e) => setNewEmployee({...newEmployee, position: e.target.value})}
+                  onChange={(e) =>
+                    setNewEmployee({ ...newEmployee, position: e.target.value })
+                  }
                   placeholder="Job position"
                 />
               </div>
@@ -1062,7 +1262,12 @@ const Departments = () => {
                   id="empSalary"
                   type="number"
                   value={newEmployee.salary}
-                  onChange={(e) => setNewEmployee({...newEmployee, salary: parseInt(e.target.value) || 0})}
+                  onChange={(e) =>
+                    setNewEmployee({
+                      ...newEmployee,
+                      salary: parseInt(e.target.value) || 0,
+                    })
+                  }
                   placeholder="Annual salary"
                 />
               </div>
@@ -1072,12 +1277,22 @@ const Departments = () => {
                   id="empStartDate"
                   type="date"
                   value={newEmployee.startDate}
-                  onChange={(e) => setNewEmployee({...newEmployee, startDate: e.target.value})}
+                  onChange={(e) =>
+                    setNewEmployee({
+                      ...newEmployee,
+                      startDate: e.target.value,
+                    })
+                  }
                 />
               </div>
               <div>
                 <Label htmlFor="empStatus">Status</Label>
-                <Select value={newEmployee.status} onValueChange={(value) => setNewEmployee({...newEmployee, status: value as any})}>
+                <Select
+                  value={newEmployee.status}
+                  onValueChange={(value) =>
+                    setNewEmployee({ ...newEmployee, status: value as any })
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
@@ -1090,12 +1305,13 @@ const Departments = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowEmployeeDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowEmployeeDialog(false)}
+            >
               Cancel
             </Button>
-            <Button onClick={addEmployeeToDepartment}>
-              Add Employee
-            </Button>
+            <Button onClick={addEmployeeToDepartment}>Add Employee</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -1104,7 +1320,9 @@ const Departments = () => {
       <Dialog open={showBudgetDialog} onOpenChange={setShowBudgetDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Budget Management - {selectedDepartment?.name}</DialogTitle>
+            <DialogTitle>
+              Budget Management - {selectedDepartment?.name}
+            </DialogTitle>
             <DialogDescription>
               Add budget allocation, deduction, or project funding
             </DialogDescription>
@@ -1116,20 +1334,34 @@ const Departments = () => {
                 <Input
                   id="budgetDesc"
                   value={newBudgetEntry.description}
-                  onChange={(e) => setNewBudgetEntry({...newBudgetEntry, description: e.target.value})}
+                  onChange={(e) =>
+                    setNewBudgetEntry({
+                      ...newBudgetEntry,
+                      description: e.target.value,
+                    })
+                  }
                   placeholder="Budget entry description"
                 />
               </div>
               <div>
                 <Label htmlFor="budgetType">Type *</Label>
-                <Select value={newBudgetEntry.type} onValueChange={(value) => setNewBudgetEntry({...newBudgetEntry, type: value as any})}>
+                <Select
+                  value={newBudgetEntry.type}
+                  onValueChange={(value) =>
+                    setNewBudgetEntry({ ...newBudgetEntry, type: value as any })
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="allocation">Budget Allocation</SelectItem>
+                    <SelectItem value="allocation">
+                      Budget Allocation
+                    </SelectItem>
                     <SelectItem value="deduction">Budget Deduction</SelectItem>
-                    <SelectItem value="project_allocation">Project Funding</SelectItem>
+                    <SelectItem value="project_allocation">
+                      Project Funding
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -1141,8 +1373,15 @@ const Departments = () => {
                   value={newBudgetEntry.amount}
                   onChange={(e) => {
                     const amount = parseInt(e.target.value) || 0;
-                    const finalAmount = newBudgetEntry.type === "deduction" || newBudgetEntry.type === "project_allocation" ? -Math.abs(amount) : Math.abs(amount);
-                    setNewBudgetEntry({...newBudgetEntry, amount: finalAmount});
+                    const finalAmount =
+                      newBudgetEntry.type === "deduction" ||
+                      newBudgetEntry.type === "project_allocation"
+                        ? -Math.abs(amount)
+                        : Math.abs(amount);
+                    setNewBudgetEntry({
+                      ...newBudgetEntry,
+                      amount: finalAmount,
+                    });
                   }}
                   placeholder="Enter amount"
                 />
@@ -1152,7 +1391,12 @@ const Departments = () => {
                 <Input
                   id="budgetCategory"
                   value={newBudgetEntry.category}
-                  onChange={(e) => setNewBudgetEntry({...newBudgetEntry, category: e.target.value})}
+                  onChange={(e) =>
+                    setNewBudgetEntry({
+                      ...newBudgetEntry,
+                      category: e.target.value,
+                    })
+                  }
                   placeholder="Budget category"
                 />
               </div>
@@ -1162,18 +1406,24 @@ const Departments = () => {
                   id="budgetDate"
                   type="date"
                   value={newBudgetEntry.date}
-                  onChange={(e) => setNewBudgetEntry({...newBudgetEntry, date: e.target.value})}
+                  onChange={(e) =>
+                    setNewBudgetEntry({
+                      ...newBudgetEntry,
+                      date: e.target.value,
+                    })
+                  }
                 />
               </div>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowBudgetDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowBudgetDialog(false)}
+            >
               Cancel
             </Button>
-            <Button onClick={addBudgetEntry}>
-              Add Budget Entry
-            </Button>
+            <Button onClick={addBudgetEntry}>Add Budget Entry</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

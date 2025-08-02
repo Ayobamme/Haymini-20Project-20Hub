@@ -222,7 +222,9 @@ const Attendance = () => {
   });
   const [filterDepartment, setFilterDepartment] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
-  const [filterPeriod, setFilterPeriod] = useState<"daily" | "weekly" | "monthly">("daily");
+  const [filterPeriod, setFilterPeriod] = useState<
+    "daily" | "weekly" | "monthly"
+  >("daily");
   const [searchTerm, setSearchTerm] = useState("");
   const [showVisitorDialog, setShowVisitorDialog] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
@@ -476,20 +478,24 @@ const Attendance = () => {
 
     switch (filterPeriod) {
       case "daily":
-        matchesPeriod = record.date === selectedDate.toISOString().split("T")[0];
+        matchesPeriod =
+          record.date === selectedDate.toISOString().split("T")[0];
         break;
       case "weekly":
         // Get start of week (Monday)
         const startOfWeek = new Date(selectedDateObj);
-        startOfWeek.setDate(selectedDateObj.getDate() - selectedDateObj.getDay() + 1);
+        startOfWeek.setDate(
+          selectedDateObj.getDate() - selectedDateObj.getDay() + 1,
+        );
         const endOfWeek = new Date(startOfWeek);
         endOfWeek.setDate(startOfWeek.getDate() + 6);
 
         matchesPeriod = recordDate >= startOfWeek && recordDate <= endOfWeek;
         break;
       case "monthly":
-        matchesPeriod = recordDate.getMonth() === selectedDateObj.getMonth() &&
-                       recordDate.getFullYear() === selectedDateObj.getFullYear();
+        matchesPeriod =
+          recordDate.getMonth() === selectedDateObj.getMonth() &&
+          recordDate.getFullYear() === selectedDateObj.getFullYear();
         break;
     }
 
@@ -931,9 +937,12 @@ const Attendance = () => {
           <Card>
             <CardHeader>
               <CardTitle>
-                {filterPeriod === "daily" && `Daily Attendance - ${selectedDate.toDateString()}`}
-                {filterPeriod === "weekly" && `Weekly Attendance - Week of ${selectedDate.toDateString()}`}
-                {filterPeriod === "monthly" && `Monthly Attendance - ${selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`}
+                {filterPeriod === "daily" &&
+                  `Daily Attendance - ${selectedDate.toDateString()}`}
+                {filterPeriod === "weekly" &&
+                  `Weekly Attendance - Week of ${selectedDate.toDateString()}`}
+                {filterPeriod === "monthly" &&
+                  `Monthly Attendance - ${selectedDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}`}
               </CardTitle>
               <CardDescription>
                 Real-time attendance tracking with RFID, NFC, QR systems, and

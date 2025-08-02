@@ -129,7 +129,8 @@ const OKRs = () => {
     {
       id: "OKR-001",
       title: "Increase Customer Satisfaction",
-      description: "Improve overall customer satisfaction scores and reduce response times",
+      description:
+        "Improve overall customer satisfaction scores and reduce response times",
       objective: "Achieve 95% customer satisfaction rating",
       keyResults: [
         {
@@ -152,7 +153,8 @@ const OKRs = () => {
             {
               id: "MS-002",
               title: "Train support team",
-              description: "Complete customer service training for all support staff",
+              description:
+                "Complete customer service training for all support staff",
               targetDate: "2024-03-01",
               completed: false,
             },
@@ -182,7 +184,8 @@ const OKRs = () => {
         {
           id: "C-001",
           author: "Admin User",
-          content: "Great progress on the feedback system! @john.doe please update on training progress.",
+          content:
+            "Great progress on the feedback system! @john.doe please update on training progress.",
           taggedUsers: ["john.doe"],
           timestamp: "2024-01-15T10:30:00Z",
         },
@@ -268,20 +271,39 @@ const OKRs = () => {
     { id: "alex.rodriguez", name: "Alex Rodriguez", department: "Sales" },
   ];
 
-  const teams = ["Engineering", "Design", "Marketing", "Sales", "Customer Success"];
-  const departments = ["Engineering", "Design", "Marketing", "Sales", "Customer Support", "HR", "Finance"];
+  const teams = [
+    "Engineering",
+    "Design",
+    "Marketing",
+    "Sales",
+    "Customer Success",
+  ];
+  const departments = [
+    "Engineering",
+    "Design",
+    "Marketing",
+    "Sales",
+    "Customer Support",
+    "HR",
+    "Finance",
+  ];
 
   const calculateOKRProgress = (okr: OKR) => {
     const totalWeight = okr.keyResults.reduce((sum, kr) => sum + kr.weight, 0);
     const weightedProgress = okr.keyResults.reduce((sum, kr) => {
       const progress = (kr.currentValue / kr.targetValue) * 100;
-      return sum + (progress * kr.weight / 100);
+      return sum + (progress * kr.weight) / 100;
     }, 0);
     return totalWeight > 0 ? (weightedProgress / totalWeight) * 100 : 0;
   };
 
   const saveOKR = () => {
-    if (!newOKR.title || !newOKR.objective || !newOKR.startDate || !newOKR.endDate) {
+    if (
+      !newOKR.title ||
+      !newOKR.objective ||
+      !newOKR.startDate ||
+      !newOKR.endDate
+    ) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields.",
@@ -300,14 +322,15 @@ const OKRs = () => {
       progress: 0,
       comments: editingOKR?.comments || [],
       createdBy: "Admin User",
-      createdDate: editingOKR?.createdDate || new Date().toISOString().split('T')[0],
-      lastUpdated: new Date().toISOString().split('T')[0],
+      createdDate:
+        editingOKR?.createdDate || new Date().toISOString().split("T")[0],
+      lastUpdated: new Date().toISOString().split("T")[0],
     } as OKR;
 
     okr.progress = calculateOKRProgress(okr);
 
     if (editingOKR) {
-      setOkrs(okrs.map(o => o.id === editingOKR.id ? okr : o));
+      setOkrs(okrs.map((o) => (o.id === editingOKR.id ? okr : o)));
       toast({
         title: "OKR Updated",
         description: `OKR "${okr.title}" has been updated successfully.`,
@@ -384,14 +407,14 @@ const OKRs = () => {
     const updatedOKR = {
       ...selectedOKR,
       comments: [...selectedOKR.comments, comment],
-      lastUpdated: new Date().toISOString().split('T')[0],
+      lastUpdated: new Date().toISOString().split("T")[0],
     };
 
-    setOkrs(okrs.map(okr => okr.id === selectedOKR.id ? updatedOKR : okr));
+    setOkrs(okrs.map((okr) => (okr.id === selectedOKR.id ? updatedOKR : okr)));
     setSelectedOKR(updatedOKR);
 
     setNewComment({ content: "", taggedUsers: [] });
-    
+
     toast({
       title: "Comment Added",
       description: "Your comment has been added to the OKR.",
@@ -407,8 +430,8 @@ const OKRs = () => {
   const generateKPIs = () => {
     const newKPIs: KPI[] = [];
 
-    okrs.forEach(okr => {
-      okr.keyResults.forEach(kr => {
+    okrs.forEach((okr) => {
+      okr.keyResults.forEach((kr) => {
         const kpi: KPI = {
           id: `KPI-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           name: kr.title,
@@ -416,20 +439,32 @@ const OKRs = () => {
           targetValue: kr.targetValue,
           currentValue: kr.currentValue,
           unit: kr.unit,
-          category: okr.assignedDepartments.length > 0 ? "department" :
-                   okr.assignedTeams.length > 0 ? "team" : "individual",
-          assignedTo: okr.assignedDepartments[0] || okr.assignedTeams[0] || okr.assignedTo[0] || "",
+          category:
+            okr.assignedDepartments.length > 0
+              ? "department"
+              : okr.assignedTeams.length > 0
+                ? "team"
+                : "individual",
+          assignedTo:
+            okr.assignedDepartments[0] ||
+            okr.assignedTeams[0] ||
+            okr.assignedTo[0] ||
+            "",
           period: "monthly",
-          trend: kr.currentValue >= kr.targetValue * 0.8 ? "up" : 
-                 kr.currentValue >= kr.targetValue * 0.5 ? "stable" : "down",
-          lastUpdated: new Date().toISOString().split('T')[0],
+          trend:
+            kr.currentValue >= kr.targetValue * 0.8
+              ? "up"
+              : kr.currentValue >= kr.targetValue * 0.5
+                ? "stable"
+                : "down",
+          lastUpdated: new Date().toISOString().split("T")[0],
         };
         newKPIs.push(kpi);
       });
     });
 
     setKpis([...kpis, ...newKPIs]);
-    
+
     toast({
       title: "KPIs Generated",
       description: `Generated ${newKPIs.length} KPIs from active OKRs.`,
@@ -438,29 +473,40 @@ const OKRs = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "draft": return "bg-gray-100 text-gray-800";
-      case "active": return "bg-blue-100 text-blue-800";
-      case "completed": return "bg-green-100 text-green-800";
-      case "cancelled": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "draft":
+        return "bg-gray-100 text-gray-800";
+      case "active":
+        return "bg-blue-100 text-blue-800";
+      case "completed":
+        return "bg-green-100 text-green-800";
+      case "cancelled":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getTrendIcon = (trend: string) => {
     switch (trend) {
-      case "up": return <TrendingUp className="h-4 w-4 text-green-500" />;
-      case "down": return <AlertTriangle className="h-4 w-4 text-red-500" />;
-      case "stable": return <Clock className="h-4 w-4 text-yellow-500" />;
-      default: return <Clock className="h-4 w-4 text-gray-500" />;
+      case "up":
+        return <TrendingUp className="h-4 w-4 text-green-500" />;
+      case "down":
+        return <AlertTriangle className="h-4 w-4 text-red-500" />;
+      case "stable":
+        return <Clock className="h-4 w-4 text-yellow-500" />;
+      default:
+        return <Clock className="h-4 w-4 text-gray-500" />;
     }
   };
 
-  const filteredOKRs = okrs.filter(okr => {
-    const matchesSearch = okr.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         okr.objective.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredOKRs = okrs.filter((okr) => {
+    const matchesSearch =
+      okr.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      okr.objective.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || okr.status === statusFilter;
-    const matchesQuarter = quarterFilter === "all" || okr.quarter === quarterFilter;
-    
+    const matchesQuarter =
+      quarterFilter === "all" || okr.quarter === quarterFilter;
+
     return matchesSearch && matchesStatus && matchesQuarter;
   });
 
@@ -470,7 +516,8 @@ const OKRs = () => {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">OKRs Management</h1>
           <p className="text-muted-foreground">
-            Manage Objectives and Key Results with team assignments and KPI generation
+            Manage Objectives and Key Results with team assignments and KPI
+            generation
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -487,7 +534,9 @@ const OKRs = () => {
             </DialogTrigger>
             <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>{editingOKR ? "Edit OKR" : "Create New OKR"}</DialogTitle>
+                <DialogTitle>
+                  {editingOKR ? "Edit OKR" : "Create New OKR"}
+                </DialogTitle>
                 <DialogDescription>
                   Define objectives, key results, and assign to team members
                 </DialogDescription>
@@ -499,7 +548,9 @@ const OKRs = () => {
                     <Input
                       id="title"
                       value={newOKR.title}
-                      onChange={(e) => setNewOKR({...newOKR, title: e.target.value})}
+                      onChange={(e) =>
+                        setNewOKR({ ...newOKR, title: e.target.value })
+                      }
                       placeholder="Enter OKR title"
                     />
                   </div>
@@ -508,7 +559,9 @@ const OKRs = () => {
                     <Textarea
                       id="objective"
                       value={newOKR.objective}
-                      onChange={(e) => setNewOKR({...newOKR, objective: e.target.value})}
+                      onChange={(e) =>
+                        setNewOKR({ ...newOKR, objective: e.target.value })
+                      }
                       placeholder="Define the main objective..."
                       rows={3}
                     />
@@ -518,14 +571,21 @@ const OKRs = () => {
                     <Textarea
                       id="description"
                       value={newOKR.description}
-                      onChange={(e) => setNewOKR({...newOKR, description: e.target.value})}
+                      onChange={(e) =>
+                        setNewOKR({ ...newOKR, description: e.target.value })
+                      }
                       placeholder="Provide additional context..."
                       rows={2}
                     />
                   </div>
                   <div>
                     <Label htmlFor="quarter">Quarter</Label>
-                    <Select value={newOKR.quarter} onValueChange={(value) => setNewOKR({...newOKR, quarter: value})}>
+                    <Select
+                      value={newOKR.quarter}
+                      onValueChange={(value) =>
+                        setNewOKR({ ...newOKR, quarter: value })
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select quarter" />
                       </SelectTrigger>
@@ -539,7 +599,12 @@ const OKRs = () => {
                   </div>
                   <div>
                     <Label htmlFor="status">Status</Label>
-                    <Select value={newOKR.status} onValueChange={(value) => setNewOKR({...newOKR, status: value as any})}>
+                    <Select
+                      value={newOKR.status}
+                      onValueChange={(value) =>
+                        setNewOKR({ ...newOKR, status: value as any })
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select status" />
                       </SelectTrigger>
@@ -557,7 +622,9 @@ const OKRs = () => {
                       id="startDate"
                       type="date"
                       value={newOKR.startDate}
-                      onChange={(e) => setNewOKR({...newOKR, startDate: e.target.value})}
+                      onChange={(e) =>
+                        setNewOKR({ ...newOKR, startDate: e.target.value })
+                      }
                     />
                   </div>
                   <div>
@@ -566,7 +633,9 @@ const OKRs = () => {
                       id="endDate"
                       type="date"
                       value={newOKR.endDate}
-                      onChange={(e) => setNewOKR({...newOKR, endDate: e.target.value})}
+                      onChange={(e) =>
+                        setNewOKR({ ...newOKR, endDate: e.target.value })
+                      }
                     />
                   </div>
                 </div>
@@ -578,16 +647,27 @@ const OKRs = () => {
                     <div>
                       <Label>Team Members</Label>
                       <div className="border rounded p-3 max-h-32 overflow-y-auto">
-                        {teamMembers.map(member => (
-                          <div key={member.id} className="flex items-center space-x-2 mb-2">
+                        {teamMembers.map((member) => (
+                          <div
+                            key={member.id}
+                            className="flex items-center space-x-2 mb-2"
+                          >
                             <Checkbox
                               checked={newOKR.assignedTo?.includes(member.id)}
                               onCheckedChange={(checked) => {
                                 const assignedTo = newOKR.assignedTo || [];
                                 if (checked) {
-                                  setNewOKR({...newOKR, assignedTo: [...assignedTo, member.id]});
+                                  setNewOKR({
+                                    ...newOKR,
+                                    assignedTo: [...assignedTo, member.id],
+                                  });
                                 } else {
-                                  setNewOKR({...newOKR, assignedTo: assignedTo.filter(id => id !== member.id)});
+                                  setNewOKR({
+                                    ...newOKR,
+                                    assignedTo: assignedTo.filter(
+                                      (id) => id !== member.id,
+                                    ),
+                                  });
                                 }
                               }}
                             />
@@ -599,16 +679,28 @@ const OKRs = () => {
                     <div>
                       <Label>Teams</Label>
                       <div className="border rounded p-3 max-h-32 overflow-y-auto">
-                        {teams.map(team => (
-                          <div key={team} className="flex items-center space-x-2 mb-2">
+                        {teams.map((team) => (
+                          <div
+                            key={team}
+                            className="flex items-center space-x-2 mb-2"
+                          >
                             <Checkbox
                               checked={newOKR.assignedTeams?.includes(team)}
                               onCheckedChange={(checked) => {
-                                const assignedTeams = newOKR.assignedTeams || [];
+                                const assignedTeams =
+                                  newOKR.assignedTeams || [];
                                 if (checked) {
-                                  setNewOKR({...newOKR, assignedTeams: [...assignedTeams, team]});
+                                  setNewOKR({
+                                    ...newOKR,
+                                    assignedTeams: [...assignedTeams, team],
+                                  });
                                 } else {
-                                  setNewOKR({...newOKR, assignedTeams: assignedTeams.filter(t => t !== team)});
+                                  setNewOKR({
+                                    ...newOKR,
+                                    assignedTeams: assignedTeams.filter(
+                                      (t) => t !== team,
+                                    ),
+                                  });
                                 }
                               }}
                             />
@@ -620,16 +712,34 @@ const OKRs = () => {
                     <div>
                       <Label>Departments</Label>
                       <div className="border rounded p-3 max-h-32 overflow-y-auto">
-                        {departments.map(dept => (
-                          <div key={dept} className="flex items-center space-x-2 mb-2">
+                        {departments.map((dept) => (
+                          <div
+                            key={dept}
+                            className="flex items-center space-x-2 mb-2"
+                          >
                             <Checkbox
-                              checked={newOKR.assignedDepartments?.includes(dept)}
+                              checked={newOKR.assignedDepartments?.includes(
+                                dept,
+                              )}
                               onCheckedChange={(checked) => {
-                                const assignedDepartments = newOKR.assignedDepartments || [];
+                                const assignedDepartments =
+                                  newOKR.assignedDepartments || [];
                                 if (checked) {
-                                  setNewOKR({...newOKR, assignedDepartments: [...assignedDepartments, dept]});
+                                  setNewOKR({
+                                    ...newOKR,
+                                    assignedDepartments: [
+                                      ...assignedDepartments,
+                                      dept,
+                                    ],
+                                  });
                                 } else {
-                                  setNewOKR({...newOKR, assignedDepartments: assignedDepartments.filter(d => d !== dept)});
+                                  setNewOKR({
+                                    ...newOKR,
+                                    assignedDepartments:
+                                      assignedDepartments.filter(
+                                        (d) => d !== dept,
+                                      ),
+                                  });
                                 }
                               }}
                             />
@@ -650,35 +760,65 @@ const OKRs = () => {
                       <Input
                         placeholder="Key Result Title"
                         value={newKeyResult.title}
-                        onChange={(e) => setNewKeyResult({...newKeyResult, title: e.target.value})}
+                        onChange={(e) =>
+                          setNewKeyResult({
+                            ...newKeyResult,
+                            title: e.target.value,
+                          })
+                        }
                       />
                       <Input
                         placeholder="Description"
                         value={newKeyResult.description}
-                        onChange={(e) => setNewKeyResult({...newKeyResult, description: e.target.value})}
+                        onChange={(e) =>
+                          setNewKeyResult({
+                            ...newKeyResult,
+                            description: e.target.value,
+                          })
+                        }
                       />
                       <Input
                         type="number"
                         placeholder="Target Value"
                         value={newKeyResult.targetValue}
-                        onChange={(e) => setNewKeyResult({...newKeyResult, targetValue: parseFloat(e.target.value) || 0})}
+                        onChange={(e) =>
+                          setNewKeyResult({
+                            ...newKeyResult,
+                            targetValue: parseFloat(e.target.value) || 0,
+                          })
+                        }
                       />
                       <Input
                         type="number"
                         placeholder="Current Value"
                         value={newKeyResult.currentValue}
-                        onChange={(e) => setNewKeyResult({...newKeyResult, currentValue: parseFloat(e.target.value) || 0})}
+                        onChange={(e) =>
+                          setNewKeyResult({
+                            ...newKeyResult,
+                            currentValue: parseFloat(e.target.value) || 0,
+                          })
+                        }
                       />
                       <Input
                         placeholder="Unit (%, hours, etc.)"
                         value={newKeyResult.unit}
-                        onChange={(e) => setNewKeyResult({...newKeyResult, unit: e.target.value})}
+                        onChange={(e) =>
+                          setNewKeyResult({
+                            ...newKeyResult,
+                            unit: e.target.value,
+                          })
+                        }
                       />
                       <Input
                         type="number"
                         placeholder="Weight (%)"
                         value={newKeyResult.weight}
-                        onChange={(e) => setNewKeyResult({...newKeyResult, weight: parseFloat(e.target.value) || 0})}
+                        onChange={(e) =>
+                          setNewKeyResult({
+                            ...newKeyResult,
+                            weight: parseFloat(e.target.value) || 0,
+                          })
+                        }
                       />
                     </div>
                     <Button onClick={addKeyResult} size="sm">
@@ -696,17 +836,27 @@ const OKRs = () => {
                           <div className="flex justify-between items-start">
                             <div>
                               <div className="font-medium">{kr.title}</div>
-                              <div className="text-sm text-muted-foreground">{kr.description}</div>
+                              <div className="text-sm text-muted-foreground">
+                                {kr.description}
+                              </div>
                               <div className="text-sm">
-                                Target: {kr.targetValue} {kr.unit} | Current: {kr.currentValue} {kr.unit} | Weight: {kr.weight}%
+                                Target: {kr.targetValue} {kr.unit} | Current:{" "}
+                                {kr.currentValue} {kr.unit} | Weight:{" "}
+                                {kr.weight}%
                               </div>
                             </div>
                             <Button
                               size="sm"
                               variant="outline"
                               onClick={() => {
-                                const updatedKRs = newOKR.keyResults?.filter((_, i) => i !== index) || [];
-                                setNewOKR({...newOKR, keyResults: updatedKRs});
+                                const updatedKRs =
+                                  newOKR.keyResults?.filter(
+                                    (_, i) => i !== index,
+                                  ) || [];
+                                setNewOKR({
+                                  ...newOKR,
+                                  keyResults: updatedKRs,
+                                });
                               }}
                             >
                               Remove
@@ -719,10 +869,13 @@ const OKRs = () => {
                 </div>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => {
-                  setShowOKRDialog(false);
-                  setEditingOKR(null);
-                }}>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowOKRDialog(false);
+                    setEditingOKR(null);
+                  }}
+                >
                   Cancel
                 </Button>
                 <Button onClick={saveOKR}>
@@ -740,7 +893,9 @@ const OKRs = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total OKRs</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Total OKRs
+                </p>
                 <div className="text-2xl font-bold">{okrs.length}</div>
               </div>
               <Target className="h-8 w-8 text-blue-500" />
@@ -752,9 +907,11 @@ const OKRs = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Active OKRs</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Active OKRs
+                </p>
                 <div className="text-2xl font-bold text-green-600">
-                  {okrs.filter(okr => okr.status === "active").length}
+                  {okrs.filter((okr) => okr.status === "active").length}
                 </div>
               </div>
               <CheckCircle className="h-8 w-8 text-green-500" />
@@ -766,9 +923,15 @@ const OKRs = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Average Progress</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Average Progress
+                </p>
                 <div className="text-2xl font-bold text-blue-600">
-                  {Math.round(okrs.reduce((sum, okr) => sum + okr.progress, 0) / okrs.length)}%
+                  {Math.round(
+                    okrs.reduce((sum, okr) => sum + okr.progress, 0) /
+                      okrs.length,
+                  )}
+                  %
                 </div>
               </div>
               <BarChart3 className="h-8 w-8 text-blue-500" />
@@ -780,8 +943,12 @@ const OKRs = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Generated KPIs</p>
-                <div className="text-2xl font-bold text-purple-600">{kpis.length}</div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Generated KPIs
+                </p>
+                <div className="text-2xl font-bold text-purple-600">
+                  {kpis.length}
+                </div>
               </div>
               <TrendingUp className="h-8 w-8 text-purple-500" />
             </div>
@@ -852,7 +1019,9 @@ const OKRs = () => {
                         <Badge className={getStatusColor(okr.status)}>
                           {okr.status}
                         </Badge>
-                        <Badge variant="outline">{okr.quarter} {okr.year}</Badge>
+                        <Badge variant="outline">
+                          {okr.quarter} {okr.year}
+                        </Badge>
                       </div>
                       <CardDescription className="text-base">
                         {okr.objective}
@@ -885,7 +1054,9 @@ const OKRs = () => {
                     <div>
                       <div className="flex justify-between text-sm mb-2">
                         <span>Overall Progress</span>
-                        <span className="font-medium">{Math.round(okr.progress)}%</span>
+                        <span className="font-medium">
+                          {Math.round(okr.progress)}%
+                        </span>
                       </div>
                       <Progress value={okr.progress} className="h-2" />
                     </div>
@@ -898,14 +1069,21 @@ const OKRs = () => {
                           <div key={kr.id} className="border rounded p-3">
                             <div className="flex justify-between items-start mb-2">
                               <div className="flex-1">
-                                <div className="font-medium text-sm">{kr.title}</div>
-                                <div className="text-xs text-muted-foreground">{kr.description}</div>
+                                <div className="font-medium text-sm">
+                                  {kr.title}
+                                </div>
+                                <div className="text-xs text-muted-foreground">
+                                  {kr.description}
+                                </div>
                               </div>
                               <div className="text-sm font-medium">
                                 {kr.currentValue}/{kr.targetValue} {kr.unit}
                               </div>
                             </div>
-                            <Progress value={(kr.currentValue / kr.targetValue) * 100} className="h-1" />
+                            <Progress
+                              value={(kr.currentValue / kr.targetValue) * 100}
+                              className="h-1"
+                            />
                           </div>
                         ))}
                       </div>
@@ -916,12 +1094,20 @@ const OKRs = () => {
                       {okr.assignedTo.length > 0 && (
                         <div className="flex items-center gap-2">
                           <User className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-muted-foreground">Members:</span>
+                          <span className="text-muted-foreground">
+                            Members:
+                          </span>
                           <div className="flex gap-1">
-                            {okr.assignedTo.map(memberId => {
-                              const member = teamMembers.find(m => m.id === memberId);
+                            {okr.assignedTo.map((memberId) => {
+                              const member = teamMembers.find(
+                                (m) => m.id === memberId,
+                              );
                               return member ? (
-                                <Badge key={memberId} variant="outline" className="text-xs">
+                                <Badge
+                                  key={memberId}
+                                  variant="outline"
+                                  className="text-xs"
+                                >
                                   {member.name}
                                 </Badge>
                               ) : null;
@@ -929,14 +1115,18 @@ const OKRs = () => {
                           </div>
                         </div>
                       )}
-                      
+
                       {okr.assignedTeams.length > 0 && (
                         <div className="flex items-center gap-2">
                           <Users className="h-4 w-4 text-muted-foreground" />
                           <span className="text-muted-foreground">Teams:</span>
                           <div className="flex gap-1">
-                            {okr.assignedTeams.map(team => (
-                              <Badge key={team} variant="outline" className="text-xs">
+                            {okr.assignedTeams.map((team) => (
+                              <Badge
+                                key={team}
+                                variant="outline"
+                                className="text-xs"
+                              >
                                 {team}
                               </Badge>
                             ))}
@@ -947,10 +1137,16 @@ const OKRs = () => {
                       {okr.assignedDepartments.length > 0 && (
                         <div className="flex items-center gap-2">
                           <Building className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-muted-foreground">Departments:</span>
+                          <span className="text-muted-foreground">
+                            Departments:
+                          </span>
                           <div className="flex gap-1">
-                            {okr.assignedDepartments.map(dept => (
-                              <Badge key={dept} variant="outline" className="text-xs">
+                            {okr.assignedDepartments.map((dept) => (
+                              <Badge
+                                key={dept}
+                                variant="outline"
+                                className="text-xs"
+                              >
                                 {dept}
                               </Badge>
                             ))}
@@ -966,8 +1162,12 @@ const OKRs = () => {
                           Latest Comment ({okr.comments.length} total)
                         </div>
                         <div className="text-sm">
-                          <span className="font-medium">{okr.comments[okr.comments.length - 1].author}:</span>
-                          <span className="ml-2">{okr.comments[okr.comments.length - 1].content}</span>
+                          <span className="font-medium">
+                            {okr.comments[okr.comments.length - 1].author}:
+                          </span>
+                          <span className="ml-2">
+                            {okr.comments[okr.comments.length - 1].content}
+                          </span>
                         </div>
                       </div>
                     )}
@@ -1007,7 +1207,9 @@ const OKRs = () => {
                           </Badge>
                           {getTrendIcon(kpi.trend)}
                         </div>
-                        <p className="text-sm text-muted-foreground">{kpi.description}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {kpi.description}
+                        </p>
                         <p className="text-sm text-muted-foreground">
                           Assigned to: {kpi.assignedTo} • {kpi.period}
                         </p>
@@ -1017,11 +1219,17 @@ const OKRs = () => {
                           {kpi.currentValue}/{kpi.targetValue} {kpi.unit}
                         </div>
                         <div className="text-sm text-muted-foreground">
-                          {Math.round((kpi.currentValue / kpi.targetValue) * 100)}%
+                          {Math.round(
+                            (kpi.currentValue / kpi.targetValue) * 100,
+                          )}
+                          %
                         </div>
                       </div>
                     </div>
-                    <Progress value={(kpi.currentValue / kpi.targetValue) * 100} className="h-2" />
+                    <Progress
+                      value={(kpi.currentValue / kpi.targetValue) * 100}
+                      className="h-2"
+                    />
                   </div>
                 ))}
               </div>
@@ -1055,7 +1263,9 @@ const OKRs = () => {
                       <TableCell>
                         <div>
                           <div className="font-medium">{okr.title}</div>
-                          <div className="text-sm text-muted-foreground">{okr.quarter} {okr.year}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {okr.quarter} {okr.year}
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -1066,7 +1276,9 @@ const OKRs = () => {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Progress value={okr.progress} className="h-2 w-20" />
-                          <span className="text-sm font-medium">{Math.round(okr.progress)}%</span>
+                          <span className="text-sm font-medium">
+                            {Math.round(okr.progress)}%
+                          </span>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -1122,7 +1334,9 @@ const OKRs = () => {
                 {selectedOKR.comments.map((comment) => (
                   <div key={comment.id} className="border rounded p-3">
                     <div className="flex justify-between items-start mb-2">
-                      <div className="font-medium text-sm">{comment.author}</div>
+                      <div className="font-medium text-sm">
+                        {comment.author}
+                      </div>
                       <div className="text-xs text-muted-foreground">
                         {new Date(comment.timestamp).toLocaleString()}
                       </div>
@@ -1130,10 +1344,16 @@ const OKRs = () => {
                     <div className="text-sm">{comment.content}</div>
                     {comment.taggedUsers.length > 0 && (
                       <div className="flex gap-1 mt-2">
-                        {comment.taggedUsers.map(userId => {
-                          const member = teamMembers.find(m => m.id === userId);
+                        {comment.taggedUsers.map((userId) => {
+                          const member = teamMembers.find(
+                            (m) => m.id === userId,
+                          );
                           return member ? (
-                            <Badge key={userId} variant="outline" className="text-xs">
+                            <Badge
+                              key={userId}
+                              variant="outline"
+                              className="text-xs"
+                            >
                               @{member.name}
                             </Badge>
                           ) : null;
@@ -1143,31 +1363,41 @@ const OKRs = () => {
                   </div>
                 ))}
               </div>
-              
+
               <div className="space-y-3">
                 <Textarea
                   placeholder="Add a comment..."
                   value={newComment.content}
-                  onChange={(e) => setNewComment({...newComment, content: e.target.value})}
+                  onChange={(e) =>
+                    setNewComment({ ...newComment, content: e.target.value })
+                  }
                   rows={3}
                 />
                 <div>
                   <Label className="text-sm">Tag Team Members</Label>
                   <div className="border rounded p-3 max-h-32 overflow-y-auto">
-                    {teamMembers.map(member => (
-                      <div key={member.id} className="flex items-center space-x-2 mb-2">
+                    {teamMembers.map((member) => (
+                      <div
+                        key={member.id}
+                        className="flex items-center space-x-2 mb-2"
+                      >
                         <Checkbox
                           checked={newComment.taggedUsers.includes(member.id)}
                           onCheckedChange={(checked) => {
                             if (checked) {
                               setNewComment({
                                 ...newComment,
-                                taggedUsers: [...newComment.taggedUsers, member.id]
+                                taggedUsers: [
+                                  ...newComment.taggedUsers,
+                                  member.id,
+                                ],
                               });
                             } else {
                               setNewComment({
                                 ...newComment,
-                                taggedUsers: newComment.taggedUsers.filter(id => id !== member.id)
+                                taggedUsers: newComment.taggedUsers.filter(
+                                  (id) => id !== member.id,
+                                ),
                               });
                             }
                           }}
@@ -1181,7 +1411,10 @@ const OKRs = () => {
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowCommentDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowCommentDialog(false)}
+            >
               Cancel
             </Button>
             <Button onClick={addComment}>
