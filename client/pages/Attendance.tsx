@@ -913,6 +913,16 @@ const Attendance = () => {
                     <SelectItem value="vacation">Vacation</SelectItem>
                   </SelectContent>
                 </Select>
+                <Select value={filterPeriod} onValueChange={setFilterPeriod}>
+                  <SelectTrigger className="w-full lg:w-[180px]">
+                    <SelectValue placeholder="Filter by period" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="daily">Daily View</SelectItem>
+                    <SelectItem value="weekly">Weekly View</SelectItem>
+                    <SelectItem value="monthly">Monthly View</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </CardContent>
           </Card>
