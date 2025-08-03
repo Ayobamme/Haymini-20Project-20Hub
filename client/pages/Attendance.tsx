@@ -1334,8 +1334,10 @@ const Attendance = () => {
       </div>
 
       <Tabs defaultValue="attendance" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="attendance">Attendance Records</TabsTrigger>
+          <TabsTrigger value="rfid-devices">RFID Devices</TabsTrigger>
+          <TabsTrigger value="rfid-cards">RFID Cards</TabsTrigger>
           <TabsTrigger value="visitors">Visitor Management</TabsTrigger>
           <TabsTrigger value="calendar">Calendar View</TabsTrigger>
           <TabsTrigger value="analytics">Analytics & Reports</TabsTrigger>
