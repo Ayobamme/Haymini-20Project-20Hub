@@ -62,6 +62,22 @@ import {
   BarChart3,
   TrendingUp,
   Mail,
+  Wifi,
+  WifiOff,
+  Battery,
+  Shield,
+  Settings,
+  RefreshCw,
+  Eye,
+  Lock,
+  Unlock,
+  Thermometer,
+  Activity,
+  Radio,
+  Database,
+  Globe,
+  Server,
+  HardDrive,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
@@ -82,6 +98,49 @@ interface AttendanceRecord {
   notes?: string;
   isLeaveApproved?: boolean;
   leaveType?: string;
+  rfidCardNumber?: string;
+  biometricData?: string;
+  temperature?: number;
+  securityLevel?: "low" | "medium" | "high";
+  geoLocation?: {
+    latitude: number;
+    longitude: number;
+    accuracy: number;
+  };
+}
+
+interface RFIDDevice {
+  id: string;
+  deviceName: string;
+  location: string;
+  ipAddress: string;
+  status: "active" | "inactive" | "maintenance" | "error";
+  lastSync: string;
+  firmware: string;
+  batteryLevel?: number;
+  securityLevel: "low" | "medium" | "high";
+  assignedEmployees: string[];
+  configuredSettings: {
+    readRange: number;
+    scanInterval: number;
+    securityMode: boolean;
+    biometricEnabled: boolean;
+    temperatureCheck: boolean;
+  };
+}
+
+interface RFIDCard {
+  id: string;
+  cardNumber: string;
+  employeeId: string;
+  employeeName: string;
+  issueDate: string;
+  expiryDate: string;
+  status: "active" | "inactive" | "lost" | "damaged";
+  accessLevel: "basic" | "standard" | "admin" | "executive";
+  restrictions: string[];
+  lastUsed?: string;
+  usageCount: number;
 }
 
 interface VisitorRecord {
@@ -232,12 +291,143 @@ const Attendance = () => {
   const [reportType, setReportType] = useState<
     "daily" | "weekly" | "monthly" | "quarterly" | "yearly"
   >("monthly");
+  const [showRFIDDialog, setShowRFIDDialog] = useState(false);
+  const [showDeviceDialog, setShowDeviceDialog] = useState(false);
+  const [showCardDialog, setShowCardDialog] = useState(false);
+  const [realTimeMonitoring, setRealTimeMonitoring] = useState(true);
+  const [selectedDevice, setSelectedDevice] = useState<RFIDDevice | null>(null);
+  const [selectedCard, setSelectedCard] = useState<RFIDCard | null>(null);
 
   const [newVisitor, setNewVisitor] = useState({
     visitorName: "",
     company: "",
     purpose: "",
     hostEmployee: "",
+  });
+
+  const [rfidDevices, setRfidDevices] = useState<RFIDDevice[]>([
+    {
+      id: "RFID-001",
+      deviceName: "Main Entrance Scanner",
+      location: "Main Entrance",
+      ipAddress: "192.168.1.100",
+      status: "active",
+      lastSync: "2024-01-15T08:30:00Z",
+      firmware: "v2.1.5",
+      batteryLevel: 85,
+      securityLevel: "high",
+      assignedEmployees: ["EMP-001", "EMP-002", "EMP-003"],
+      configuredSettings: {
+        readRange: 10,
+        scanInterval: 500,
+        securityMode: true,
+        biometricEnabled: true,
+        temperatureCheck: true,
+      },
+    },
+    {
+      id: "RFID-002",
+      deviceName: "Executive Floor Scanner",
+      location: "Executive Floor",
+      ipAddress: "192.168.1.101",
+      status: "active",
+      lastSync: "2024-01-15T08:25:00Z",
+      firmware: "v2.1.5",
+      batteryLevel: 92,
+      securityLevel: "high",
+      assignedEmployees: ["EMP-004", "EMP-005"],
+      configuredSettings: {
+        readRange: 8,
+        scanInterval: 300,
+        securityMode: true,
+        biometricEnabled: true,
+        temperatureCheck: true,
+      },
+    },
+    {
+      id: "RFID-003",
+      deviceName: "Cafeteria Scanner",
+      location: "Cafeteria",
+      ipAddress: "192.168.1.102",
+      status: "maintenance",
+      lastSync: "2024-01-14T16:45:00Z",
+      firmware: "v2.1.3",
+      batteryLevel: 45,
+      securityLevel: "medium",
+      assignedEmployees: [],
+      configuredSettings: {
+        readRange: 15,
+        scanInterval: 1000,
+        securityMode: false,
+        biometricEnabled: false,
+        temperatureCheck: false,
+      },
+    },
+  ]);
+
+  const [rfidCards, setRfidCards] = useState<RFIDCard[]>([
+    {
+      id: "CARD-001",
+      cardNumber: "RF-2024-001",
+      employeeId: "EMP-001",
+      employeeName: "John Doe",
+      issueDate: "2024-01-01",
+      expiryDate: "2025-01-01",
+      status: "active",
+      accessLevel: "admin",
+      restrictions: [],
+      lastUsed: "2024-01-15T08:30:00Z",
+      usageCount: 145,
+    },
+    {
+      id: "CARD-002",
+      cardNumber: "RF-2024-002",
+      employeeId: "EMP-002",
+      employeeName: "Sarah Wilson",
+      issueDate: "2024-01-01",
+      expiryDate: "2025-01-01",
+      status: "active",
+      accessLevel: "standard",
+      restrictions: [],
+      lastUsed: "2024-01-15T09:15:00Z",
+      usageCount: 128,
+    },
+    {
+      id: "CARD-003",
+      cardNumber: "RF-2024-003",
+      employeeId: "EMP-003",
+      employeeName: "Mike Chen",
+      issueDate: "2024-01-01",
+      expiryDate: "2025-01-01",
+      status: "lost",
+      accessLevel: "basic",
+      restrictions: ["No after hours access"],
+      lastUsed: "2024-01-10T17:30:00Z",
+      usageCount: 89,
+    },
+  ]);
+
+  const [newRFIDDevice, setNewRFIDDevice] = useState({
+    deviceName: "",
+    location: "",
+    ipAddress: "",
+    securityLevel: "medium" as "low" | "medium" | "high",
+    configuredSettings: {
+      readRange: 10,
+      scanInterval: 500,
+      securityMode: true,
+      biometricEnabled: false,
+      temperatureCheck: false,
+    },
+  });
+
+  const [newRFIDCard, setNewRFIDCard] = useState({
+    cardNumber: "",
+    employeeId: "",
+    employeeName: "",
+    expiryDate: "",
+    accessLevel: "basic" as "basic" | "standard" | "admin" | "executive",
+    restrictions: [] as string[],
   });
 
   const departments = [
@@ -255,6 +445,180 @@ const Attendance = () => {
     "Alex Rodriguez",
     "Emma Davis",
   ];
+
+  const simulateRFIDScan = (deviceId: string, cardNumber: string) => {
+    const device = rfidDevices.find(d => d.id === deviceId);
+    const card = rfidCards.find(c => c.cardNumber === cardNumber);
+
+    if (!device || !card) {
+      toast({
+        title: "RFID Scan Failed",
+        description: "Device or card not found",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (device.status !== "active" || card.status !== "active") {
+      toast({
+        title: "Access Denied",
+        description: "Device offline or card inactive",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Simulate temperature check if enabled
+    const temperature = device.configuredSettings.temperatureCheck
+      ? 36.2 + Math.random() * 2
+      : undefined;
+
+    // Create new attendance record
+    const newRecord: AttendanceRecord = {
+      id: `ATT-${Date.now()}`,
+      employeeId: card.employeeId,
+      employeeName: card.employeeName,
+      department: "Engineering", // Would come from employee data
+      date: new Date().toISOString().split('T')[0],
+      clockIn: new Date().toLocaleTimeString('en-US', { hour12: false }),
+      breakTime: 0,
+      totalHours: 0,
+      status: "present",
+      location: device.location,
+      deviceType: "RFID",
+      deviceId: device.id,
+      rfidCardNumber: card.cardNumber,
+      temperature,
+      securityLevel: device.securityLevel,
+      geoLocation: {
+        latitude: 6.5244 + Math.random() * 0.01,
+        longitude: 3.3792 + Math.random() * 0.01,
+        accuracy: 5,
+      },
+    };
+
+    setAttendanceRecords(prev => [newRecord, ...prev]);
+
+    // Update card usage
+    setRfidCards(prev => prev.map(c =>
+      c.id === card.id
+        ? { ...c, lastUsed: new Date().toISOString(), usageCount: c.usageCount + 1 }
+        : c
+    ));
+
+    toast({
+      title: "RFID Scan Successful",
+      description: `Welcome ${card.employeeName}! Temperature: ${temperature?.toFixed(1)}°C`,
+    });
+  };
+
+  const addRFIDDevice = () => {
+    if (!newRFIDDevice.deviceName || !newRFIDDevice.location || !newRFIDDevice.ipAddress) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const device: RFIDDevice = {
+      id: `RFID-${Date.now()}`,
+      ...newRFIDDevice,
+      status: "active",
+      lastSync: new Date().toISOString(),
+      firmware: "v2.1.5",
+      batteryLevel: 100,
+      assignedEmployees: [],
+    };
+
+    setRfidDevices(prev => [...prev, device]);
+    setNewRFIDDevice({
+      deviceName: "",
+      location: "",
+      ipAddress: "",
+      securityLevel: "medium",
+      configuredSettings: {
+        readRange: 10,
+        scanInterval: 500,
+        securityMode: true,
+        biometricEnabled: false,
+        temperatureCheck: false,
+      },
+    });
+    setShowDeviceDialog(false);
+
+    toast({
+      title: "RFID Device Added",
+      description: `${device.deviceName} has been configured successfully.`,
+    });
+  };
+
+  const addRFIDCard = () => {
+    if (!newRFIDCard.cardNumber || !newRFIDCard.employeeId || !newRFIDCard.employeeName) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const card: RFIDCard = {
+      id: `CARD-${Date.now()}`,
+      ...newRFIDCard,
+      issueDate: new Date().toISOString().split('T')[0],
+      expiryDate: newRFIDCard.expiryDate || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      status: "active",
+      usageCount: 0,
+    };
+
+    setRfidCards(prev => [...prev, card]);
+    setNewRFIDCard({
+      cardNumber: "",
+      employeeId: "",
+      employeeName: "",
+      expiryDate: "",
+      accessLevel: "basic",
+      restrictions: [],
+    });
+    setShowCardDialog(false);
+
+    toast({
+      title: "RFID Card Issued",
+      description: `Card ${card.cardNumber} has been issued to ${card.employeeName}.`,
+    });
+  };
+
+  const getDeviceStatusColor = (status: string) => {
+    switch (status) {
+      case "active": return "bg-green-100 text-green-800";
+      case "inactive": return "bg-gray-100 text-gray-800";
+      case "maintenance": return "bg-yellow-100 text-yellow-800";
+      case "error": return "bg-red-100 text-red-800";
+      default: return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getCardStatusColor = (status: string) => {
+    switch (status) {
+      case "active": return "bg-green-100 text-green-800";
+      case "inactive": return "bg-gray-100 text-gray-800";
+      case "lost": return "bg-red-100 text-red-800";
+      case "damaged": return "bg-orange-100 text-orange-800";
+      default: return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getAccessLevelColor = (level: string) => {
+    switch (level) {
+      case "basic": return "bg-blue-100 text-blue-800";
+      case "standard": return "bg-green-100 text-green-800";
+      case "admin": return "bg-purple-100 text-purple-800";
+      case "executive": return "bg-red-100 text-red-800";
+      default: return "bg-gray-100 text-gray-800";
+    }
+  };
 
   const generateVisitorQR = () => {
     if (!newVisitor.visitorName || !newVisitor.hostEmployee) {
