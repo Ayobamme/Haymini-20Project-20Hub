@@ -1343,6 +1343,446 @@ const Attendance = () => {
           <TabsTrigger value="analytics">Analytics & Reports</TabsTrigger>
         </TabsList>
 
+        <TabsContent value="rfid-devices" className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold">RFID Device Management</h2>
+              <p className="text-muted-foreground">Configure and monitor RFID attendance devices</p>
+            </div>
+            <Dialog open={showDeviceDialog} onOpenChange={setShowDeviceDialog}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Device
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add New RFID Device</DialogTitle>
+                  <DialogDescription>
+                    Configure a new RFID device for attendance tracking
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="deviceName">Device Name *</Label>
+                    <Input
+                      id="deviceName"
+                      value={newRFIDDevice.deviceName}
+                      onChange={(e) => setNewRFIDDevice({...newRFIDDevice, deviceName: e.target.value})}
+                      placeholder="e.g. Main Entrance Scanner"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="location">Location *</Label>
+                    <Input
+                      id="location"
+                      value={newRFIDDevice.location}
+                      onChange={(e) => setNewRFIDDevice({...newRFIDDevice, location: e.target.value})}
+                      placeholder="e.g. Main Entrance"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="ipAddress">IP Address *</Label>
+                    <Input
+                      id="ipAddress"
+                      value={newRFIDDevice.ipAddress}
+                      onChange={(e) => setNewRFIDDevice({...newRFIDDevice, ipAddress: e.target.value})}
+                      placeholder="e.g. 192.168.1.100"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label>Security Level</Label>
+                    <Select
+                      value={newRFIDDevice.securityLevel}
+                      onValueChange={(value: "low" | "medium" | "high") =>
+                        setNewRFIDDevice({...newRFIDDevice, securityLevel: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="low">Low Security</SelectItem>
+                        <SelectItem value="medium">Medium Security</SelectItem>
+                        <SelectItem value="high">High Security</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-3">
+                    <Label>Advanced Settings</Label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="readRange">Read Range (cm)</Label>
+                        <Input
+                          id="readRange"
+                          type="number"
+                          value={newRFIDDevice.configuredSettings.readRange}
+                          onChange={(e) => setNewRFIDDevice({
+                            ...newRFIDDevice,
+                            configuredSettings: {
+                              ...newRFIDDevice.configuredSettings,
+                              readRange: Number(e.target.value)
+                            }
+                          })}
+                        />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="scanInterval">Scan Interval (ms)</Label>
+                        <Input
+                          id="scanInterval"
+                          type="number"
+                          value={newRFIDDevice.configuredSettings.scanInterval}
+                          onChange={(e) => setNewRFIDDevice({
+                            ...newRFIDDevice,
+                            configuredSettings: {
+                              ...newRFIDDevice.configuredSettings,
+                              scanInterval: Number(e.target.value)
+                            }
+                          })}
+                        />
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id="biometricEnabled"
+                        checked={newRFIDDevice.configuredSettings.biometricEnabled}
+                        onChange={(e) => setNewRFIDDevice({
+                          ...newRFIDDevice,
+                          configuredSettings: {
+                            ...newRFIDDevice.configuredSettings,
+                            biometricEnabled: e.target.checked
+                          }
+                        })}
+                      />
+                      <Label htmlFor="biometricEnabled">Enable Biometric Verification</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id="temperatureCheck"
+                        checked={newRFIDDevice.configuredSettings.temperatureCheck}
+                        onChange={(e) => setNewRFIDDevice({
+                          ...newRFIDDevice,
+                          configuredSettings: {
+                            ...newRFIDDevice.configuredSettings,
+                            temperatureCheck: e.target.checked
+                          }
+                        })}
+                      />
+                      <Label htmlFor="temperatureCheck">Enable Temperature Screening</Label>
+                    </div>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setShowDeviceDialog(false)}>Cancel</Button>
+                  <Button onClick={addRFIDDevice}>Add Device</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {rfidDevices.map((device) => (
+              <Card key={device.id}>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg">{device.deviceName}</CardTitle>
+                    <Badge className={getDeviceStatusColor(device.status)}>
+                      {device.status}
+                    </Badge>
+                  </div>
+                  <CardDescription>{device.location}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-muted-foreground">IP Address:</span>
+                      <p className="font-medium">{device.ipAddress}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Firmware:</span>
+                      <p className="font-medium">{device.firmware}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Last Sync:</span>
+                      <p className="font-medium">{new Date(device.lastSync).toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Battery:</span>
+                      <div className="flex items-center gap-1">
+                        <Battery className={`h-4 w-4 ${device.batteryLevel && device.batteryLevel > 30 ? 'text-green-500' : 'text-red-500'}`} />
+                        <span className="font-medium">{device.batteryLevel}%</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <span className="text-muted-foreground text-sm">Security Level:</span>
+                    <Badge className={`ml-2 ${device.securityLevel === 'high' ? 'bg-red-100 text-red-800' : device.securityLevel === 'medium' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>
+                      <Shield className="h-3 w-3 mr-1" />
+                      {device.securityLevel}
+                    </Badge>
+                  </div>
+
+                  <div>
+                    <span className="text-muted-foreground text-sm">Assigned Employees:</span>
+                    <p className="font-medium">{device.assignedEmployees.length} employees</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <span className="text-muted-foreground text-sm">Features:</span>
+                    <div className="flex flex-wrap gap-1">
+                      {device.configuredSettings.biometricEnabled && (
+                        <Badge variant="outline" className="text-xs">
+                          <Eye className="h-3 w-3 mr-1" />
+                          Biometric
+                        </Badge>
+                      )}
+                      {device.configuredSettings.temperatureCheck && (
+                        <Badge variant="outline" className="text-xs">
+                          <Thermometer className="h-3 w-3 mr-1" />
+                          Temperature
+                        </Badge>
+                      )}
+                      {device.configuredSettings.securityMode && (
+                        <Badge variant="outline" className="text-xs">
+                          <Lock className="h-3 w-3 mr-1" />
+                          Secure
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2 pt-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setRfidDevices(prev => prev.map(d =>
+                          d.id === device.id
+                            ? { ...d, lastSync: new Date().toISOString() }
+                            : d
+                        ));
+                        toast({
+                          title: "Device Synchronized",
+                          description: `${device.deviceName} has been synchronized.`,
+                        });
+                      }}
+                    >
+                      <RefreshCw className="h-3 w-3 mr-1" />
+                      Sync
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setSelectedDevice(device)}
+                    >
+                      <Settings className="h-3 w-3 mr-1" />
+                      Configure
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant={device.status === 'active' ? 'destructive' : 'default'}
+                      onClick={() => {
+                        setRfidDevices(prev => prev.map(d =>
+                          d.id === device.id
+                            ? { ...d, status: device.status === 'active' ? 'inactive' : 'active' }
+                            : d
+                        ));
+                      }}
+                    >
+                      {device.status === 'active' ? (
+                        <>
+                          <Unlock className="h-3 w-3 mr-1" />
+                          Disable
+                        </>
+                      ) : (
+                        <>
+                          <Lock className="h-3 w-3 mr-1" />
+                          Enable
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="rfid-cards" className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold">RFID Card Management</h2>
+              <p className="text-muted-foreground">Issue and manage employee RFID access cards</p>
+            </div>
+            <Dialog open={showCardDialog} onOpenChange={setShowCardDialog}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Issue Card
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Issue New RFID Card</DialogTitle>
+                  <DialogDescription>
+                    Create a new RFID card for employee access
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="cardNumber">Card Number *</Label>
+                    <Input
+                      id="cardNumber"
+                      value={newRFIDCard.cardNumber}
+                      onChange={(e) => setNewRFIDCard({...newRFIDCard, cardNumber: e.target.value})}
+                      placeholder="e.g. RF-2024-001"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="employeeId">Employee ID *</Label>
+                    <Input
+                      id="employeeId"
+                      value={newRFIDCard.employeeId}
+                      onChange={(e) => setNewRFIDCard({...newRFIDCard, employeeId: e.target.value})}
+                      placeholder="e.g. EMP-001"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="employeeName">Employee Name *</Label>
+                    <Input
+                      id="employeeName"
+                      value={newRFIDCard.employeeName}
+                      onChange={(e) => setNewRFIDCard({...newRFIDCard, employeeName: e.target.value})}
+                      placeholder="Enter employee full name"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="expiryDate">Expiry Date</Label>
+                    <Input
+                      id="expiryDate"
+                      type="date"
+                      value={newRFIDCard.expiryDate}
+                      onChange={(e) => setNewRFIDCard({...newRFIDCard, expiryDate: e.target.value})}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label>Access Level</Label>
+                    <Select
+                      value={newRFIDCard.accessLevel}
+                      onValueChange={(value: "basic" | "standard" | "admin" | "executive") =>
+                        setNewRFIDCard({...newRFIDCard, accessLevel: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="basic">Basic Access</SelectItem>
+                        <SelectItem value="standard">Standard Access</SelectItem>
+                        <SelectItem value="admin">Admin Access</SelectItem>
+                        <SelectItem value="executive">Executive Access</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setShowCardDialog(false)}>Cancel</Button>
+                  <Button onClick={addRFIDCard}>Issue Card</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          <Card>
+            <CardContent className="p-6">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Card Number</TableHead>
+                    <TableHead>Employee</TableHead>
+                    <TableHead>Access Level</TableHead>
+                    <TableHead>Issue Date</TableHead>
+                    <TableHead>Expiry Date</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Usage Count</TableHead>
+                    <TableHead>Last Used</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {rfidCards.map((card) => (
+                    <TableRow key={card.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <CreditCard className="h-4 w-4 text-blue-500" />
+                          <span className="font-mono">{card.cardNumber}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{card.employeeName}</div>
+                          <div className="text-sm text-muted-foreground">{card.employeeId}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={getAccessLevelColor(card.accessLevel)}>
+                          {card.accessLevel}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{new Date(card.issueDate).toLocaleDateString()}</TableCell>
+                      <TableCell>{new Date(card.expiryDate).toLocaleDateString()}</TableCell>
+                      <TableCell>
+                        <Badge className={getCardStatusColor(card.status)}>
+                          {card.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1">
+                          <Database className="h-4 w-4 text-muted-foreground" />
+                          {card.usageCount}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {card.lastUsed ? new Date(card.lastUsed).toLocaleString() : 'Never'}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-1">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setSelectedCard(card)}
+                          >
+                            <Eye className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant={card.status === 'active' ? 'destructive' : 'default'}
+                            onClick={() => {
+                              setRfidCards(prev => prev.map(c =>
+                                c.id === card.id
+                                  ? { ...c, status: card.status === 'active' ? 'inactive' : 'active' }
+                                  : c
+                              ));
+                            }}
+                          >
+                            {card.status === 'active' ? (
+                              <Lock className="h-3 w-3" />
+                            ) : (
+                              <Unlock className="h-3 w-3" />
+                            )}
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="attendance" className="space-y-6">
           {/* Filters */}
           <Card>
