@@ -902,6 +902,110 @@ const Attendance = () => {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <Dialog open={showRFIDDialog} onOpenChange={setShowRFIDDialog}>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <CreditCard className="h-4 w-4 mr-2" />
+                RFID Monitor
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl">
+              <DialogHeader>
+                <DialogTitle>Real-Time RFID Monitoring</DialogTitle>
+                <DialogDescription>
+                  Monitor RFID device status and simulate card scans
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Activity className={`h-5 w-5 ${realTimeMonitoring ? 'text-green-500' : 'text-gray-400'}`} />
+                    <span className="font-medium">Real-Time Monitoring</span>
+                  </div>
+                  <Button
+                    variant={realTimeMonitoring ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setRealTimeMonitoring(!realTimeMonitoring)}
+                  >
+                    {realTimeMonitoring ? <Wifi className="h-4 w-4 mr-2" /> : <WifiOff className="h-4 w-4 mr-2" />}
+                    {realTimeMonitoring ? "Online" : "Offline"}
+                  </Button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {rfidDevices.map((device) => (
+                    <Card key={device.id} className="border-2">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                            <Server className="h-5 w-5 text-blue-500" />
+                            <span className="font-medium">{device.deviceName}</span>
+                          </div>
+                          <Badge className={getDeviceStatusColor(device.status)}>
+                            {device.status}
+                          </Badge>
+                        </div>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Location:</span>
+                            <span>{device.location}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">IP Address:</span>
+                            <span>{device.ipAddress}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Battery:</span>
+                            <div className="flex items-center gap-1">
+                              <Battery className="h-4 w-4" />
+                              <span>{device.batteryLevel}%</span>
+                            </div>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Security:</span>
+                            <Badge className={device.securityLevel === 'high' ? 'bg-red-100 text-red-800' : device.securityLevel === 'medium' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}>
+                              {device.securityLevel}
+                            </Badge>
+                          </div>
+                        </div>
+                        <div className="mt-3 flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              const availableCards = rfidCards.filter(c => c.status === 'active');
+                              if (availableCards.length > 0) {
+                                const randomCard = availableCards[Math.floor(Math.random() * availableCards.length)];
+                                simulateRFIDScan(device.id, randomCard.cardNumber);
+                              }
+                            }}
+                            disabled={device.status !== 'active'}
+                          >
+                            <Radio className="h-4 w-4 mr-1" />
+                            Test Scan
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setSelectedDevice(device)}
+                          >
+                            <Settings className="h-4 w-4 mr-1" />
+                            Configure
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setShowRFIDDialog(false)}>
+                  Close
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
           <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
             <DialogTrigger asChild>
               <Button variant="outline">
