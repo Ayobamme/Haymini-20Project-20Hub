@@ -191,6 +191,14 @@ const App = () => (
               </DashboardLayout>
             }
           />
+          <Route
+            path="/human-resources"
+            element={
+              <DashboardLayout>
+                <HumanResources />
+              </DashboardLayout>
+            }
+          />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
