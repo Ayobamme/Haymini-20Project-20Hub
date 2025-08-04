@@ -633,43 +633,63 @@ const HumanResources = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "onboarding": return "bg-blue-100 text-blue-800";
-      case "active": return "bg-green-100 text-green-800";
-      case "offboarding": return "bg-yellow-100 text-yellow-800";
-      case "terminated": return "bg-red-100 text-red-800";
-      case "resigned": return "bg-purple-100 text-purple-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "onboarding": return "bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0";
+      case "active": return "bg-gradient-to-r from-green-500 to-green-600 text-white border-0";
+      case "offboarding": return "bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0";
+      case "terminated": return "bg-gradient-to-r from-red-500 to-red-600 text-white border-0";
+      case "resigned": return "bg-gradient-to-r from-purple-500 to-purple-600 text-white border-0";
+      default: return "bg-gradient-to-r from-gray-400 to-gray-500 text-white border-0";
     }
   };
 
   const getTaskStatusColor = (status: string) => {
     switch (status) {
-      case "pending": return "bg-gray-100 text-gray-800";
-      case "in_progress": return "bg-blue-100 text-blue-800";
-      case "completed": return "bg-green-100 text-green-800";
-      case "overdue": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "pending": return "bg-gradient-to-r from-orange-400 to-orange-500 text-white border-0";
+      case "in_progress": return "bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0";
+      case "completed": return "bg-gradient-to-r from-green-500 to-green-600 text-white border-0";
+      case "overdue": return "bg-gradient-to-r from-red-500 to-red-600 text-white border-0";
+      default: return "bg-gradient-to-r from-gray-400 to-gray-500 text-white border-0";
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "low": return "bg-gray-100 text-gray-800";
-      case "medium": return "bg-blue-100 text-blue-800";
-      case "high": return "bg-yellow-100 text-yellow-800";
-      case "critical": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "low": return "bg-gradient-to-r from-gray-400 to-gray-500 text-white border-0";
+      case "medium": return "bg-gradient-to-r from-yellow-400 to-yellow-500 text-white border-0";
+      case "high": return "bg-gradient-to-r from-orange-500 to-red-500 text-white border-0";
+      case "critical": return "bg-gradient-to-r from-red-600 to-red-700 text-white border-0";
+      default: return "bg-gradient-to-r from-gray-400 to-gray-500 text-white border-0";
     }
   };
 
   const getEquipmentStatusColor = (status: string) => {
     switch (status) {
-      case "available": return "bg-green-100 text-green-800";
-      case "assigned": return "bg-blue-100 text-blue-800";
-      case "maintenance": return "bg-yellow-100 text-yellow-800";
-      case "damaged": return "bg-red-100 text-red-800";
-      case "retired": return "bg-gray-100 text-gray-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "available": return "bg-gradient-to-r from-green-500 to-green-600 text-white border-0";
+      case "assigned": return "bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0";
+      case "maintenance": return "bg-gradient-to-r from-yellow-500 to-yellow-600 text-white border-0";
+      case "damaged": return "bg-gradient-to-r from-red-500 to-red-600 text-white border-0";
+      case "retired": return "bg-gradient-to-r from-gray-500 to-gray-600 text-white border-0";
+      default: return "bg-gradient-to-r from-gray-400 to-gray-500 text-white border-0";
+    }
+  };
+
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case "safety": return "bg-gradient-to-r from-red-400 to-red-500 text-white";
+      case "compliance": return "bg-gradient-to-r from-blue-400 to-blue-500 text-white";
+      case "technical": return "bg-gradient-to-r from-purple-400 to-purple-500 text-white";
+      case "soft_skills": return "bg-gradient-to-r from-green-400 to-green-500 text-white";
+      case "company_culture": return "bg-gradient-to-r from-indigo-400 to-indigo-500 text-white";
+      case "documentation": return "bg-gradient-to-r from-cyan-400 to-cyan-500 text-white";
+      case "equipment": return "bg-gradient-to-r from-orange-400 to-orange-500 text-white";
+      case "training": return "bg-gradient-to-r from-teal-400 to-teal-500 text-white";
+      case "orientation": return "bg-gradient-to-r from-pink-400 to-pink-500 text-white";
+      case "system_access": return "bg-gradient-to-r from-violet-400 to-violet-500 text-white";
+      case "equipment_return": return "bg-gradient-to-r from-amber-400 to-amber-500 text-white";
+      case "access_revocation": return "bg-gradient-to-r from-red-400 to-red-500 text-white";
+      case "knowledge_transfer": return "bg-gradient-to-r from-emerald-400 to-emerald-500 text-white";
+      case "exit_interview": return "bg-gradient-to-r from-slate-400 to-slate-500 text-white";
+      default: return "bg-gradient-to-r from-gray-400 to-gray-500 text-white";
     }
   };
 
@@ -805,1095 +825,1120 @@ const HumanResources = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Human Resources</h1>
-          <p className="text-muted-foreground">
-            Comprehensive employee onboarding and offboarding management
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 p-6">
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+              Human Resources
+            </h1>
+            <p className="text-lg text-slate-600">
+              Comprehensive employee onboarding and offboarding management
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Dialog open={showEmployeeDialog} onOpenChange={setShowEmployeeDialog}>
+              <DialogTrigger asChild>
+                <Button className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Add Employee
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl border-0 shadow-2xl bg-gradient-to-br from-white to-slate-50">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                    Add New Employee
+                  </DialogTitle>
+                  <DialogDescription className="text-slate-600">
+                    Start the onboarding process for a new employee
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-6 py-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="firstName" className="text-slate-700 font-medium">First Name *</Label>
+                      <Input
+                        id="firstName"
+                        value={newEmployee.firstName}
+                        onChange={(e) => setNewEmployee({...newEmployee, firstName: e.target.value})}
+                        placeholder="Enter first name"
+                        className="border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="lastName" className="text-slate-700 font-medium">Last Name *</Label>
+                      <Input
+                        id="lastName"
+                        value={newEmployee.lastName}
+                        onChange={(e) => setNewEmployee({...newEmployee, lastName: e.target.value})}
+                        placeholder="Enter last name"
+                        className="border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="email" className="text-slate-700 font-medium">Email Address *</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={newEmployee.email}
+                        onChange={(e) => setNewEmployee({...newEmployee, email: e.target.value})}
+                        placeholder="employee@company.com"
+                        className="border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="phone" className="text-slate-700 font-medium">Phone Number</Label>
+                      <Input
+                        id="phone"
+                        value={newEmployee.phone}
+                        onChange={(e) => setNewEmployee({...newEmployee, phone: e.target.value})}
+                        placeholder="+234-XXX-XXX-XXXX"
+                        className="border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-2">
+                      <Label className="text-slate-700 font-medium">Department *</Label>
+                      <Select 
+                        value={newEmployee.department} 
+                        onValueChange={(value) => setNewEmployee({...newEmployee, department: value})}
+                      >
+                        <SelectTrigger className="border-2 border-slate-200 focus:border-blue-400">
+                          <SelectValue placeholder="Select department" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {departments.map((dept) => (
+                            <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="position" className="text-slate-700 font-medium">Position</Label>
+                      <Input
+                        id="position"
+                        value={newEmployee.position}
+                        onChange={(e) => setNewEmployee({...newEmployee, position: e.target.value})}
+                        placeholder="Job title"
+                        className="border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="startDate" className="text-slate-700 font-medium">Start Date</Label>
+                      <Input
+                        id="startDate"
+                        type="date"
+                        value={newEmployee.startDate}
+                        onChange={(e) => setNewEmployee({...newEmployee, startDate: e.target.value})}
+                        className="border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label className="text-slate-700 font-medium">Manager</Label>
+                      <Select 
+                        value={newEmployee.manager} 
+                        onValueChange={(value) => setNewEmployee({...newEmployee, manager: value})}
+                      >
+                        <SelectTrigger className="border-2 border-slate-200 focus:border-blue-400">
+                          <SelectValue placeholder="Select manager" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {managers.map((manager) => (
+                            <SelectItem key={manager} value={manager}>{manager}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label className="text-slate-700 font-medium">Location</Label>
+                    <Select 
+                      value={newEmployee.location} 
+                      onValueChange={(value) => setNewEmployee({...newEmployee, location: value})}
+                    >
+                      <SelectTrigger className="border-2 border-slate-200 focus:border-blue-400">
+                        <SelectValue placeholder="Select location" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {locations.map((location) => (
+                          <SelectItem key={location} value={location}>{location}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label className="text-slate-700 font-medium">Emergency Contact</Label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="emergencyName" className="text-slate-700 font-medium">Contact Name</Label>
+                        <Input
+                          id="emergencyName"
+                          value={newEmployee.emergencyContact.name}
+                          onChange={(e) => setNewEmployee({
+                            ...newEmployee,
+                            emergencyContact: {...newEmployee.emergencyContact, name: e.target.value}
+                          })}
+                          placeholder="Full name"
+                          className="border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
+                        />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="emergencyRelationship" className="text-slate-700 font-medium">Relationship</Label>
+                        <Input
+                          id="emergencyRelationship"
+                          value={newEmployee.emergencyContact.relationship}
+                          onChange={(e) => setNewEmployee({
+                            ...newEmployee,
+                            emergencyContact: {...newEmployee.emergencyContact, relationship: e.target.value}
+                          })}
+                          placeholder="e.g. Spouse, Parent"
+                          className="border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="emergencyPhone" className="text-slate-700 font-medium">Phone Number</Label>
+                        <Input
+                          id="emergencyPhone"
+                          value={newEmployee.emergencyContact.phone}
+                          onChange={(e) => setNewEmployee({
+                            ...newEmployee,
+                            emergencyContact: {...newEmployee.emergencyContact, phone: e.target.value}
+                          })}
+                          placeholder="+234-XXX-XXX-XXXX"
+                          className="border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
+                        />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="emergencyEmail" className="text-slate-700 font-medium">Email Address</Label>
+                        <Input
+                          id="emergencyEmail"
+                          type="email"
+                          value={newEmployee.emergencyContact.email}
+                          onChange={(e) => setNewEmployee({
+                            ...newEmployee,
+                            emergencyContact: {...newEmployee.emergencyContact, email: e.target.value}
+                          })}
+                          placeholder="contact@email.com"
+                          className="border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setShowEmployeeDialog(false)} className="border-2 border-slate-300 hover:bg-slate-100">
+                    Cancel
+                  </Button>
+                  <Button onClick={addEmployee} className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white border-0">
+                    <UserPlus className="h-4 w-4 mr-2" />
+                    Add Employee
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Dialog open={showEmployeeDialog} onOpenChange={setShowEmployeeDialog}>
-            <DialogTrigger asChild>
-              <Button>
-                <UserPlus className="h-4 w-4 mr-2" />
-                Add Employee
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Add New Employee</DialogTitle>
-                <DialogDescription>
-                  Start the onboarding process for a new employee
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-6 py-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="firstName">First Name *</Label>
-                    <Input
-                      id="firstName"
-                      value={newEmployee.firstName}
-                      onChange={(e) => setNewEmployee({...newEmployee, firstName: e.target.value})}
-                      placeholder="Enter first name"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="lastName">Last Name *</Label>
-                    <Input
-                      id="lastName"
-                      value={newEmployee.lastName}
-                      onChange={(e) => setNewEmployee({...newEmployee, lastName: e.target.value})}
-                      placeholder="Enter last name"
-                    />
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="email">Email Address *</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={newEmployee.email}
-                      onChange={(e) => setNewEmployee({...newEmployee, email: e.target.value})}
-                      placeholder="employee@company.com"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      value={newEmployee.phone}
-                      onChange={(e) => setNewEmployee({...newEmployee, phone: e.target.value})}
-                      placeholder="+234-XXX-XXX-XXXX"
-                    />
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label>Department *</Label>
-                    <Select 
-                      value={newEmployee.department} 
-                      onValueChange={(value) => setNewEmployee({...newEmployee, department: value})}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select department" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {departments.map((dept) => (
-                          <SelectItem key={dept} value={dept}>{dept}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="position">Position</Label>
-                    <Input
-                      id="position"
-                      value={newEmployee.position}
-                      onChange={(e) => setNewEmployee({...newEmployee, position: e.target.value})}
-                      placeholder="Job title"
-                    />
+        {/* Stats Cards with Vibrant Colors */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-blue-100 text-sm font-medium">Total Employees</p>
+                  <div className="text-3xl font-bold">{employees.length}</div>
+                </div>
+                <Users className="h-10 w-10 text-blue-200" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-emerald-100 text-sm font-medium">Onboarding</p>
+                  <div className="text-3xl font-bold">{onboardingStats.total}</div>
+                </div>
+                <UserPlus className="h-10 w-10 text-emerald-200" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-green-500 to-green-600 text-white">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-green-100 text-sm font-medium">Active</p>
+                  <div className="text-3xl font-bold">
+                    {employees.filter(e => e.status === "active").length}
                   </div>
                 </div>
+                <UserCheck className="h-10 w-10 text-green-200" />
+              </div>
+            </CardContent>
+          </Card>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="startDate">Start Date</Label>
-                    <Input
-                      id="startDate"
-                      type="date"
-                      value={newEmployee.startDate}
-                      onChange={(e) => setNewEmployee({...newEmployee, startDate: e.target.value})}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>Manager</Label>
-                    <Select 
-                      value={newEmployee.manager} 
-                      onValueChange={(value) => setNewEmployee({...newEmployee, manager: value})}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select manager" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {managers.map((manager) => (
-                          <SelectItem key={manager} value={manager}>{manager}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-amber-500 to-orange-500 text-white">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-amber-100 text-sm font-medium">Offboarding</p>
+                  <div className="text-3xl font-bold">{offboardingStats.total}</div>
                 </div>
+                <UserMinus className="h-10 w-10 text-amber-200" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-                <div className="grid gap-2">
-                  <Label>Location</Label>
-                  <Select 
-                    value={newEmployee.location} 
-                    onValueChange={(value) => setNewEmployee({...newEmployee, location: value})}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select location" />
+        <Tabs defaultValue="employees" className="w-full">
+          <TabsList className="grid w-full grid-cols-6 bg-gradient-to-r from-slate-100 to-slate-200 rounded-xl p-1 h-12">
+            <TabsTrigger value="employees" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500 data-[state=active]:to-purple-600 data-[state=active]:text-white rounded-lg transition-all duration-300">Employees</TabsTrigger>
+            <TabsTrigger value="onboarding" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white rounded-lg transition-all duration-300">Onboarding</TabsTrigger>
+            <TabsTrigger value="offboarding" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-orange-500 data-[state=active]:text-white rounded-lg transition-all duration-300">Offboarding</TabsTrigger>
+            <TabsTrigger value="training" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-rose-600 data-[state=active]:text-white rounded-lg transition-all duration-300">Training</TabsTrigger>
+            <TabsTrigger value="equipment" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-blue-600 data-[state=active]:text-white rounded-lg transition-all duration-300">Equipment</TabsTrigger>
+            <TabsTrigger value="analytics" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-purple-600 data-[state=active]:text-white rounded-lg transition-all duration-300">Analytics</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="employees" className="space-y-6 mt-6">
+            {/* Filters */}
+            <Card className="border-0 shadow-lg bg-gradient-to-r from-white to-slate-50">
+              <CardContent className="p-6">
+                <div className="flex flex-col lg:flex-row gap-4">
+                  <div className="flex-1">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                      <Input
+                        placeholder="Search employees..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10 border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
+                      />
+                    </div>
+                  </div>
+                  <Select value={filterStatus} onValueChange={setFilterStatus}>
+                    <SelectTrigger className="w-full lg:w-[180px] border-2 border-slate-200 focus:border-blue-400">
+                      <SelectValue placeholder="Filter by status" />
                     </SelectTrigger>
                     <SelectContent>
-                      {locations.map((location) => (
-                        <SelectItem key={location} value={location}>{location}</SelectItem>
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="onboarding">Onboarding</SelectItem>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="offboarding">Offboarding</SelectItem>
+                      <SelectItem value="terminated">Terminated</SelectItem>
+                      <SelectItem value="resigned">Resigned</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value={filterDepartment} onValueChange={setFilterDepartment}>
+                    <SelectTrigger className="w-full lg:w-[180px] border-2 border-slate-200 focus:border-blue-400">
+                      <SelectValue placeholder="Filter by department" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Departments</SelectItem>
+                      {departments.map((dept) => (
+                        <SelectItem key={dept} value={dept}>{dept}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
+              </CardContent>
+            </Card>
 
-                <div className="space-y-3">
-                  <Label>Emergency Contact</Label>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="emergencyName">Contact Name</Label>
-                      <Input
-                        id="emergencyName"
-                        value={newEmployee.emergencyContact.name}
-                        onChange={(e) => setNewEmployee({
-                          ...newEmployee,
-                          emergencyContact: {...newEmployee.emergencyContact, name: e.target.value}
-                        })}
-                        placeholder="Full name"
-                      />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="emergencyRelationship">Relationship</Label>
-                      <Input
-                        id="emergencyRelationship"
-                        value={newEmployee.emergencyContact.relationship}
-                        onChange={(e) => setNewEmployee({
-                          ...newEmployee,
-                          emergencyContact: {...newEmployee.emergencyContact, relationship: e.target.value}
-                        })}
-                        placeholder="e.g. Spouse, Parent"
-                      />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="emergencyPhone">Phone Number</Label>
-                      <Input
-                        id="emergencyPhone"
-                        value={newEmployee.emergencyContact.phone}
-                        onChange={(e) => setNewEmployee({
-                          ...newEmployee,
-                          emergencyContact: {...newEmployee.emergencyContact, phone: e.target.value}
-                        })}
-                        placeholder="+234-XXX-XXX-XXXX"
-                      />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="emergencyEmail">Email Address</Label>
-                      <Input
-                        id="emergencyEmail"
-                        type="email"
-                        value={newEmployee.emergencyContact.email}
-                        onChange={(e) => setNewEmployee({
-                          ...newEmployee,
-                          emergencyContact: {...newEmployee.emergencyContact, email: e.target.value}
-                        })}
-                        placeholder="contact@email.com"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setShowEmployeeDialog(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={addEmployee}>
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Add Employee
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Employees</p>
-                <div className="text-2xl font-bold">{employees.length}</div>
-              </div>
-              <Users className="h-8 w-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Onboarding</p>
-                <div className="text-2xl font-bold text-blue-600">{onboardingStats.total}</div>
-              </div>
-              <UserPlus className="h-8 w-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Active</p>
-                <div className="text-2xl font-bold text-green-600">
-                  {employees.filter(e => e.status === "active").length}
-                </div>
-              </div>
-              <UserCheck className="h-8 w-8 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Offboarding</p>
-                <div className="text-2xl font-bold text-yellow-600">{offboardingStats.total}</div>
-              </div>
-              <UserMinus className="h-8 w-8 text-yellow-500" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Tabs defaultValue="employees" className="w-full">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="employees">Employees</TabsTrigger>
-          <TabsTrigger value="onboarding">Onboarding</TabsTrigger>
-          <TabsTrigger value="offboarding">Offboarding</TabsTrigger>
-          <TabsTrigger value="training">Training</TabsTrigger>
-          <TabsTrigger value="equipment">Equipment</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="employees" className="space-y-6">
-          {/* Filters */}
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex flex-col lg:flex-row gap-4">
-                <div className="flex-1">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Search employees..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
-                <Select value={filterStatus} onValueChange={setFilterStatus}>
-                  <SelectTrigger className="w-full lg:w-[180px]">
-                    <SelectValue placeholder="Filter by status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="onboarding">Onboarding</SelectItem>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="offboarding">Offboarding</SelectItem>
-                    <SelectItem value="terminated">Terminated</SelectItem>
-                    <SelectItem value="resigned">Resigned</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select value={filterDepartment} onValueChange={setFilterDepartment}>
-                  <SelectTrigger className="w-full lg:w-[180px]">
-                    <SelectValue placeholder="Filter by department" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Departments</SelectItem>
-                    {departments.map((dept) => (
-                      <SelectItem key={dept} value={dept}>{dept}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Employee Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Employee Directory</CardTitle>
-              <CardDescription>
-                Comprehensive employee management with onboarding and offboarding tracking
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Employee</TableHead>
-                    <TableHead>Department</TableHead>
-                    <TableHead>Position</TableHead>
-                    <TableHead>Manager</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Progress</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredEmployees.map((employee) => (
-                    <TableRow key={employee.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-8 w-8">
-                            <AvatarImage src={employee.profileImage} />
-                            <AvatarFallback>
-                              {employee.firstName[0]}{employee.lastName[0]}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <div className="font-medium">{employee.firstName} {employee.lastName}</div>
-                            <div className="text-sm text-muted-foreground">{employee.employeeId}</div>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>{employee.department}</TableCell>
-                      <TableCell>{employee.position}</TableCell>
-                      <TableCell>{employee.manager}</TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(employee.status)}>
-                          {employee.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
-                          {employee.status === "onboarding" && (
-                            <>
-                              <div className="text-sm">Onboarding: {employee.onboardingProgress}%</div>
-                              <Progress value={employee.onboardingProgress} className="w-20" />
-                            </>
-                          )}
-                          {employee.status === "offboarding" && (
-                            <>
-                              <div className="text-sm">Offboarding: {employee.offboardingProgress}%</div>
-                              <Progress value={employee.offboardingProgress} className="w-20" />
-                            </>
-                          )}
-                          {employee.status === "active" && (
-                            <div className="text-sm text-green-600">Complete</div>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-1">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => setSelectedEmployee(employee)}
-                          >
-                            <Eye className="h-3 w-3" />
-                          </Button>
-                          {employee.status === "onboarding" && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => completeOnboarding(employee.id)}
-                            >
-                              <CheckCircle className="h-3 w-3" />
-                            </Button>
-                          )}
-                          {employee.status === "active" && (
-                            <Button
-                              size="sm"
-                              variant="destructive"
-                              onClick={() => startOffboarding(employee.id)}
-                            >
-                              <UserMinus className="h-3 w-3" />
-                            </Button>
-                          )}
-                          {employee.status === "offboarding" && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => completeOffboarding(employee.id)}
-                            >
-                              <Archive className="h-3 w-3" />
-                            </Button>
-                          )}
-                        </div>
-                      </TableCell>
+            {/* Employee Table */}
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
+              <CardHeader className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-t-lg">
+                <CardTitle className="text-xl">Employee Directory</CardTitle>
+                <CardDescription className="text-indigo-100">
+                  Comprehensive employee management with onboarding and offboarding tracking
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-gradient-to-r from-slate-50 to-slate-100">
+                      <TableHead className="font-semibold text-slate-700">Employee</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Department</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Position</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Manager</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Status</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Progress</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="onboarding" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Pending Tasks</p>
-                    <div className="text-2xl font-bold text-orange-600">{onboardingStats.pending}</div>
-                  </div>
-                  <Clock className="h-8 w-8 text-orange-500" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">In Progress</p>
-                    <div className="text-2xl font-bold text-blue-600">{onboardingStats.inProgress}</div>
-                  </div>
-                  <Activity className="h-8 w-8 text-blue-500" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Completed</p>
-                    <div className="text-2xl font-bold text-green-600">{onboardingStats.completed}</div>
-                  </div>
-                  <CheckCircle className="h-8 w-8 text-green-500" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Overdue</p>
-                    <div className="text-2xl font-bold text-red-600">{onboardingStats.overdue}</div>
-                  </div>
-                  <AlertTriangle className="h-8 w-8 text-red-500" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Onboarding Tasks</CardTitle>
-              <CardDescription>
-                Track and manage onboarding tasks for new employees
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Task</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Assigned To</TableHead>
-                    <TableHead>Priority</TableHead>
-                    <TableHead>Due Date</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Progress</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {onboardingTasks.map((task) => (
-                    <TableRow key={task.id}>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{task.title}</div>
-                          <div className="text-sm text-muted-foreground">{task.description}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="capitalize">
-                          {task.category.replace('_', ' ')}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{task.assignedTo}</TableCell>
-                      <TableCell>
-                        <Badge className={getPriorityColor(task.priority)}>
-                          {task.priority}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{new Date(task.dueDate).toLocaleDateString()}</TableCell>
-                      <TableCell>
-                        <Badge className={getTaskStatusColor(task.status)}>
-                          {task.status.replace('_', ' ')}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm">{task.estimatedHours}h est.</span>
-                          {task.actualHours && (
-                            <span className="text-sm text-muted-foreground">
-                              ({task.actualHours}h actual)
-                            </span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-1">
-                          <Button size="sm" variant="outline">
-                            <Edit className="h-3 w-3" />
-                          </Button>
-                          {task.status !== "completed" && (
-                            <Button 
-                              size="sm" 
-                              variant="outline"
-                              onClick={() => {
-                                setOnboardingTasks(prev => prev.map(t => 
-                                  t.id === task.id 
-                                    ? { ...t, status: "completed", completedDate: new Date().toISOString() }
-                                    : t
-                                ));
-                                toast({
-                                  title: "Task Completed",
-                                  description: `${task.title} has been marked as completed.`,
-                                });
-                              }}
-                            >
-                              <CheckCircle className="h-3 w-3" />
-                            </Button>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="offboarding" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Pending Tasks</p>
-                    <div className="text-2xl font-bold text-orange-600">{offboardingStats.pending}</div>
-                  </div>
-                  <Clock className="h-8 w-8 text-orange-500" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">In Progress</p>
-                    <div className="text-2xl font-bold text-blue-600">{offboardingStats.inProgress}</div>
-                  </div>
-                  <Activity className="h-8 w-8 text-blue-500" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Completed</p>
-                    <div className="text-2xl font-bold text-green-600">{offboardingStats.completed}</div>
-                  </div>
-                  <CheckCircle className="h-8 w-8 text-green-500" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Overdue</p>
-                    <div className="text-2xl font-bold text-red-600">{offboardingStats.overdue}</div>
-                  </div>
-                  <AlertTriangle className="h-8 w-8 text-red-500" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Offboarding Tasks</CardTitle>
-              <CardDescription>
-                Manage offboarding tasks for departing employees
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Task</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Assigned To</TableHead>
-                    <TableHead>Priority</TableHead>
-                    <TableHead>Due Date</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Progress</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {offboardingTasks.map((task) => (
-                    <TableRow key={task.id}>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{task.title}</div>
-                          <div className="text-sm text-muted-foreground">{task.description}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="capitalize">
-                          {task.category.replace('_', ' ')}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{task.assignedTo}</TableCell>
-                      <TableCell>
-                        <Badge className={getPriorityColor(task.priority)}>
-                          {task.priority}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{new Date(task.dueDate).toLocaleDateString()}</TableCell>
-                      <TableCell>
-                        <Badge className={getTaskStatusColor(task.status)}>
-                          {task.status.replace('_', ' ')}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm">{task.estimatedHours}h est.</span>
-                          {task.actualHours && (
-                            <span className="text-sm text-muted-foreground">
-                              ({task.actualHours}h actual)
-                            </span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-1">
-                          <Button size="sm" variant="outline">
-                            <Edit className="h-3 w-3" />
-                          </Button>
-                          {task.status !== "completed" && (
-                            <Button 
-                              size="sm" 
-                              variant="outline"
-                              onClick={() => {
-                                setOffboardingTasks(prev => prev.map(t => 
-                                  t.id === task.id 
-                                    ? { ...t, status: "completed", completedDate: new Date().toISOString() }
-                                    : t
-                                ));
-                                toast({
-                                  title: "Task Completed",
-                                  description: `${task.title} has been marked as completed.`,
-                                });
-                              }}
-                            >
-                              <CheckCircle className="h-3 w-3" />
-                            </Button>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="training" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Training Modules</CardTitle>
-              <CardDescription>
-                Manage employee training and development programs
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {trainingModules.map((module) => (
-                  <Card key={module.id}>
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-lg mb-2">{module.title}</h3>
-                          <p className="text-sm text-muted-foreground mb-3">{module.description}</p>
-                          <div className="flex items-center gap-2 mb-3">
-                            <Badge variant="outline" className="capitalize">
-                              {module.category.replace('_', ' ')}
-                            </Badge>
-                            {module.mandatory && (
-                              <Badge className="bg-red-100 text-red-800">Mandatory</Badge>
-                            )}
-                            {module.certificateRequired && (
-                              <Badge variant="outline">
-                                <GraduationCap className="h-3 w-3 mr-1" />
-                                Certificate
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                        <Badge className={getTaskStatusColor(module.status)}>
-                          {module.status.replace('_', ' ')}
-                        </Badge>
-                      </div>
-
-                      <div className="space-y-3">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Duration:</span>
-                          <span>{module.duration} hours</span>
-                        </div>
-                        {module.instructor && (
-                          <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Instructor:</span>
-                            <span>{module.instructor}</span>
-                          </div>
-                        )}
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Progress:</span>
-                          <span>{module.progress}%</span>
-                        </div>
-                        <Progress value={module.progress} />
-                        
-                        {module.completionDate && (
-                          <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Completed:</span>
-                            <span>{new Date(module.completionDate).toLocaleDateString()}</span>
-                          </div>
-                        )}
-
-                        {module.prerequisites.length > 0 && (
-                          <div>
-                            <span className="text-sm text-muted-foreground">Prerequisites:</span>
-                            <div className="flex flex-wrap gap-1 mt-1">
-                              {module.prerequisites.map((prereq, index) => (
-                                <Badge key={index} variant="outline" className="text-xs">
-                                  {prereq}
-                                </Badge>
-                              ))}
+                  </TableHeader>
+                  <TableBody>
+                    {filteredEmployees.map((employee) => (
+                      <TableRow key={employee.id} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200">
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-10 w-10 border-2 border-white shadow-md">
+                              <AvatarImage src={employee.profileImage} />
+                              <AvatarFallback className="bg-gradient-to-r from-indigo-400 to-purple-500 text-white font-semibold">
+                                {employee.firstName[0]}{employee.lastName[0]}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <div className="font-semibold text-slate-800">{employee.firstName} {employee.lastName}</div>
+                              <div className="text-sm text-slate-500">{employee.employeeId}</div>
                             </div>
                           </div>
-                        )}
-
-                        <div className="flex gap-2 pt-3">
-                          <Button size="sm" variant="outline" className="flex-1">
-                            <BookOpen className="h-3 w-3 mr-1" />
-                            View Materials
-                          </Button>
-                          {module.status !== "completed" && (
-                            <Button size="sm" className="flex-1">
-                              <Star className="h-3 w-3 mr-1" />
-                              Start Training
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="equipment" className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold">Equipment Management</h2>
-              <p className="text-muted-foreground">Track and manage company equipment and assets</p>
-            </div>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Equipment
-            </Button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Total Equipment</p>
-                    <div className="text-2xl font-bold">{equipment.length}</div>
-                  </div>
-                  <Package className="h-8 w-8 text-blue-500" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Available</p>
-                    <div className="text-2xl font-bold text-green-600">
-                      {equipment.filter(e => e.status === "available").length}
-                    </div>
-                  </div>
-                  <CheckCircle className="h-8 w-8 text-green-500" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Assigned</p>
-                    <div className="text-2xl font-bold text-blue-600">
-                      {equipment.filter(e => e.status === "assigned").length}
-                    </div>
-                  </div>
-                  <UserCheck className="h-8 w-8 text-blue-500" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Total Value</p>
-                    <div className="text-2xl font-bold text-green-600">
-                      {formatCurrency(equipment.reduce((sum, item) => sum + item.value, 0))}
-                    </div>
-                  </div>
-                  <DollarSign className="h-8 w-8 text-green-500" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card>
-            <CardContent className="p-6">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Equipment</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Serial Number</TableHead>
-                    <TableHead>Value</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Assigned To</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {equipment.map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{item.name}</div>
-                          <div className="text-sm text-muted-foreground">{item.brand} {item.model}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          {item.type === "laptop" && <Laptop className="h-4 w-4" />}
-                          {item.type === "desktop" && <Monitor className="h-4 w-4" />}
-                          {item.type === "phone" && <Smartphone className="h-4 w-4" />}
-                          {item.type === "monitor" && <Monitor className="h-4 w-4" />}
-                          {item.type === "accessories" && <Headphones className="h-4 w-4" />}
-                          <span className="capitalize">{item.type}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <code className="text-sm bg-muted px-2 py-1 rounded">
-                          {item.serialNumber}
-                        </code>
-                      </TableCell>
-                      <TableCell>{formatCurrency(item.value)}</TableCell>
-                      <TableCell>
-                        <Badge className={getEquipmentStatusColor(item.status)}>
-                          {item.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {item.assignedTo ? (
-                          <div>
-                            <div className="font-medium">{item.assignedTo}</div>
-                            {item.assignedDate && (
-                              <div className="text-sm text-muted-foreground">
-                                Since {new Date(item.assignedDate).toLocaleDateString()}
-                              </div>
+                        </TableCell>
+                        <TableCell className="font-medium text-slate-700">{employee.department}</TableCell>
+                        <TableCell className="text-slate-600">{employee.position}</TableCell>
+                        <TableCell className="text-slate-600">{employee.manager}</TableCell>
+                        <TableCell>
+                          <Badge className={getStatusColor(employee.status)}>
+                            {employee.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="space-y-1">
+                            {employee.status === "onboarding" && (
+                              <>
+                                <div className="text-sm font-medium text-blue-600">Onboarding: {employee.onboardingProgress}%</div>
+                                <Progress value={employee.onboardingProgress} className="w-24 h-2" />
+                              </>
+                            )}
+                            {employee.status === "offboarding" && (
+                              <>
+                                <div className="text-sm font-medium text-orange-600">Offboarding: {employee.offboardingProgress}%</div>
+                                <Progress value={employee.offboardingProgress} className="w-24 h-2" />
+                              </>
+                            )}
+                            {employee.status === "active" && (
+                              <div className="text-sm font-medium text-green-600">Complete</div>
                             )}
                           </div>
-                        ) : (
-                          <span className="text-muted-foreground">Unassigned</span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1">
-                          <MapPin className="h-4 w-4 text-muted-foreground" />
-                          {item.location}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-1">
-                          <Button size="sm" variant="outline">
-                            <Edit className="h-3 w-3" />
-                          </Button>
-                          {item.status === "assigned" ? (
-                            <Button size="sm" variant="outline">
-                              <Truck className="h-3 w-3" />
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-1">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setSelectedEmployee(employee)}
+                              className="border-2 border-blue-200 hover:bg-blue-50"
+                            >
+                              <Eye className="h-3 w-3" />
                             </Button>
-                          ) : (
-                            <Button size="sm" variant="outline">
-                              <UserCheck className="h-3 w-3" />
-                            </Button>
-                          )}
-                        </div>
-                      </TableCell>
+                            {employee.status === "onboarding" && (
+                              <Button
+                                size="sm"
+                                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white border-0"
+                                onClick={() => completeOnboarding(employee.id)}
+                              >
+                                <CheckCircle className="h-3 w-3" />
+                              </Button>
+                            )}
+                            {employee.status === "active" && (
+                              <Button
+                                size="sm"
+                                className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white border-0"
+                                onClick={() => startOffboarding(employee.id)}
+                              >
+                                <UserMinus className="h-3 w-3" />
+                              </Button>
+                            )}
+                            {employee.status === "offboarding" && (
+                              <Button
+                                size="sm"
+                                className="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white border-0"
+                                onClick={() => completeOffboarding(employee.id)}
+                              >
+                                <Archive className="h-3 w-3" />
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="onboarding" className="space-y-6 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-orange-500 to-red-500 text-white">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-orange-100 text-sm font-medium">Pending Tasks</p>
+                      <div className="text-3xl font-bold">{onboardingStats.pending}</div>
+                    </div>
+                    <Clock className="h-10 w-10 text-orange-200" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-blue-100 text-sm font-medium">In Progress</p>
+                      <div className="text-3xl font-bold">{onboardingStats.inProgress}</div>
+                    </div>
+                    <Activity className="h-10 w-10 text-blue-200" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-green-500 to-emerald-600 text-white">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-green-100 text-sm font-medium">Completed</p>
+                      <div className="text-3xl font-bold">{onboardingStats.completed}</div>
+                    </div>
+                    <CheckCircle className="h-10 w-10 text-green-200" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-red-500 to-pink-600 text-white">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-red-100 text-sm font-medium">Overdue</p>
+                      <div className="text-3xl font-bold">{onboardingStats.overdue}</div>
+                    </div>
+                    <AlertTriangle className="h-10 w-10 text-red-200" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
+              <CardHeader className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-t-lg">
+                <CardTitle className="text-xl">Onboarding Tasks</CardTitle>
+                <CardDescription className="text-emerald-100">
+                  Track and manage onboarding tasks for new employees
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-gradient-to-r from-slate-50 to-slate-100">
+                      <TableHead className="font-semibold text-slate-700">Task</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Category</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Assigned To</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Priority</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Due Date</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Status</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Progress</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Actions</TableHead>
                     </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {onboardingTasks.map((task) => (
+                      <TableRow key={task.id} className="hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50 transition-all duration-200">
+                        <TableCell>
+                          <div>
+                            <div className="font-semibold text-slate-800">{task.title}</div>
+                            <div className="text-sm text-slate-500">{task.description}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={getCategoryColor(task.category)}>
+                            {task.category.replace('_', ' ')}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="font-medium text-slate-700">{task.assignedTo}</TableCell>
+                        <TableCell>
+                          <Badge className={getPriorityColor(task.priority)}>
+                            {task.priority}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-slate-600">{new Date(task.dueDate).toLocaleDateString()}</TableCell>
+                        <TableCell>
+                          <Badge className={getTaskStatusColor(task.status)}>
+                            {task.status.replace('_', ' ')}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium text-slate-600">{task.estimatedHours}h est.</span>
+                            {task.actualHours && (
+                              <span className="text-sm text-slate-400">
+                                ({task.actualHours}h actual)
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-1">
+                            <Button size="sm" variant="outline" className="border-2 border-blue-200 hover:bg-blue-50">
+                              <Edit className="h-3 w-3" />
+                            </Button>
+                            {task.status !== "completed" && (
+                              <Button 
+                                size="sm" 
+                                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white border-0"
+                                onClick={() => {
+                                  setOnboardingTasks(prev => prev.map(t => 
+                                    t.id === task.id 
+                                      ? { ...t, status: "completed", completedDate: new Date().toISOString() }
+                                      : t
+                                  ));
+                                  toast({
+                                    title: "Task Completed",
+                                    description: `${task.title} has been marked as completed.`,
+                                  });
+                                }}
+                              >
+                                <CheckCircle className="h-3 w-3" />
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="offboarding" className="space-y-6 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-orange-500 to-red-500 text-white">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-orange-100 text-sm font-medium">Pending Tasks</p>
+                      <div className="text-3xl font-bold">{offboardingStats.pending}</div>
+                    </div>
+                    <Clock className="h-10 w-10 text-orange-200" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-blue-100 text-sm font-medium">In Progress</p>
+                      <div className="text-3xl font-bold">{offboardingStats.inProgress}</div>
+                    </div>
+                    <Activity className="h-10 w-10 text-blue-200" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-green-500 to-emerald-600 text-white">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-green-100 text-sm font-medium">Completed</p>
+                      <div className="text-3xl font-bold">{offboardingStats.completed}</div>
+                    </div>
+                    <CheckCircle className="h-10 w-10 text-green-200" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-red-500 to-pink-600 text-white">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-red-100 text-sm font-medium">Overdue</p>
+                      <div className="text-3xl font-bold">{offboardingStats.overdue}</div>
+                    </div>
+                    <AlertTriangle className="h-10 w-10 text-red-200" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
+              <CardHeader className="bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-t-lg">
+                <CardTitle className="text-xl">Offboarding Tasks</CardTitle>
+                <CardDescription className="text-amber-100">
+                  Manage offboarding tasks for departing employees
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-gradient-to-r from-slate-50 to-slate-100">
+                      <TableHead className="font-semibold text-slate-700">Task</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Category</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Assigned To</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Priority</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Due Date</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Status</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Progress</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {offboardingTasks.map((task) => (
+                      <TableRow key={task.id} className="hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 transition-all duration-200">
+                        <TableCell>
+                          <div>
+                            <div className="font-semibold text-slate-800">{task.title}</div>
+                            <div className="text-sm text-slate-500">{task.description}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={getCategoryColor(task.category)}>
+                            {task.category.replace('_', ' ')}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="font-medium text-slate-700">{task.assignedTo}</TableCell>
+                        <TableCell>
+                          <Badge className={getPriorityColor(task.priority)}>
+                            {task.priority}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-slate-600">{new Date(task.dueDate).toLocaleDateString()}</TableCell>
+                        <TableCell>
+                          <Badge className={getTaskStatusColor(task.status)}>
+                            {task.status.replace('_', ' ')}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium text-slate-600">{task.estimatedHours}h est.</span>
+                            {task.actualHours && (
+                              <span className="text-sm text-slate-400">
+                                ({task.actualHours}h actual)
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-1">
+                            <Button size="sm" variant="outline" className="border-2 border-blue-200 hover:bg-blue-50">
+                              <Edit className="h-3 w-3" />
+                            </Button>
+                            {task.status !== "completed" && (
+                              <Button 
+                                size="sm" 
+                                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white border-0"
+                                onClick={() => {
+                                  setOffboardingTasks(prev => prev.map(t => 
+                                    t.id === task.id 
+                                      ? { ...t, status: "completed", completedDate: new Date().toISOString() }
+                                      : t
+                                  ));
+                                  toast({
+                                    title: "Task Completed",
+                                    description: `${task.title} has been marked as completed.`,
+                                  });
+                                }}
+                              >
+                                <CheckCircle className="h-3 w-3" />
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="training" className="space-y-6 mt-6">
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
+              <CardHeader className="bg-gradient-to-r from-pink-500 to-rose-600 text-white rounded-t-lg">
+                <CardTitle className="text-xl">Training Modules</CardTitle>
+                <CardDescription className="text-pink-100">
+                  Manage employee training and development programs
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {trainingModules.map((module) => (
+                    <Card key={module.id} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-slate-50">
+                      <CardContent className="p-6">
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex-1">
+                            <h3 className="font-bold text-lg mb-2 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">{module.title}</h3>
+                            <p className="text-sm text-slate-600 mb-3">{module.description}</p>
+                            <div className="flex items-center gap-2 mb-3 flex-wrap">
+                              <Badge className={getCategoryColor(module.category)}>
+                                {module.category.replace('_', ' ')}
+                              </Badge>
+                              {module.mandatory && (
+                                <Badge className="bg-gradient-to-r from-red-500 to-red-600 text-white border-0">Mandatory</Badge>
+                              )}
+                              {module.certificateRequired && (
+                                <Badge className="bg-gradient-to-r from-yellow-500 to-amber-500 text-white border-0">
+                                  <GraduationCap className="h-3 w-3 mr-1" />
+                                  Certificate
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                          <Badge className={getTaskStatusColor(module.status)}>
+                            {module.status.replace('_', ' ')}
+                          </Badge>
+                        </div>
+
+                        <div className="space-y-3">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-slate-600 font-medium">Duration:</span>
+                            <span className="font-medium text-slate-800">{module.duration} hours</span>
+                          </div>
+                          {module.instructor && (
+                            <div className="flex justify-between text-sm">
+                              <span className="text-slate-600 font-medium">Instructor:</span>
+                              <span className="font-medium text-slate-800">{module.instructor}</span>
+                            </div>
+                          )}
+                          <div className="flex justify-between text-sm">
+                            <span className="text-slate-600 font-medium">Progress:</span>
+                            <span className="font-medium text-slate-800">{module.progress}%</span>
+                          </div>
+                          <Progress value={module.progress} className="h-3" />
+                          
+                          {module.completionDate && (
+                            <div className="flex justify-between text-sm">
+                              <span className="text-slate-600 font-medium">Completed:</span>
+                              <span className="font-medium text-green-600">{new Date(module.completionDate).toLocaleDateString()}</span>
+                            </div>
+                          )}
+
+                          {module.prerequisites.length > 0 && (
+                            <div>
+                              <span className="text-sm text-slate-600 font-medium">Prerequisites:</span>
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {module.prerequisites.map((prereq, index) => (
+                                  <Badge key={index} variant="outline" className="text-xs border-2 border-slate-300 text-slate-600">
+                                    {prereq}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="flex gap-2 pt-3">
+                            <Button size="sm" variant="outline" className="flex-1 border-2 border-blue-200 hover:bg-blue-50">
+                              <BookOpen className="h-3 w-3 mr-1" />
+                              View Materials
+                            </Button>
+                            {module.status !== "completed" && (
+                              <Button size="sm" className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white border-0">
+                                <Star className="h-3 w-3 mr-1" />
+                                Start Training
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
                   ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="analytics" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Onboarding Metrics</CardTitle>
-                <CardDescription>Performance metrics for employee onboarding</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Average Onboarding Time</span>
-                    <div className="flex items-center gap-2">
-                      <TrendingUp className="h-4 w-4 text-green-500" />
-                      <span className="text-sm font-medium">12 days</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Task Completion Rate</span>
-                    <div className="flex items-center gap-2">
-                      <Target className="h-4 w-4 text-blue-500" />
-                      <span className="text-sm font-medium">94%</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Employee Satisfaction</span>
-                    <div className="flex items-center gap-2">
-                      <Star className="h-4 w-4 text-yellow-500" />
-                      <span className="text-sm font-medium">4.7/5</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Time to Productivity</span>
-                    <div className="flex items-center gap-2">
-                      <BarChart3 className="h-4 w-4 text-purple-500" />
-                      <span className="text-sm font-medium">18 days</span>
-                    </div>
-                  </div>
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Offboarding Metrics</CardTitle>
-                <CardDescription>Performance metrics for employee offboarding</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Average Offboarding Time</span>
-                    <div className="flex items-center gap-2">
-                      <TrendingUp className="h-4 w-4 text-orange-500" />
-                      <span className="text-sm font-medium">8 days</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Knowledge Transfer Rate</span>
-                    <div className="flex items-center gap-2">
-                      <Target className="h-4 w-4 text-green-500" />
-                      <span className="text-sm font-medium">89%</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Equipment Recovery Rate</span>
-                    <div className="flex items-center gap-2">
-                      <Package className="h-4 w-4 text-blue-500" />
-                      <span className="text-sm font-medium">98%</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Exit Interview Completion</span>
-                    <div className="flex items-center gap-2">
-                      <MessageSquare className="h-4 w-4 text-purple-500" />
-                      <span className="text-sm font-medium">76%</span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Department Overview</CardTitle>
-              <CardDescription>Employee distribution and status by department</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {departments.map((dept) => {
-                  const deptEmployees = employees.filter(e => e.department === dept);
-                  const onboarding = deptEmployees.filter(e => e.status === "onboarding").length;
-                  const active = deptEmployees.filter(e => e.status === "active").length;
-                  const offboarding = deptEmployees.filter(e => e.status === "offboarding").length;
-                  
-                  return (
-                    <div key={dept} className="border rounded-lg p-4">
-                      <div className="flex justify-between items-center mb-3">
-                        <h3 className="font-semibold">{dept}</h3>
-                        <span className="text-sm text-muted-foreground">
-                          {deptEmployees.length} employees
-                        </span>
-                      </div>
-                      <div className="grid grid-cols-3 gap-4 text-sm">
-                        <div className="text-center">
-                          <div className="text-blue-600 font-medium">{onboarding}</div>
-                          <div className="text-muted-foreground">Onboarding</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-green-600 font-medium">{active}</div>
-                          <div className="text-muted-foreground">Active</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-yellow-600 font-medium">{offboarding}</div>
-                          <div className="text-muted-foreground">Offboarding</div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+          <TabsContent value="equipment" className="space-y-6 mt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
+                  Equipment Management
+                </h2>
+                <p className="text-slate-600 text-lg">Track and manage company equipment and assets</p>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+              <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white border-0 shadow-lg">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Equipment
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-cyan-500 to-blue-600 text-white">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-cyan-100 text-sm font-medium">Total Equipment</p>
+                      <div className="text-3xl font-bold">{equipment.length}</div>
+                    </div>
+                    <Package className="h-10 w-10 text-cyan-200" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-green-500 to-emerald-600 text-white">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-green-100 text-sm font-medium">Available</p>
+                      <div className="text-3xl font-bold">
+                        {equipment.filter(e => e.status === "available").length}
+                      </div>
+                    </div>
+                    <CheckCircle className="h-10 w-10 text-green-200" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-blue-100 text-sm font-medium">Assigned</p>
+                      <div className="text-3xl font-bold">
+                        {equipment.filter(e => e.status === "assigned").length}
+                      </div>
+                    </div>
+                    <UserCheck className="h-10 w-10 text-blue-200" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-emerald-500 to-green-600 text-white">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-emerald-100 text-sm font-medium">Total Value</p>
+                      <div className="text-2xl font-bold">
+                        {formatCurrency(equipment.reduce((sum, item) => sum + item.value, 0))}
+                      </div>
+                    </div>
+                    <DollarSign className="h-10 w-10 text-emerald-200" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
+              <CardHeader className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-t-lg">
+                <CardTitle className="text-xl">Equipment Inventory</CardTitle>
+                <CardDescription className="text-cyan-100">
+                  Comprehensive equipment tracking and assignment
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-gradient-to-r from-slate-50 to-slate-100">
+                      <TableHead className="font-semibold text-slate-700">Equipment</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Type</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Serial Number</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Value</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Status</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Assigned To</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Location</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {equipment.map((item) => (
+                      <TableRow key={item.id} className="hover:bg-gradient-to-r hover:from-cyan-50 hover:to-blue-50 transition-all duration-200">
+                        <TableCell>
+                          <div>
+                            <div className="font-semibold text-slate-800">{item.name}</div>
+                            <div className="text-sm text-slate-500">{item.brand} {item.model}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            {item.type === "laptop" && <Laptop className="h-4 w-4 text-blue-500" />}
+                            {item.type === "desktop" && <Monitor className="h-4 w-4 text-green-500" />}
+                            {item.type === "phone" && <Smartphone className="h-4 w-4 text-purple-500" />}
+                            {item.type === "monitor" && <Monitor className="h-4 w-4 text-cyan-500" />}
+                            {item.type === "accessories" && <Headphones className="h-4 w-4 text-orange-500" />}
+                            <span className="capitalize font-medium text-slate-700">{item.type}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <code className="text-sm bg-gradient-to-r from-slate-100 to-slate-200 px-3 py-1 rounded-md font-mono">
+                            {item.serialNumber}
+                          </code>
+                        </TableCell>
+                        <TableCell className="font-semibold text-emerald-600">{formatCurrency(item.value)}</TableCell>
+                        <TableCell>
+                          <Badge className={getEquipmentStatusColor(item.status)}>
+                            {item.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          {item.assignedTo ? (
+                            <div>
+                              <div className="font-semibold text-slate-800">{item.assignedTo}</div>
+                              {item.assignedDate && (
+                                <div className="text-sm text-slate-500">
+                                  Since {new Date(item.assignedDate).toLocaleDateString()}
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="text-slate-400 italic">Unassigned</span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <MapPin className="h-4 w-4 text-slate-400" />
+                            <span className="text-slate-600">{item.location}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-1">
+                            <Button size="sm" variant="outline" className="border-2 border-blue-200 hover:bg-blue-50">
+                              <Edit className="h-3 w-3" />
+                            </Button>
+                            {item.status === "assigned" ? (
+                              <Button size="sm" className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white border-0">
+                                <Truck className="h-3 w-3" />
+                              </Button>
+                            ) : (
+                              <Button size="sm" className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white border-0">
+                                <UserCheck className="h-3 w-3" />
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="analytics" className="space-y-6 mt-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
+                <CardHeader className="bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-t-lg">
+                  <CardTitle className="text-xl">Onboarding Metrics</CardTitle>
+                  <CardDescription className="text-violet-100">Performance metrics for employee onboarding</CardDescription>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center p-3 rounded-lg bg-gradient-to-r from-green-50 to-emerald-50">
+                      <span className="text-sm font-medium text-slate-700">Average Onboarding Time</span>
+                      <div className="flex items-center gap-2">
+                        <TrendingUp className="h-4 w-4 text-green-500" />
+                        <span className="text-sm font-bold text-green-600">12 days</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center p-3 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50">
+                      <span className="text-sm font-medium text-slate-700">Task Completion Rate</span>
+                      <div className="flex items-center gap-2">
+                        <Target className="h-4 w-4 text-blue-500" />
+                        <span className="text-sm font-bold text-blue-600">94%</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center p-3 rounded-lg bg-gradient-to-r from-yellow-50 to-amber-50">
+                      <span className="text-sm font-medium text-slate-700">Employee Satisfaction</span>
+                      <div className="flex items-center gap-2">
+                        <Star className="h-4 w-4 text-yellow-500" />
+                        <span className="text-sm font-bold text-yellow-600">4.7/5</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center p-3 rounded-lg bg-gradient-to-r from-purple-50 to-violet-50">
+                      <span className="text-sm font-medium text-slate-700">Time to Productivity</span>
+                      <div className="flex items-center gap-2">
+                        <BarChart3 className="h-4 w-4 text-purple-500" />
+                        <span className="text-sm font-bold text-purple-600">18 days</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
+                <CardHeader className="bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-t-lg">
+                  <CardTitle className="text-xl">Offboarding Metrics</CardTitle>
+                  <CardDescription className="text-orange-100">Performance metrics for employee offboarding</CardDescription>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center p-3 rounded-lg bg-gradient-to-r from-orange-50 to-red-50">
+                      <span className="text-sm font-medium text-slate-700">Average Offboarding Time</span>
+                      <div className="flex items-center gap-2">
+                        <TrendingUp className="h-4 w-4 text-orange-500" />
+                        <span className="text-sm font-bold text-orange-600">8 days</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center p-3 rounded-lg bg-gradient-to-r from-green-50 to-emerald-50">
+                      <span className="text-sm font-medium text-slate-700">Knowledge Transfer Rate</span>
+                      <div className="flex items-center gap-2">
+                        <Target className="h-4 w-4 text-green-500" />
+                        <span className="text-sm font-bold text-green-600">89%</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center p-3 rounded-lg bg-gradient-to-r from-blue-50 to-cyan-50">
+                      <span className="text-sm font-medium text-slate-700">Equipment Recovery Rate</span>
+                      <div className="flex items-center gap-2">
+                        <Package className="h-4 w-4 text-blue-500" />
+                        <span className="text-sm font-bold text-blue-600">98%</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center p-3 rounded-lg bg-gradient-to-r from-purple-50 to-pink-50">
+                      <span className="text-sm font-medium text-slate-700">Exit Interview Completion</span>
+                      <div className="flex items-center gap-2">
+                        <MessageSquare className="h-4 w-4 text-purple-500" />
+                        <span className="text-sm font-bold text-purple-600">76%</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
+              <CardHeader className="bg-gradient-to-r from-indigo-500 to-blue-600 text-white rounded-t-lg">
+                <CardTitle className="text-xl">Department Overview</CardTitle>
+                <CardDescription className="text-indigo-100">Employee distribution and status by department</CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  {departments.map((dept) => {
+                    const deptEmployees = employees.filter(e => e.department === dept);
+                    const onboarding = deptEmployees.filter(e => e.status === "onboarding").length;
+                    const active = deptEmployees.filter(e => e.status === "active").length;
+                    const offboarding = deptEmployees.filter(e => e.status === "offboarding").length;
+                    
+                    return (
+                      <div key={dept} className="border-2 border-slate-200 rounded-xl p-4 bg-gradient-to-r from-slate-50 to-white hover:shadow-md transition-all duration-300">
+                        <div className="flex justify-between items-center mb-3">
+                          <h3 className="font-bold text-lg text-slate-800">{dept}</h3>
+                          <span className="text-sm text-slate-500 font-medium">
+                            {deptEmployees.length} employees
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-4 text-sm">
+                          <div className="text-center p-3 rounded-lg bg-gradient-to-r from-blue-100 to-blue-200">
+                            <div className="text-blue-700 font-bold text-lg">{onboarding}</div>
+                            <div className="text-blue-600 font-medium">Onboarding</div>
+                          </div>
+                          <div className="text-center p-3 rounded-lg bg-gradient-to-r from-green-100 to-green-200">
+                            <div className="text-green-700 font-bold text-lg">{active}</div>
+                            <div className="text-green-600 font-medium">Active</div>
+                          </div>
+                          <div className="text-center p-3 rounded-lg bg-gradient-to-r from-yellow-100 to-orange-200">
+                            <div className="text-orange-700 font-bold text-lg">{offboarding}</div>
+                            <div className="text-orange-600 font-medium">Offboarding</div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 };
