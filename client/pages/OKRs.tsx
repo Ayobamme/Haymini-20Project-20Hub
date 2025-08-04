@@ -474,15 +474,15 @@ const OKRs = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "draft":
-        return "bg-gray-100 text-gray-800";
+        return "bg-gradient-to-r from-gray-400 to-gray-500 text-white border-0";
       case "active":
-        return "bg-blue-100 text-blue-800";
+        return "bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0";
       case "completed":
-        return "bg-green-100 text-green-800";
+        return "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-0";
       case "cancelled":
-        return "bg-red-100 text-red-800";
+        return "bg-gradient-to-r from-red-500 to-red-600 text-white border-0";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gradient-to-r from-gray-400 to-gray-500 text-white border-0";
     }
   };
 
@@ -511,919 +511,958 @@ const OKRs = () => {
   });
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">OKRs Management</h1>
-          <p className="text-muted-foreground">
-            Manage Objectives and Key Results with team assignments and KPI
-            generation
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={generateKPIs}>
-            <BarChart3 className="h-4 w-4 mr-2" />
-            Generate KPIs
-          </Button>
-          <Dialog open={showOKRDialog} onOpenChange={setShowOKRDialog}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Create OKR
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>
-                  {editingOKR ? "Edit OKR" : "Create New OKR"}
-                </DialogTitle>
-                <DialogDescription>
-                  Define objectives, key results, and assign to team members
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="col-span-2">
-                    <Label htmlFor="title">OKR Title *</Label>
-                    <Input
-                      id="title"
-                      value={newOKR.title}
-                      onChange={(e) =>
-                        setNewOKR({ ...newOKR, title: e.target.value })
-                      }
-                      placeholder="Enter OKR title"
-                    />
-                  </div>
-                  <div className="col-span-2">
-                    <Label htmlFor="objective">Main Objective *</Label>
-                    <Textarea
-                      id="objective"
-                      value={newOKR.objective}
-                      onChange={(e) =>
-                        setNewOKR({ ...newOKR, objective: e.target.value })
-                      }
-                      placeholder="Define the main objective..."
-                      rows={3}
-                    />
-                  </div>
-                  <div className="col-span-2">
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea
-                      id="description"
-                      value={newOKR.description}
-                      onChange={(e) =>
-                        setNewOKR({ ...newOKR, description: e.target.value })
-                      }
-                      placeholder="Provide additional context..."
-                      rows={2}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="quarter">Quarter</Label>
-                    <Select
-                      value={newOKR.quarter}
-                      onValueChange={(value) =>
-                        setNewOKR({ ...newOKR, quarter: value })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select quarter" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Q1">Q1 2024</SelectItem>
-                        <SelectItem value="Q2">Q2 2024</SelectItem>
-                        <SelectItem value="Q3">Q3 2024</SelectItem>
-                        <SelectItem value="Q4">Q4 2024</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="status">Status</Label>
-                    <Select
-                      value={newOKR.status}
-                      onValueChange={(value) =>
-                        setNewOKR({ ...newOKR, status: value as any })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="draft">Draft</SelectItem>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="completed">Completed</SelectItem>
-                        <SelectItem value="cancelled">Cancelled</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="startDate">Start Date *</Label>
-                    <Input
-                      id="startDate"
-                      type="date"
-                      value={newOKR.startDate}
-                      onChange={(e) =>
-                        setNewOKR({ ...newOKR, startDate: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="endDate">End Date *</Label>
-                    <Input
-                      id="endDate"
-                      type="date"
-                      value={newOKR.endDate}
-                      onChange={(e) =>
-                        setNewOKR({ ...newOKR, endDate: e.target.value })
-                      }
-                    />
-                  </div>
-                </div>
-
-                {/* Team Assignment */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Assignment</h3>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <Label>Team Members</Label>
-                      <div className="border rounded p-3 max-h-32 overflow-y-auto">
-                        {teamMembers.map((member) => (
-                          <div
-                            key={member.id}
-                            className="flex items-center space-x-2 mb-2"
-                          >
-                            <Checkbox
-                              checked={newOKR.assignedTo?.includes(member.id)}
-                              onCheckedChange={(checked) => {
-                                const assignedTo = newOKR.assignedTo || [];
-                                if (checked) {
-                                  setNewOKR({
-                                    ...newOKR,
-                                    assignedTo: [...assignedTo, member.id],
-                                  });
-                                } else {
-                                  setNewOKR({
-                                    ...newOKR,
-                                    assignedTo: assignedTo.filter(
-                                      (id) => id !== member.id,
-                                    ),
-                                  });
-                                }
-                              }}
-                            />
-                            <Label className="text-sm">{member.name}</Label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <Label>Teams</Label>
-                      <div className="border rounded p-3 max-h-32 overflow-y-auto">
-                        {teams.map((team) => (
-                          <div
-                            key={team}
-                            className="flex items-center space-x-2 mb-2"
-                          >
-                            <Checkbox
-                              checked={newOKR.assignedTeams?.includes(team)}
-                              onCheckedChange={(checked) => {
-                                const assignedTeams =
-                                  newOKR.assignedTeams || [];
-                                if (checked) {
-                                  setNewOKR({
-                                    ...newOKR,
-                                    assignedTeams: [...assignedTeams, team],
-                                  });
-                                } else {
-                                  setNewOKR({
-                                    ...newOKR,
-                                    assignedTeams: assignedTeams.filter(
-                                      (t) => t !== team,
-                                    ),
-                                  });
-                                }
-                              }}
-                            />
-                            <Label className="text-sm">{team}</Label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <Label>Departments</Label>
-                      <div className="border rounded p-3 max-h-32 overflow-y-auto">
-                        {departments.map((dept) => (
-                          <div
-                            key={dept}
-                            className="flex items-center space-x-2 mb-2"
-                          >
-                            <Checkbox
-                              checked={newOKR.assignedDepartments?.includes(
-                                dept,
-                              )}
-                              onCheckedChange={(checked) => {
-                                const assignedDepartments =
-                                  newOKR.assignedDepartments || [];
-                                if (checked) {
-                                  setNewOKR({
-                                    ...newOKR,
-                                    assignedDepartments: [
-                                      ...assignedDepartments,
-                                      dept,
-                                    ],
-                                  });
-                                } else {
-                                  setNewOKR({
-                                    ...newOKR,
-                                    assignedDepartments:
-                                      assignedDepartments.filter(
-                                        (d) => d !== dept,
-                                      ),
-                                  });
-                                }
-                              }}
-                            />
-                            <Label className="text-sm">{dept}</Label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Key Results */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Key Results</h3>
-                  <div className="border rounded p-4">
-                    <h4 className="font-medium mb-3">Add Key Result</h4>
-                    <div className="grid grid-cols-2 gap-3 mb-3">
-                      <Input
-                        placeholder="Key Result Title"
-                        value={newKeyResult.title}
-                        onChange={(e) =>
-                          setNewKeyResult({
-                            ...newKeyResult,
-                            title: e.target.value,
-                          })
-                        }
-                      />
-                      <Input
-                        placeholder="Description"
-                        value={newKeyResult.description}
-                        onChange={(e) =>
-                          setNewKeyResult({
-                            ...newKeyResult,
-                            description: e.target.value,
-                          })
-                        }
-                      />
-                      <Input
-                        type="number"
-                        placeholder="Target Value"
-                        value={newKeyResult.targetValue}
-                        onChange={(e) =>
-                          setNewKeyResult({
-                            ...newKeyResult,
-                            targetValue: parseFloat(e.target.value) || 0,
-                          })
-                        }
-                      />
-                      <Input
-                        type="number"
-                        placeholder="Current Value"
-                        value={newKeyResult.currentValue}
-                        onChange={(e) =>
-                          setNewKeyResult({
-                            ...newKeyResult,
-                            currentValue: parseFloat(e.target.value) || 0,
-                          })
-                        }
-                      />
-                      <Input
-                        placeholder="Unit (%, hours, etc.)"
-                        value={newKeyResult.unit}
-                        onChange={(e) =>
-                          setNewKeyResult({
-                            ...newKeyResult,
-                            unit: e.target.value,
-                          })
-                        }
-                      />
-                      <Input
-                        type="number"
-                        placeholder="Weight (%)"
-                        value={newKeyResult.weight}
-                        onChange={(e) =>
-                          setNewKeyResult({
-                            ...newKeyResult,
-                            weight: parseFloat(e.target.value) || 0,
-                          })
-                        }
-                      />
-                    </div>
-                    <Button onClick={addKeyResult} size="sm">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Key Result
-                    </Button>
-                  </div>
-
-                  {/* Display Added Key Results */}
-                  {newOKR.keyResults && newOKR.keyResults.length > 0 && (
-                    <div className="space-y-2">
-                      <h4 className="font-medium">Added Key Results:</h4>
-                      {newOKR.keyResults.map((kr, index) => (
-                        <div key={index} className="border rounded p-3">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <div className="font-medium">{kr.title}</div>
-                              <div className="text-sm text-muted-foreground">
-                                {kr.description}
-                              </div>
-                              <div className="text-sm">
-                                Target: {kr.targetValue} {kr.unit} | Current:{" "}
-                                {kr.currentValue} {kr.unit} | Weight:{" "}
-                                {kr.weight}%
-                              </div>
-                            </div>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => {
-                                const updatedKRs =
-                                  newOKR.keyResults?.filter(
-                                    (_, i) => i !== index,
-                                  ) || [];
-                                setNewOKR({
-                                  ...newOKR,
-                                  keyResults: updatedKRs,
-                                });
-                              }}
-                            >
-                              Remove
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setShowOKRDialog(false);
-                    setEditingOKR(null);
-                  }}
-                >
-                  Cancel
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 p-6">
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-amber-600 via-orange-600 to-red-600 bg-clip-text text-transparent">
+              OKRs Management
+            </h1>
+            <p className="text-lg text-slate-600">
+              Manage Objectives and Key Results with team assignments and KPI
+              generation
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={generateKPIs}
+              className="border-2 border-amber-300 hover:bg-amber-50 text-amber-700"
+            >
+              <BarChart3 className="h-4 w-4 mr-2" />
+              Generate KPIs
+            </Button>
+            <Dialog open={showOKRDialog} onOpenChange={setShowOKRDialog}>
+              <DialogTrigger asChild>
+                <Button className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white border-0 shadow-lg">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create OKR
                 </Button>
-                <Button onClick={saveOKR}>
-                  {editingOKR ? "Update" : "Create"} OKR
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
-
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Total OKRs
-                </p>
-                <div className="text-2xl font-bold">{okrs.length}</div>
-              </div>
-              <Target className="h-8 w-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Active OKRs
-                </p>
-                <div className="text-2xl font-bold text-green-600">
-                  {okrs.filter((okr) => okr.status === "active").length}
-                </div>
-              </div>
-              <CheckCircle className="h-8 w-8 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Average Progress
-                </p>
-                <div className="text-2xl font-bold text-blue-600">
-                  {Math.round(
-                    okrs.reduce((sum, okr) => sum + okr.progress, 0) /
-                      okrs.length,
-                  )}
-                  %
-                </div>
-              </div>
-              <BarChart3 className="h-8 w-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Generated KPIs
-                </p>
-                <div className="text-2xl font-bold text-purple-600">
-                  {kpis.length}
-                </div>
-              </div>
-              <TrendingUp className="h-8 w-8 text-purple-500" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Tabs defaultValue="okrs" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="okrs">OKRs Overview</TabsTrigger>
-          <TabsTrigger value="kpis">KPIs Dashboard</TabsTrigger>
-          <TabsTrigger value="progress">Progress Tracking</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="okrs" className="space-y-6">
-          {/* Filters */}
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex flex-col lg:flex-row gap-4">
-                <div className="flex-1">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Search OKRs..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-full lg:w-[180px]">
-                    <SelectValue placeholder="Filter by status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select value={quarterFilter} onValueChange={setQuarterFilter}>
-                  <SelectTrigger className="w-full lg:w-[180px]">
-                    <SelectValue placeholder="Filter by quarter" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Quarters</SelectItem>
-                    <SelectItem value="Q1">Q1 2024</SelectItem>
-                    <SelectItem value="Q2">Q2 2024</SelectItem>
-                    <SelectItem value="Q3">Q3 2024</SelectItem>
-                    <SelectItem value="Q4">Q4 2024</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* OKRs List */}
-          <div className="grid gap-6">
-            {filteredOKRs.map((okr) => (
-              <Card key={okr.id}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <CardTitle className="text-lg">{okr.title}</CardTitle>
-                        <Badge className={getStatusColor(okr.status)}>
-                          {okr.status}
-                        </Badge>
-                        <Badge variant="outline">
-                          {okr.quarter} {okr.year}
-                        </Badge>
-                      </div>
-                      <CardDescription className="text-base">
-                        {okr.objective}
-                      </CardDescription>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto border-0 shadow-2xl bg-gradient-to-br from-white to-slate-50">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+                    {editingOKR ? "Edit OKR" : "Create New OKR"}
+                  </DialogTitle>
+                  <DialogDescription className="text-slate-600">
+                    Define objectives, key results, and assign to team members
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="col-span-2">
+                      <Label htmlFor="title" className="text-slate-700 font-medium">OKR Title *</Label>
+                      <Input
+                        id="title"
+                        value={newOKR.title}
+                        onChange={(e) =>
+                          setNewOKR({ ...newOKR, title: e.target.value })
+                        }
+                        placeholder="Enter OKR title"
+                        className="border-2 border-slate-200 focus:border-amber-400 focus:ring-2 focus:ring-amber-100"
+                      />
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          setSelectedOKR(okr);
-                          setShowCommentDialog(true);
-                        }}
+                    <div className="col-span-2">
+                      <Label htmlFor="objective" className="text-slate-700 font-medium">Main Objective *</Label>
+                      <Textarea
+                        id="objective"
+                        value={newOKR.objective}
+                        onChange={(e) =>
+                          setNewOKR({ ...newOKR, objective: e.target.value })
+                        }
+                        placeholder="Define the main objective..."
+                        rows={3}
+                        className="border-2 border-slate-200 focus:border-amber-400 focus:ring-2 focus:ring-amber-100"
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <Label htmlFor="description" className="text-slate-700 font-medium">Description</Label>
+                      <Textarea
+                        id="description"
+                        value={newOKR.description}
+                        onChange={(e) =>
+                          setNewOKR({ ...newOKR, description: e.target.value })
+                        }
+                        placeholder="Provide additional context..."
+                        rows={2}
+                        className="border-2 border-slate-200 focus:border-amber-400 focus:ring-2 focus:ring-amber-100"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="quarter" className="text-slate-700 font-medium">Quarter</Label>
+                      <Select
+                        value={newOKR.quarter}
+                        onValueChange={(value) =>
+                          setNewOKR({ ...newOKR, quarter: value })
+                        }
                       >
-                        <MessageSquare className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => editOKR(okr)}
+                        <SelectTrigger className="border-2 border-slate-200 focus:border-amber-400">
+                          <SelectValue placeholder="Select quarter" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Q1">Q1 2024</SelectItem>
+                          <SelectItem value="Q2">Q2 2024</SelectItem>
+                          <SelectItem value="Q3">Q3 2024</SelectItem>
+                          <SelectItem value="Q4">Q4 2024</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="status" className="text-slate-700 font-medium">Status</Label>
+                      <Select
+                        value={newOKR.status}
+                        onValueChange={(value) =>
+                          setNewOKR({ ...newOKR, status: value as any })
+                        }
                       >
-                        <Edit className="h-4 w-4" />
-                      </Button>
+                        <SelectTrigger className="border-2 border-slate-200 focus:border-amber-400">
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="draft">Draft</SelectItem>
+                          <SelectItem value="active">Active</SelectItem>
+                          <SelectItem value="completed">Completed</SelectItem>
+                          <SelectItem value="cancelled">Cancelled</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="startDate" className="text-slate-700 font-medium">Start Date *</Label>
+                      <Input
+                        id="startDate"
+                        type="date"
+                        value={newOKR.startDate}
+                        onChange={(e) =>
+                          setNewOKR({ ...newOKR, startDate: e.target.value })
+                        }
+                        className="border-2 border-slate-200 focus:border-amber-400 focus:ring-2 focus:ring-amber-100"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="endDate" className="text-slate-700 font-medium">End Date *</Label>
+                      <Input
+                        id="endDate"
+                        type="date"
+                        value={newOKR.endDate}
+                        onChange={(e) =>
+                          setNewOKR({ ...newOKR, endDate: e.target.value })
+                        }
+                        className="border-2 border-slate-200 focus:border-amber-400 focus:ring-2 focus:ring-amber-100"
+                      />
                     </div>
                   </div>
-                </CardHeader>
-                <CardContent>
+
+                  {/* Team Assignment */}
                   <div className="space-y-4">
-                    {/* Progress */}
-                    <div>
-                      <div className="flex justify-between text-sm mb-2">
-                        <span>Overall Progress</span>
-                        <span className="font-medium">
-                          {Math.round(okr.progress)}%
-                        </span>
+                    <h3 className="text-lg font-semibold text-slate-800">Assignment</h3>
+                    <div className="grid grid-cols-3 gap-4">
+                      <div>
+                        <Label className="text-slate-700 font-medium">Team Members</Label>
+                        <div className="border-2 border-slate-200 rounded-lg p-3 max-h-32 overflow-y-auto bg-gradient-to-r from-slate-50 to-slate-100">
+                          {teamMembers.map((member) => (
+                            <div
+                              key={member.id}
+                              className="flex items-center space-x-2 mb-2"
+                            >
+                              <Checkbox
+                                checked={newOKR.assignedTo?.includes(member.id)}
+                                onCheckedChange={(checked) => {
+                                  const assignedTo = newOKR.assignedTo || [];
+                                  if (checked) {
+                                    setNewOKR({
+                                      ...newOKR,
+                                      assignedTo: [...assignedTo, member.id],
+                                    });
+                                  } else {
+                                    setNewOKR({
+                                      ...newOKR,
+                                      assignedTo: assignedTo.filter(
+                                        (id) => id !== member.id,
+                                      ),
+                                    });
+                                  }
+                                }}
+                              />
+                              <Label className="text-sm">{member.name}</Label>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                      <Progress value={okr.progress} className="h-2" />
+                      <div>
+                        <Label className="text-slate-700 font-medium">Teams</Label>
+                        <div className="border-2 border-slate-200 rounded-lg p-3 max-h-32 overflow-y-auto bg-gradient-to-r from-slate-50 to-slate-100">
+                          {teams.map((team) => (
+                            <div
+                              key={team}
+                              className="flex items-center space-x-2 mb-2"
+                            >
+                              <Checkbox
+                                checked={newOKR.assignedTeams?.includes(team)}
+                                onCheckedChange={(checked) => {
+                                  const assignedTeams =
+                                    newOKR.assignedTeams || [];
+                                  if (checked) {
+                                    setNewOKR({
+                                      ...newOKR,
+                                      assignedTeams: [...assignedTeams, team],
+                                    });
+                                  } else {
+                                    setNewOKR({
+                                      ...newOKR,
+                                      assignedTeams: assignedTeams.filter(
+                                        (t) => t !== team,
+                                      ),
+                                    });
+                                  }
+                                }}
+                              />
+                              <Label className="text-sm">{team}</Label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-slate-700 font-medium">Departments</Label>
+                        <div className="border-2 border-slate-200 rounded-lg p-3 max-h-32 overflow-y-auto bg-gradient-to-r from-slate-50 to-slate-100">
+                          {departments.map((dept) => (
+                            <div
+                              key={dept}
+                              className="flex items-center space-x-2 mb-2"
+                            >
+                              <Checkbox
+                                checked={newOKR.assignedDepartments?.includes(
+                                  dept,
+                                )}
+                                onCheckedChange={(checked) => {
+                                  const assignedDepartments =
+                                    newOKR.assignedDepartments || [];
+                                  if (checked) {
+                                    setNewOKR({
+                                      ...newOKR,
+                                      assignedDepartments: [
+                                        ...assignedDepartments,
+                                        dept,
+                                      ],
+                                    });
+                                  } else {
+                                    setNewOKR({
+                                      ...newOKR,
+                                      assignedDepartments:
+                                        assignedDepartments.filter(
+                                          (d) => d !== dept,
+                                        ),
+                                    });
+                                  }
+                                }}
+                              />
+                              <Label className="text-sm">{dept}</Label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Key Results */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-slate-800">Key Results</h3>
+                    <div className="border-2 border-amber-200 rounded-lg p-4 bg-gradient-to-r from-amber-50 to-orange-50">
+                      <h4 className="font-medium mb-3 text-amber-800">Add Key Result</h4>
+                      <div className="grid grid-cols-2 gap-3 mb-3">
+                        <Input
+                          placeholder="Key Result Title"
+                          value={newKeyResult.title}
+                          onChange={(e) =>
+                            setNewKeyResult({
+                              ...newKeyResult,
+                              title: e.target.value,
+                            })
+                          }
+                          className="border-2 border-amber-200 focus:border-amber-400"
+                        />
+                        <Input
+                          placeholder="Description"
+                          value={newKeyResult.description}
+                          onChange={(e) =>
+                            setNewKeyResult({
+                              ...newKeyResult,
+                              description: e.target.value,
+                            })
+                          }
+                          className="border-2 border-amber-200 focus:border-amber-400"
+                        />
+                        <Input
+                          type="number"
+                          placeholder="Target Value"
+                          value={newKeyResult.targetValue}
+                          onChange={(e) =>
+                            setNewKeyResult({
+                              ...newKeyResult,
+                              targetValue: parseFloat(e.target.value) || 0,
+                            })
+                          }
+                          className="border-2 border-amber-200 focus:border-amber-400"
+                        />
+                        <Input
+                          type="number"
+                          placeholder="Current Value"
+                          value={newKeyResult.currentValue}
+                          onChange={(e) =>
+                            setNewKeyResult({
+                              ...newKeyResult,
+                              currentValue: parseFloat(e.target.value) || 0,
+                            })
+                          }
+                          className="border-2 border-amber-200 focus:border-amber-400"
+                        />
+                        <Input
+                          placeholder="Unit (%, hours, etc.)"
+                          value={newKeyResult.unit}
+                          onChange={(e) =>
+                            setNewKeyResult({
+                              ...newKeyResult,
+                              unit: e.target.value,
+                            })
+                          }
+                          className="border-2 border-amber-200 focus:border-amber-400"
+                        />
+                        <Input
+                          type="number"
+                          placeholder="Weight (%)"
+                          value={newKeyResult.weight}
+                          onChange={(e) =>
+                            setNewKeyResult({
+                              ...newKeyResult,
+                              weight: parseFloat(e.target.value) || 0,
+                            })
+                          }
+                          className="border-2 border-amber-200 focus:border-amber-400"
+                        />
+                      </div>
+                      <Button
+                        onClick={addKeyResult}
+                        size="sm"
+                        className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white border-0"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Key Result
+                      </Button>
                     </div>
 
-                    {/* Key Results */}
-                    <div>
-                      <h4 className="font-medium mb-3">Key Results</h4>
-                      <div className="space-y-3">
-                        {okr.keyResults.map((kr) => (
-                          <div key={kr.id} className="border rounded p-3">
-                            <div className="flex justify-between items-start mb-2">
-                              <div className="flex-1">
-                                <div className="font-medium text-sm">
-                                  {kr.title}
-                                </div>
-                                <div className="text-xs text-muted-foreground">
+                    {/* Display Added Key Results */}
+                    {newOKR.keyResults && newOKR.keyResults.length > 0 && (
+                      <div className="space-y-2">
+                        <h4 className="font-medium text-slate-800">Added Key Results:</h4>
+                        {newOKR.keyResults.map((kr, index) => (
+                          <div key={index} className="border-2 border-slate-200 rounded-lg p-3 bg-gradient-to-r from-white to-slate-50">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <div className="font-medium text-slate-800">{kr.title}</div>
+                                <div className="text-sm text-muted-foreground">
                                   {kr.description}
                                 </div>
+                                <div className="text-sm">
+                                  Target: {kr.targetValue} {kr.unit} | Current:{" "}
+                                  {kr.currentValue} {kr.unit} | Weight:{" "}
+                                  {kr.weight}%
+                                </div>
                               </div>
-                              <div className="text-sm font-medium">
-                                {kr.currentValue}/{kr.targetValue} {kr.unit}
-                              </div>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                  const updatedKRs =
+                                    newOKR.keyResults?.filter(
+                                      (_, i) => i !== index,
+                                    ) || [];
+                                  setNewOKR({
+                                    ...newOKR,
+                                    keyResults: updatedKRs,
+                                  });
+                                }}
+                                className="border-2 border-red-300 hover:bg-red-50 text-red-700"
+                              >
+                                Remove
+                              </Button>
                             </div>
-                            <Progress
-                              value={(kr.currentValue / kr.targetValue) * 100}
-                              className="h-1"
-                            />
                           </div>
                         ))}
-                      </div>
-                    </div>
-
-                    {/* Assignments */}
-                    <div className="flex flex-wrap gap-4 text-sm">
-                      {okr.assignedTo.length > 0 && (
-                        <div className="flex items-center gap-2">
-                          <User className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-muted-foreground">
-                            Members:
-                          </span>
-                          <div className="flex gap-1">
-                            {okr.assignedTo.map((memberId) => {
-                              const member = teamMembers.find(
-                                (m) => m.id === memberId,
-                              );
-                              return member ? (
-                                <Badge
-                                  key={memberId}
-                                  variant="outline"
-                                  className="text-xs"
-                                >
-                                  {member.name}
-                                </Badge>
-                              ) : null;
-                            })}
-                          </div>
-                        </div>
-                      )}
-
-                      {okr.assignedTeams.length > 0 && (
-                        <div className="flex items-center gap-2">
-                          <Users className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-muted-foreground">Teams:</span>
-                          <div className="flex gap-1">
-                            {okr.assignedTeams.map((team) => (
-                              <Badge
-                                key={team}
-                                variant="outline"
-                                className="text-xs"
-                              >
-                                {team}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {okr.assignedDepartments.length > 0 && (
-                        <div className="flex items-center gap-2">
-                          <Building className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-muted-foreground">
-                            Departments:
-                          </span>
-                          <div className="flex gap-1">
-                            {okr.assignedDepartments.map((dept) => (
-                              <Badge
-                                key={dept}
-                                variant="outline"
-                                className="text-xs"
-                              >
-                                {dept}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Comments Preview */}
-                    {okr.comments.length > 0 && (
-                      <div className="border-t pt-3">
-                        <div className="text-sm text-muted-foreground mb-2">
-                          Latest Comment ({okr.comments.length} total)
-                        </div>
-                        <div className="text-sm">
-                          <span className="font-medium">
-                            {okr.comments[okr.comments.length - 1].author}:
-                          </span>
-                          <span className="ml-2">
-                            {okr.comments[okr.comments.length - 1].content}
-                          </span>
-                        </div>
                       </div>
                     )}
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowOKRDialog(false);
+                      setEditingOKR(null);
+                    }}
+                    className="border-2 border-slate-300 hover:bg-slate-100"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={saveOKR}
+                    className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white border-0"
+                  >
+                    {editingOKR ? "Update" : "Create"} OKR
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
-        </TabsContent>
+        </div>
 
-        <TabsContent value="kpis" className="space-y-6">
-          <Card>
-            <CardHeader>
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-amber-500 to-orange-600 text-white">
+            <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>KPIs Dashboard</CardTitle>
-                  <CardDescription>
-                    Key Performance Indicators generated from OKRs
-                  </CardDescription>
+                  <p className="text-sm font-medium text-amber-100">
+                    Total OKRs
+                  </p>
+                  <div className="text-3xl font-bold">{okrs.length}</div>
                 </div>
-                <Button onClick={generateKPIs}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Refresh KPIs
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4">
-                {kpis.map((kpi) => (
-                  <div key={kpi.id} className="border rounded p-4">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h4 className="font-medium">{kpi.name}</h4>
-                          <Badge variant="outline" className="capitalize">
-                            {kpi.category}
-                          </Badge>
-                          {getTrendIcon(kpi.trend)}
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          {kpi.description}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          Assigned to: {kpi.assignedTo} • {kpi.period}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <div className="font-medium">
-                          {kpi.currentValue}/{kpi.targetValue} {kpi.unit}
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          {Math.round(
-                            (kpi.currentValue / kpi.targetValue) * 100,
-                          )}
-                          %
-                        </div>
-                      </div>
-                    </div>
-                    <Progress
-                      value={(kpi.currentValue / kpi.targetValue) * 100}
-                      className="h-2"
-                    />
-                  </div>
-                ))}
+                <Target className="h-8 w-8 text-amber-200" />
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
 
-        <TabsContent value="progress" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Progress Tracking</CardTitle>
-              <CardDescription>
-                Detailed progress analysis across all OKRs
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>OKR</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Progress</TableHead>
-                    <TableHead>Key Results</TableHead>
-                    <TableHead>Assigned To</TableHead>
-                    <TableHead>Last Updated</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {okrs.map((okr) => (
-                    <TableRow key={okr.id}>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{okr.title}</div>
-                          <div className="text-sm text-muted-foreground">
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-green-500 to-emerald-600 text-white">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-green-100">
+                    Active OKRs
+                  </p>
+                  <div className="text-3xl font-bold">
+                    {okrs.filter((okr) => okr.status === "active").length}
+                  </div>
+                </div>
+                <CheckCircle className="h-8 w-8 text-green-200" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-blue-100">
+                    Average Progress
+                  </p>
+                  <div className="text-3xl font-bold">
+                    {Math.round(
+                      okrs.reduce((sum, okr) => sum + okr.progress, 0) /
+                        okrs.length,
+                    )}
+                    %
+                  </div>
+                </div>
+                <BarChart3 className="h-8 w-8 text-blue-200" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-purple-500 to-violet-600 text-white">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-purple-100">
+                    Generated KPIs
+                  </p>
+                  <div className="text-3xl font-bold">
+                    {kpis.length}
+                  </div>
+                </div>
+                <TrendingUp className="h-8 w-8 text-purple-200" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Tabs defaultValue="okrs" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-slate-100 to-slate-200 rounded-xl p-1 h-12">
+            <TabsTrigger value="okrs" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-white rounded-lg">OKRs Overview</TabsTrigger>
+            <TabsTrigger value="kpis" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-white rounded-lg">KPIs Dashboard</TabsTrigger>
+            <TabsTrigger value="progress" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-orange-600 data-[state=active]:text-white rounded-lg">Progress Tracking</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="okrs" className="space-y-6">
+            {/* Filters */}
+            <Card className="border-0 shadow-lg bg-gradient-to-r from-white to-slate-50">
+              <CardContent className="p-6">
+                <div className="flex flex-col lg:flex-row gap-4">
+                  <div className="flex-1">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Search OKRs..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10 border-2 border-slate-200 focus:border-amber-400 focus:ring-2 focus:ring-amber-100"
+                      />
+                    </div>
+                  </div>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-full lg:w-[180px] border-2 border-slate-200 focus:border-amber-400">
+                      <SelectValue placeholder="Filter by status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="draft">Draft</SelectItem>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
+                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value={quarterFilter} onValueChange={setQuarterFilter}>
+                    <SelectTrigger className="w-full lg:w-[180px] border-2 border-slate-200 focus:border-amber-400">
+                      <SelectValue placeholder="Filter by quarter" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Quarters</SelectItem>
+                      <SelectItem value="Q1">Q1 2024</SelectItem>
+                      <SelectItem value="Q2">Q2 2024</SelectItem>
+                      <SelectItem value="Q3">Q3 2024</SelectItem>
+                      <SelectItem value="Q4">Q4 2024</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* OKRs List */}
+            <div className="grid gap-6">
+              {filteredOKRs.map((okr) => (
+                <Card key={okr.id} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-slate-50">
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <CardTitle className="text-lg text-slate-800">{okr.title}</CardTitle>
+                          <Badge className={getStatusColor(okr.status)}>
+                            {okr.status}
+                          </Badge>
+                          <Badge className="bg-gradient-to-r from-violet-100 to-purple-200 text-violet-700 border-0">
                             {okr.quarter} {okr.year}
-                          </div>
+                          </Badge>
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(okr.status)}>
-                          {okr.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Progress value={okr.progress} className="h-2 w-20" />
-                          <span className="text-sm font-medium">
+                        <CardDescription className="text-base text-slate-600">
+                          {okr.objective}
+                        </CardDescription>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setSelectedOKR(okr);
+                            setShowCommentDialog(true);
+                          }}
+                          className="border-2 border-slate-300 hover:bg-slate-100"
+                        >
+                          <MessageSquare className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => editOKR(okr)}
+                          className="border-2 border-amber-300 hover:bg-amber-50 text-amber-700"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {/* Progress */}
+                      <div>
+                        <div className="flex justify-between text-sm mb-2">
+                          <span>Overall Progress</span>
+                          <span className="font-medium">
                             {Math.round(okr.progress)}%
                           </span>
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm">
-                          {okr.keyResults.length} key results
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex flex-col gap-1">
-                          {okr.assignedTo.length > 0 && (
-                            <div className="text-xs">
-                              {okr.assignedTo.length} members
-                            </div>
-                          )}
-                          {okr.assignedTeams.length > 0 && (
-                            <div className="text-xs">
-                              {okr.assignedTeams.length} teams
-                            </div>
-                          )}
-                          {okr.assignedDepartments.length > 0 && (
-                            <div className="text-xs">
-                              {okr.assignedDepartments.length} departments
-                            </div>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm text-muted-foreground">
-                          {new Date(okr.lastUpdated).toLocaleDateString()}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-
-      {/* Comment Dialog */}
-      <Dialog open={showCommentDialog} onOpenChange={setShowCommentDialog}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>OKR Comments & Discussion</DialogTitle>
-            <DialogDescription>
-              Add comments and tag team members for collaboration
-            </DialogDescription>
-          </DialogHeader>
-          {selectedOKR && (
-            <div className="space-y-4">
-              <div className="max-h-64 overflow-y-auto space-y-3">
-                {selectedOKR.comments.map((comment) => (
-                  <div key={comment.id} className="border rounded p-3">
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="font-medium text-sm">
-                        {comment.author}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {new Date(comment.timestamp).toLocaleString()}
-                      </div>
-                    </div>
-                    <div className="text-sm">{comment.content}</div>
-                    {comment.taggedUsers.length > 0 && (
-                      <div className="flex gap-1 mt-2">
-                        {comment.taggedUsers.map((userId) => {
-                          const member = teamMembers.find(
-                            (m) => m.id === userId,
-                          );
-                          return member ? (
-                            <Badge
-                              key={userId}
-                              variant="outline"
-                              className="text-xs"
-                            >
-                              @{member.name}
-                            </Badge>
-                          ) : null;
-                        })}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <div className="space-y-3">
-                <Textarea
-                  placeholder="Add a comment..."
-                  value={newComment.content}
-                  onChange={(e) =>
-                    setNewComment({ ...newComment, content: e.target.value })
-                  }
-                  rows={3}
-                />
-                <div>
-                  <Label className="text-sm">Tag Team Members</Label>
-                  <div className="border rounded p-3 max-h-32 overflow-y-auto">
-                    {teamMembers.map((member) => (
-                      <div
-                        key={member.id}
-                        className="flex items-center space-x-2 mb-2"
-                      >
-                        <Checkbox
-                          checked={newComment.taggedUsers.includes(member.id)}
-                          onCheckedChange={(checked) => {
-                            if (checked) {
-                              setNewComment({
-                                ...newComment,
-                                taggedUsers: [
-                                  ...newComment.taggedUsers,
-                                  member.id,
-                                ],
-                              });
-                            } else {
-                              setNewComment({
-                                ...newComment,
-                                taggedUsers: newComment.taggedUsers.filter(
-                                  (id) => id !== member.id,
-                                ),
-                              });
-                            }
-                          }}
+                        <Progress
+                          value={okr.progress}
+                          className="h-3 bg-gradient-to-r from-amber-200 to-orange-200"
                         />
-                        <Label className="text-sm">{member.name}</Label>
                       </div>
+
+                      {/* Key Results */}
+                      <div>
+                        <h4 className="font-medium mb-3 text-slate-800">Key Results</h4>
+                        <div className="space-y-3">
+                          {okr.keyResults.map((kr) => (
+                            <div key={kr.id} className="border-2 border-slate-200 rounded-lg p-3 bg-gradient-to-r from-white to-slate-50">
+                              <div className="flex justify-between items-start mb-2">
+                                <div className="flex-1">
+                                  <div className="font-medium text-sm text-slate-800">
+                                    {kr.title}
+                                  </div>
+                                  <div className="text-xs text-muted-foreground">
+                                    {kr.description}
+                                  </div>
+                                </div>
+                                <div className="text-sm font-medium text-amber-700">
+                                  {kr.currentValue}/{kr.targetValue} {kr.unit}
+                                </div>
+                              </div>
+                              <Progress
+                                value={(kr.currentValue / kr.targetValue) * 100}
+                                className="h-2 bg-gradient-to-r from-amber-200 to-orange-200"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Assignments */}
+                      <div className="flex flex-wrap gap-4 text-sm">
+                        {okr.assignedTo.length > 0 && (
+                          <div className="flex items-center gap-2">
+                            <User className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-muted-foreground">
+                              Members:
+                            </span>
+                            <div className="flex gap-1">
+                              {okr.assignedTo.map((memberId) => {
+                                const member = teamMembers.find(
+                                  (m) => m.id === memberId,
+                                );
+                                return member ? (
+                                  <Badge
+                                    key={memberId}
+                                    className="bg-gradient-to-r from-blue-100 to-indigo-200 text-blue-700 border-0 text-xs"
+                                  >
+                                    {member.name}
+                                  </Badge>
+                                ) : null;
+                              })}
+                            </div>
+                          </div>
+                        )}
+
+                        {okr.assignedTeams.length > 0 && (
+                          <div className="flex items-center gap-2">
+                            <Users className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-muted-foreground">Teams:</span>
+                            <div className="flex gap-1">
+                              {okr.assignedTeams.map((team) => (
+                                <Badge
+                                  key={team}
+                                  className="bg-gradient-to-r from-green-100 to-emerald-200 text-green-700 border-0 text-xs"
+                                >
+                                  {team}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {okr.assignedDepartments.length > 0 && (
+                          <div className="flex items-center gap-2">
+                            <Building className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-muted-foreground">
+                              Departments:
+                            </span>
+                            <div className="flex gap-1">
+                              {okr.assignedDepartments.map((dept) => (
+                                <Badge
+                                  key={dept}
+                                  className="bg-gradient-to-r from-purple-100 to-violet-200 text-purple-700 border-0 text-xs"
+                                >
+                                  {dept}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Comments Preview */}
+                      {okr.comments.length > 0 && (
+                        <div className="border-t pt-3">
+                          <div className="text-sm text-muted-foreground mb-2">
+                            Latest Comment ({okr.comments.length} total)
+                          </div>
+                          <div className="text-sm bg-gradient-to-r from-slate-50 to-slate-100 p-3 rounded-lg">
+                            <span className="font-medium text-slate-800">
+                              {okr.comments[okr.comments.length - 1].author}:
+                            </span>
+                            <span className="ml-2">
+                              {okr.comments[okr.comments.length - 1].content}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="kpis" className="space-y-6">
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-slate-50">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-slate-800">KPIs Dashboard</CardTitle>
+                    <CardDescription>
+                      Key Performance Indicators generated from OKRs
+                    </CardDescription>
+                  </div>
+                  <Button
+                    onClick={generateKPIs}
+                    className="bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700 text-white border-0"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Refresh KPIs
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4">
+                  {kpis.map((kpi) => (
+                    <div key={kpi.id} className="border-2 border-slate-200 rounded-lg p-4 bg-gradient-to-r from-white to-slate-50">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className="font-medium text-slate-800">{kpi.name}</h4>
+                            <Badge className="bg-gradient-to-r from-cyan-100 to-blue-200 text-cyan-700 border-0 capitalize">
+                              {kpi.category}
+                            </Badge>
+                            {getTrendIcon(kpi.trend)}
+                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            {kpi.description}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            Assigned to: {kpi.assignedTo} • {kpi.period}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-medium text-slate-800">
+                            {kpi.currentValue}/{kpi.targetValue} {kpi.unit}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {Math.round(
+                              (kpi.currentValue / kpi.targetValue) * 100,
+                            )}
+                            %
+                          </div>
+                        </div>
+                      </div>
+                      <Progress
+                        value={(kpi.currentValue / kpi.targetValue) * 100}
+                        className="h-3 bg-gradient-to-r from-indigo-200 to-purple-200"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="progress" className="space-y-6">
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-slate-50">
+              <CardHeader>
+                <CardTitle className="text-slate-800">Progress Tracking</CardTitle>
+                <CardDescription>
+                  Detailed progress analysis across all OKRs
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>OKR</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Progress</TableHead>
+                      <TableHead>Key Results</TableHead>
+                      <TableHead>Assigned To</TableHead>
+                      <TableHead>Last Updated</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {okrs.map((okr) => (
+                      <TableRow key={okr.id}>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium text-slate-800">{okr.title}</div>
+                            <div className="text-sm text-muted-foreground">
+                              {okr.quarter} {okr.year}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={getStatusColor(okr.status)}>
+                            {okr.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Progress value={okr.progress} className="h-2 w-20 bg-gradient-to-r from-amber-200 to-orange-200" />
+                            <span className="text-sm font-medium">
+                              {Math.round(okr.progress)}%
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm">
+                            {okr.keyResults.length} key results
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-col gap-1">
+                            {okr.assignedTo.length > 0 && (
+                              <div className="text-xs">
+                                {okr.assignedTo.length} members
+                              </div>
+                            )}
+                            {okr.assignedTeams.length > 0 && (
+                              <div className="text-xs">
+                                {okr.assignedTeams.length} teams
+                              </div>
+                            )}
+                            {okr.assignedDepartments.length > 0 && (
+                              <div className="text-xs">
+                                {okr.assignedDepartments.length} departments
+                              </div>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm text-muted-foreground">
+                            {new Date(okr.lastUpdated).toLocaleDateString()}
+                          </div>
+                        </TableCell>
+                      </TableRow>
                     ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+
+        {/* Comment Dialog */}
+        <Dialog open={showCommentDialog} onOpenChange={setShowCommentDialog}>
+          <DialogContent className="max-w-2xl border-0 shadow-2xl bg-gradient-to-br from-white to-slate-50">
+            <DialogHeader>
+              <DialogTitle className="text-xl bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+                OKR Comments & Discussion
+              </DialogTitle>
+              <DialogDescription className="text-slate-600">
+                Add comments and tag team members for collaboration
+              </DialogDescription>
+            </DialogHeader>
+            {selectedOKR && (
+              <div className="space-y-4">
+                <div className="max-h-64 overflow-y-auto space-y-3">
+                  {selectedOKR.comments.map((comment) => (
+                    <div key={comment.id} className="border-2 border-slate-200 rounded-lg p-3 bg-gradient-to-r from-white to-slate-50">
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="font-medium text-sm text-slate-800">
+                          {comment.author}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {new Date(comment.timestamp).toLocaleString()}
+                        </div>
+                      </div>
+                      <div className="text-sm">{comment.content}</div>
+                      {comment.taggedUsers.length > 0 && (
+                        <div className="flex gap-1 mt-2">
+                          {comment.taggedUsers.map((userId) => {
+                            const member = teamMembers.find(
+                              (m) => m.id === userId,
+                            );
+                            return member ? (
+                              <Badge
+                                key={userId}
+                                className="bg-gradient-to-r from-amber-100 to-orange-200 text-amber-700 border-0 text-xs"
+                              >
+                                @{member.name}
+                              </Badge>
+                            ) : null;
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="space-y-3">
+                  <Textarea
+                    placeholder="Add a comment..."
+                    value={newComment.content}
+                    onChange={(e) =>
+                      setNewComment({ ...newComment, content: e.target.value })
+                    }
+                    rows={3}
+                    className="border-2 border-slate-200 focus:border-amber-400 focus:ring-2 focus:ring-amber-100"
+                  />
+                  <div>
+                    <Label className="text-sm text-slate-700 font-medium">Tag Team Members</Label>
+                    <div className="border-2 border-slate-200 rounded-lg p-3 max-h-32 overflow-y-auto bg-gradient-to-r from-slate-50 to-slate-100">
+                      {teamMembers.map((member) => (
+                        <div
+                          key={member.id}
+                          className="flex items-center space-x-2 mb-2"
+                        >
+                          <Checkbox
+                            checked={newComment.taggedUsers.includes(member.id)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setNewComment({
+                                  ...newComment,
+                                  taggedUsers: [
+                                    ...newComment.taggedUsers,
+                                    member.id,
+                                  ],
+                                });
+                              } else {
+                                setNewComment({
+                                  ...newComment,
+                                  taggedUsers: newComment.taggedUsers.filter(
+                                    (id) => id !== member.id,
+                                  ),
+                                });
+                              }
+                            }}
+                          />
+                          <Label className="text-sm">{member.name}</Label>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowCommentDialog(false)}
-            >
-              Cancel
-            </Button>
-            <Button onClick={addComment}>
-              <MessageSquare className="h-4 w-4 mr-2" />
-              Add Comment
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            )}
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setShowCommentDialog(false)}
+                className="border-2 border-slate-300 hover:bg-slate-100"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={addComment}
+                className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white border-0"
+              >
+                <MessageSquare className="h-4 w-4 mr-2" />
+                Add Comment
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 };
