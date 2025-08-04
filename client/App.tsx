@@ -26,6 +26,7 @@ import Notifications from "./pages/Notifications";
 import Attendance from "./pages/Attendance";
 import LeaveManagement from "./pages/LeaveManagement";
 import Payroll from "./pages/Payroll";
+import HumanResources from "./pages/HumanResources";
 import NotFound from "./pages/NotFound";
 import PlaceholderPage from "./pages/PlaceholderPage";
 
