@@ -174,6 +174,23 @@ const getStatusColor = (status: string) => {
   }
 };
 
+const getDepartmentColor = (department: string) => {
+  switch (department) {
+    case "Engineering":
+      return "bg-gradient-to-r from-blue-500 to-cyan-600 text-white border-0";
+    case "Marketing":
+      return "bg-gradient-to-r from-pink-500 to-rose-600 text-white border-0";
+    case "Design":
+      return "bg-gradient-to-r from-purple-500 to-violet-600 text-white border-0";
+    case "Sales":
+      return "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-0";
+    case "Operations":
+      return "bg-gradient-to-r from-orange-500 to-red-500 text-white border-0";
+    default:
+      return "bg-gradient-to-r from-gray-500 to-gray-600 text-white border-0";
+  }
+};
+
 const getInitials = (name: string) => {
   return name
     .split(" ")
@@ -201,368 +218,383 @@ export default function Teams() {
   const departments = [...new Set(teams.map((team) => team.department))];
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Teams</h1>
-          <p className="text-muted-foreground">
-            Manage your teams and team members across all projects.
-          </p>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Dialog open={isCreateTeamOpen} onOpenChange={setIsCreateTeamOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="mr-2 h-4 w-4" />
-                Create Team
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
-              <DialogHeader>
-                <DialogTitle>Create New Team</DialogTitle>
-                <DialogDescription>
-                  Create a new team and start collaborating with your
-                  colleagues.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="name">Team Name</Label>
-                  <Input
-                    id="name"
-                    placeholder="Enter team name"
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    placeholder="Describe the team's purpose and responsibilities"
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="department">Department</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select department" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="engineering">Engineering</SelectItem>
-                      <SelectItem value="marketing">Marketing</SelectItem>
-                      <SelectItem value="sales">Sales</SelectItem>
-                      <SelectItem value="design">Design</SelectItem>
-                      <SelectItem value="operations">Operations</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="location">Location</Label>
-                  <Input
-                    id="location"
-                    placeholder="e.g., San Francisco, CA or Remote"
-                    className="col-span-3"
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsCreateTeamOpen(false)}
-                >
-                  Cancel
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 p-6">
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 bg-clip-text text-transparent">
+              Teams
+            </h1>
+            <p className="text-lg text-slate-600">
+              Manage your teams and team members across all projects.
+            </p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Dialog open={isCreateTeamOpen} onOpenChange={setIsCreateTeamOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white border-0 shadow-lg">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Team
                 </Button>
-                <Button type="submit">Create Team</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
-
-      {/* Filters and Search */}
-      <div className="flex items-center space-x-4">
-        <div className="flex-1 max-w-sm">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search teams..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[500px] border-0 shadow-2xl bg-gradient-to-br from-white to-slate-50">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                    Create New Team
+                  </DialogTitle>
+                  <DialogDescription className="text-slate-600">
+                    Create a new team and start collaborating with your
+                    colleagues.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="name" className="text-slate-700 font-medium">Team Name</Label>
+                    <Input
+                      id="name"
+                      placeholder="Enter team name"
+                      className="col-span-3 border-2 border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="description" className="text-slate-700 font-medium">Description</Label>
+                    <Textarea
+                      id="description"
+                      placeholder="Describe the team's purpose and responsibilities"
+                      className="col-span-3 border-2 border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="department" className="text-slate-700 font-medium">Department</Label>
+                    <Select>
+                      <SelectTrigger className="border-2 border-slate-200 focus:border-emerald-400">
+                        <SelectValue placeholder="Select department" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="engineering">Engineering</SelectItem>
+                        <SelectItem value="marketing">Marketing</SelectItem>
+                        <SelectItem value="sales">Sales</SelectItem>
+                        <SelectItem value="design">Design</SelectItem>
+                        <SelectItem value="operations">Operations</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="location" className="text-slate-700 font-medium">Location</Label>
+                    <Input
+                      id="location"
+                      placeholder="e.g., San Francisco, CA or Remote"
+                      className="col-span-3 border-2 border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsCreateTeamOpen(false)}
+                    className="border-2 border-slate-300 hover:bg-slate-100"
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white border-0">
+                    Create Team
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
-        <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
-          <SelectTrigger className="w-[180px]">
-            <Filter className="mr-2 h-4 w-4" />
-            <SelectValue placeholder="All Departments" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Departments</SelectItem>
-            {departments.map((dept) => (
-              <SelectItem key={dept} value={dept}>
-                {dept}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
 
-      {/* Teams Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {filteredTeams.map((team) => (
-          <Card key={team.id} className="hover:shadow-md transition-shadow">
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
-                <div className="space-y-1">
-                  <CardTitle className="text-lg">{team.name}</CardTitle>
-                  <Badge variant="secondary">{team.department}</Badge>
+        {/* Filters and Search */}
+        <div className="flex items-center space-x-4">
+          <div className="flex-1 max-w-sm">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search teams..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 border-2 border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+              />
+            </div>
+          </div>
+          <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
+            <SelectTrigger className="w-[180px] border-2 border-slate-200 focus:border-emerald-400">
+              <Filter className="mr-2 h-4 w-4" />
+              <SelectValue placeholder="All Departments" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Departments</SelectItem>
+              {departments.map((dept) => (
+                <SelectItem key={dept} value={dept}>
+                  {dept}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Teams Grid */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {filteredTeams.map((team) => (
+            <Card key={team.id} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-slate-50">
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <CardTitle className="text-lg text-slate-800">{team.name}</CardTitle>
+                    <Badge className={getDepartmentColor(team.department)}>
+                      {team.department}
+                    </Badge>
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuItem>
+                        <Edit className="mr-2 h-4 w-4" />
+                        Edit Team
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setSelectedTeam(team.id);
+                          setIsInviteMemberOpen(true);
+                        }}
+                      >
+                        <UserPlus className="mr-2 h-4 w-4" />
+                        Invite Member
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="text-destructive">
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete Team
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem>
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit Team
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
+                <CardDescription className="text-sm text-slate-600">
+                  {team.description}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Team Stats */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center p-3 rounded-lg bg-gradient-to-r from-blue-100 to-cyan-100">
+                    <div className="text-2xl font-bold text-blue-700">
+                      {team.activeProjects}
+                    </div>
+                    <div className="text-xs text-blue-600 font-medium">
+                      Active Projects
+                    </div>
+                  </div>
+                  <div className="text-center p-3 rounded-lg bg-gradient-to-r from-green-100 to-emerald-100">
+                    <div className="text-2xl font-bold text-green-700">
+                      {team.completedProjects}
+                    </div>
+                    <div className="text-xs text-green-600 font-medium">Completed</div>
+                  </div>
+                </div>
+
+                {/* Location */}
+                <div className="flex items-center text-sm text-muted-foreground p-2 rounded-lg bg-gradient-to-r from-slate-50 to-slate-100">
+                  <MapPin className="mr-1 h-3 w-3" />
+                  {team.location}
+                </div>
+
+                {/* Team Members */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">
+                      Members ({team.members.length})
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={() => {
                         setSelectedTeam(team.id);
                         setIsInviteMemberOpen(true);
                       }}
+                      className="h-8 w-8 p-0 hover:bg-emerald-50"
                     >
-                      <UserPlus className="mr-2 h-4 w-4" />
-                      Invite Member
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-destructive">
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete Team
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                      <UserPlus className="h-3 w-3 text-emerald-600" />
+                    </Button>
+                  </div>
+                  <div className="space-y-2">
+                    {team.members.slice(0, 3).map((member) => (
+                      <div
+                        key={member.id}
+                        className="flex items-center space-x-3 p-2 rounded-lg bg-gradient-to-r from-white to-slate-50 border border-slate-200"
+                      >
+                        <div className="relative">
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage src={member.avatar} alt={member.name} />
+                            <AvatarFallback className="text-xs bg-gradient-to-r from-indigo-400 to-purple-500 text-white">
+                              {getInitials(member.name)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div
+                            className={`absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-background ${getStatusColor(
+                              member.status,
+                            )}`}
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate text-slate-800">
+                            {member.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground truncate">
+                            {member.role}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                    {team.members.length > 3 && (
+                      <div className="text-xs text-muted-foreground text-center py-1 bg-gradient-to-r from-slate-100 to-slate-200 rounded-lg">
+                        +{team.members.length - 3} more members
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Invite Member Dialog */}
+        <Dialog open={isInviteMemberOpen} onOpenChange={setIsInviteMemberOpen}>
+          <DialogContent className="sm:max-w-[500px] border-0 shadow-2xl bg-gradient-to-br from-white to-slate-50">
+            <DialogHeader>
+              <DialogTitle className="text-2xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Invite Team Member
+              </DialogTitle>
+              <DialogDescription className="text-slate-600">
+                Send an email invitation to add a new member to the team.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="email" className="text-slate-700 font-medium">Email Address</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter email address"
+                  className="col-span-3 border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                />
               </div>
-              <CardDescription className="text-sm">
-                {team.description}
-              </CardDescription>
+              <div className="grid gap-2">
+                <Label htmlFor="role" className="text-slate-700 font-medium">Role</Label>
+                <Select>
+                  <SelectTrigger className="border-2 border-slate-200 focus:border-blue-400">
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="member">Team Member</SelectItem>
+                    <SelectItem value="lead">Team Lead</SelectItem>
+                    <SelectItem value="senior">Senior Member</SelectItem>
+                    <SelectItem value="junior">Junior Member</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="team" className="text-slate-700 font-medium">Team</Label>
+                <Select value={selectedTeam || ""}>
+                  <SelectTrigger className="border-2 border-slate-200 focus:border-blue-400">
+                    <SelectValue placeholder="Select team" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {teams.map((team) => (
+                      <SelectItem key={team.id} value={team.id}>
+                        {team.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="message" className="text-slate-700 font-medium">Invitation Message (Optional)</Label>
+                <Textarea
+                  id="message"
+                  placeholder="Add a personal message to the invitation"
+                  className="col-span-3 border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsInviteMemberOpen(false)}
+                className="border-2 border-slate-300 hover:bg-slate-100"
+              >
+                Cancel
+              </Button>
+              <Button type="submit" className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white border-0">
+                <Mail className="mr-2 h-4 w-4" />
+                Send Invitation
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Team Stats Summary */}
+        <div className="grid gap-4 md:grid-cols-4">
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-blue-100">Total Teams</CardTitle>
+              <Users className="h-8 w-8 text-blue-200" />
             </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Team Stats */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">
-                    {team.activeProjects}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    Active Projects
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-success">
-                    {team.completedProjects}
-                  </div>
-                  <div className="text-xs text-muted-foreground">Completed</div>
-                </div>
-              </div>
-
-              {/* Location */}
-              <div className="flex items-center text-sm text-muted-foreground">
-                <MapPin className="mr-1 h-3 w-3" />
-                {team.location}
-              </div>
-
-              {/* Team Members */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">
-                    Members ({team.members.length})
-                  </span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setSelectedTeam(team.id);
-                      setIsInviteMemberOpen(true);
-                    }}
-                  >
-                    <UserPlus className="h-3 w-3" />
-                  </Button>
-                </div>
-                <div className="space-y-2">
-                  {team.members.slice(0, 3).map((member) => (
-                    <div
-                      key={member.id}
-                      className="flex items-center space-x-3"
-                    >
-                      <div className="relative">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={member.avatar} alt={member.name} />
-                          <AvatarFallback className="text-xs">
-                            {getInitials(member.name)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div
-                          className={`absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-background ${getStatusColor(
-                            member.status,
-                          )}`}
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">
-                          {member.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground truncate">
-                          {member.role}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                  {team.members.length > 3 && (
-                    <div className="text-xs text-muted-foreground text-center py-1">
-                      +{team.members.length - 3} more members
-                    </div>
-                  )}
-                </div>
-              </div>
+            <CardContent>
+              <div className="text-3xl font-bold">{teams.length}</div>
+              <p className="text-blue-100 text-sm">
+                Across {departments.length} departments
+              </p>
             </CardContent>
           </Card>
-        ))}
-      </div>
 
-      {/* Invite Member Dialog */}
-      <Dialog open={isInviteMemberOpen} onOpenChange={setIsInviteMemberOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Invite Team Member</DialogTitle>
-            <DialogDescription>
-              Send an email invitation to add a new member to the team.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email Address</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Enter email address"
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="role">Role</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="member">Team Member</SelectItem>
-                  <SelectItem value="lead">Team Lead</SelectItem>
-                  <SelectItem value="senior">Senior Member</SelectItem>
-                  <SelectItem value="junior">Junior Member</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="team">Team</Label>
-              <Select value={selectedTeam || ""}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select team" />
-                </SelectTrigger>
-                <SelectContent>
-                  {teams.map((team) => (
-                    <SelectItem key={team.id} value={team.id}>
-                      {team.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="message">Invitation Message (Optional)</Label>
-              <Textarea
-                id="message"
-                placeholder="Add a personal message to the invitation"
-                className="col-span-3"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setIsInviteMemberOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button type="submit">
-              <Mail className="mr-2 h-4 w-4" />
-              Send Invitation
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-emerald-100">Total Members</CardTitle>
+              <UserPlus className="h-8 w-8 text-emerald-200" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold">
+                {teams.reduce((acc, team) => acc + team.members.length, 0)}
+              </div>
+              <p className="text-emerald-100 text-sm">Active team members</p>
+            </CardContent>
+          </Card>
 
-      {/* Team Stats Summary */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Teams</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{teams.length}</div>
-            <p className="text-xs text-muted-foreground">
-              Across {departments.length} departments
-            </p>
-          </CardContent>
-        </Card>
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-purple-500 to-violet-600 text-white">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-purple-100">
+                Active Projects
+              </CardTitle>
+              <Calendar className="h-8 w-8 text-purple-200" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold">
+                {teams.reduce((acc, team) => acc + team.activeProjects, 0)}
+              </div>
+              <p className="text-purple-100 text-sm">In progress</p>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Members</CardTitle>
-            <UserPlus className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {teams.reduce((acc, team) => acc + team.members.length, 0)}
-            </div>
-            <p className="text-xs text-muted-foreground">Active team members</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Active Projects
-            </CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {teams.reduce((acc, team) => acc + team.activeProjects, 0)}
-            </div>
-            <p className="text-xs text-muted-foreground">In progress</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Departments</CardTitle>
-            <Globe className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{departments.length}</div>
-            <p className="text-xs text-muted-foreground">Active departments</p>
-          </CardContent>
-        </Card>
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-orange-500 to-red-500 text-white">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-orange-100">Departments</CardTitle>
+              <Globe className="h-8 w-8 text-orange-200" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold">{departments.length}</div>
+              <p className="text-orange-100 text-sm">Active departments</p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
