@@ -395,202 +395,33 @@ const Tasks = () => {
     });
   };
 
-  const addTagToNewTask = () => {
-    if (newTag.trim() && !newTask.tags.includes(newTag.trim())) {
-      setNewTask({
-        ...newTask,
-        tags: [...newTask.tags, newTag.trim()],
-      });
-      setNewTag("");
-    }
-  };
-
-  const removeTagFromNewTask = (tagToRemove: string) => {
-    setNewTask({
-      ...newTask,
-      tags: newTask.tags.filter((tag) => tag !== tagToRemove),
-    });
-  };
-
-  const addCollaboratorToNewTask = () => {
-    if (
-      newCollaboratorEmail.trim() &&
-      !newTask.collaboratorEmails.includes(newCollaboratorEmail.trim())
-    ) {
-      setNewTask({
-        ...newTask,
-        collaboratorEmails: [
-          ...newTask.collaboratorEmails,
-          newCollaboratorEmail.trim(),
-        ],
-      });
-      setNewCollaboratorEmail("");
-    }
-  };
-
-  const removeCollaboratorFromNewTask = (emailToRemove: string) => {
-    setNewTask({
-      ...newTask,
-      collaboratorEmails: newTask.collaboratorEmails.filter(
-        (email) => email !== emailToRemove,
-      ),
-    });
-  };
-
-  const addChecklistItemToNewTask = () => {
-    if (
-      newChecklistItemForm.trim() &&
-      !newTask.initialChecklist.includes(newChecklistItemForm.trim())
-    ) {
-      setNewTask({
-        ...newTask,
-        initialChecklist: [
-          ...newTask.initialChecklist,
-          newChecklistItemForm.trim(),
-        ],
-      });
-      setNewChecklistItemForm("");
-    }
-  };
-
-  const removeChecklistItemFromNewTask = (itemToRemove: string) => {
-    setNewTask({
-      ...newTask,
-      initialChecklist: newTask.initialChecklist.filter(
-        (item) => item !== itemToRemove,
-      ),
-    });
-  };
-
-  const createTask = () => {
-    if (!newTask.title.trim()) {
-      toast({
-        title: "Title Required",
-        description: "Please enter a task title.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!newTask.assigneeEmail) {
-      toast({
-        title: "Assignee Required",
-        description: "Please select an assignee for the task.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const assignee = availableTeamMembers.find(
-      (member) => member.email === newTask.assigneeEmail,
-    );
-    if (!assignee) {
-      toast({
-        title: "Invalid Assignee",
-        description: "Please select a valid team member.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const collaborators = newTask.collaboratorEmails.map((email) => {
-      const member = availableTeamMembers.find((m) => m.email === email);
-      return {
-        name: member?.name || email.split("@")[0],
-        email: email,
-        avatar: "",
-      };
-    });
-
-    const checklist: ChecklistItem[] = newTask.initialChecklist.map(
-      (item, index) => ({
-        id: `CL-${Date.now()}-${index}`,
-        title: item,
-        completed: false,
-      }),
-    );
-
-    const task: Task = {
-      id: `TSK-${String(tasks.length + 1).padStart(3, "0")}`,
-      title: newTask.title,
-      description: newTask.description,
-      status: "Todo",
-      priority: newTask.priority,
-      project: newTask.project,
-      assignee: {
-        name: assignee.name,
-        email: assignee.email,
-        avatar: "",
-      },
-      collaborators: collaborators,
-      reporter: "Admin User",
-      startDate: newTask.startDate || new Date().toISOString().split("T")[0],
-      dueDate:
-        newTask.dueDate ||
-        new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-          .toISOString()
-          .split("T")[0],
-      estimatedHours: newTask.estimatedHours,
-      loggedHours: 0,
-      tags: newTask.tags,
-      checklist: checklist,
-      comments: [],
-      attachments: 0,
-      isOverdue: false,
-    };
-
-    setTasks([...tasks, task]);
-
-    // Reset form
-    setNewTask({
-      title: "",
-      description: "",
-      priority: "Medium",
-      project: "",
-      assigneeEmail: "",
-      startDate: "",
-      dueDate: "",
-      estimatedHours: 0,
-      tags: [],
-      collaboratorEmails: [],
-      initialChecklist: [],
-    });
-
-    setShowTaskDialog(false);
-
-    toast({
-      title: "Task Created",
-      description: `Task "${task.title}" has been created and assigned to ${assignee.name}.`,
-    });
-  };
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Todo":
-        return "bg-gray-100 text-gray-800";
+        return "bg-gradient-to-r from-orange-400 to-orange-500 text-white border-0";
       case "In Progress":
-        return "bg-blue-100 text-blue-800";
+        return "bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0";
       case "Done":
-        return "bg-green-100 text-green-800";
+        return "bg-gradient-to-r from-green-500 to-green-600 text-white border-0";
       case "Blocked":
-        return "bg-red-100 text-red-800";
+        return "bg-gradient-to-r from-red-500 to-red-600 text-white border-0";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gradient-to-r from-gray-400 to-gray-500 text-white border-0";
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "Low":
-        return "bg-green-100 text-green-800 border-green-200";
+        return "bg-gradient-to-r from-green-400 to-green-500 text-white border-0";
       case "Medium":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+        return "bg-gradient-to-r from-yellow-400 to-yellow-500 text-white border-0";
       case "High":
-        return "bg-orange-100 text-orange-800 border-orange-200";
+        return "bg-gradient-to-r from-orange-500 to-red-500 text-white border-0";
       case "Critical":
-        return "bg-red-100 text-red-800 border-red-200";
+        return "bg-gradient-to-r from-red-600 to-red-700 text-white border-0";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return "bg-gradient-to-r from-gray-400 to-gray-500 text-white border-0";
     }
   };
 
@@ -646,864 +477,399 @@ const Tasks = () => {
   });
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Task Management</h1>
-          <p className="text-muted-foreground">
-            Manage and track all tasks with enhanced collaboration features
-          </p>
-        </div>
-        <Dialog open={showTaskDialog} onOpenChange={setShowTaskDialog}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Create Task
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Create New Task</DialogTitle>
-              <DialogDescription>
-                Create a comprehensive task with all details, assignments, and
-                collaboration features
-              </DialogDescription>
-            </DialogHeader>
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 p-6">
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 bg-clip-text text-transparent">
+              Task Management
+            </h1>
+            <p className="text-lg text-slate-600">
+              Manage and track all tasks with enhanced collaboration features
+            </p>
+          </div>
+          <Dialog open={showTaskDialog} onOpenChange={setShowTaskDialog}>
+            <DialogTrigger asChild>
+              <Button className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white border-0 shadow-lg">
+                <Plus className="h-4 w-4 mr-2" />
+                Create Task
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto border-0 shadow-2xl bg-gradient-to-br from-white to-slate-50">
+              <DialogHeader>
+                <DialogTitle className="text-2xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                  Create New Task
+                </DialogTitle>
+                <DialogDescription className="text-slate-600">
+                  Create a comprehensive task with all details, assignments, and
+                  collaboration features
+                </DialogDescription>
+              </DialogHeader>
 
-            <Tabs defaultValue="details" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="details">Task Details</TabsTrigger>
-                <TabsTrigger value="assignment">Assignment</TabsTrigger>
-                <TabsTrigger value="checklist">Checklist</TabsTrigger>
-                <TabsTrigger value="timeline">Timeline</TabsTrigger>
-              </TabsList>
+              <Tabs defaultValue="details" className="w-full">
+                <TabsList className="grid w-full grid-cols-4 bg-gradient-to-r from-slate-100 to-slate-200 rounded-xl p-1 h-12">
+                  <TabsTrigger value="details" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-600 data-[state=active]:text-white rounded-lg">Task Details</TabsTrigger>
+                  <TabsTrigger value="assignment" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-600 data-[state=active]:text-white rounded-lg">Assignment</TabsTrigger>
+                  <TabsTrigger value="checklist" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-600 data-[state=active]:text-white rounded-lg">Checklist</TabsTrigger>
+                  <TabsTrigger value="timeline" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-600 data-[state=active]:text-white rounded-lg">Timeline</TabsTrigger>
+                </TabsList>
 
-              <TabsContent value="details" className="space-y-4 mt-6">
-                <div className="grid gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="taskTitle">Task Title *</Label>
-                    <Input
-                      id="taskTitle"
-                      placeholder="Enter task title"
-                      value={newTask.title}
-                      onChange={(e) =>
-                        setNewTask({ ...newTask, title: e.target.value })
-                      }
-                    />
-                  </div>
-
-                  <div className="grid gap-2">
-                    <Label htmlFor="taskDescription">Description</Label>
-                    <Textarea
-                      id="taskDescription"
-                      placeholder="Describe the task in detail..."
-                      value={newTask.description}
-                      onChange={(e) =>
-                        setNewTask({ ...newTask, description: e.target.value })
-                      }
-                      rows={4}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
+                <TabsContent value="details" className="space-y-4 mt-6">
+                  <div className="grid gap-4">
                     <div className="grid gap-2">
-                      <Label htmlFor="taskPriority">Priority</Label>
-                      <Select
-                        value={newTask.priority}
-                        onValueChange={(value) =>
-                          setNewTask({
-                            ...newTask,
-                            priority: value as Task["priority"],
-                          })
+                      <Label htmlFor="taskTitle" className="text-slate-700 font-medium">Task Title *</Label>
+                      <Input
+                        id="taskTitle"
+                        placeholder="Enter task title"
+                        value={newTask.title}
+                        onChange={(e) =>
+                          setNewTask({ ...newTask, title: e.target.value })
                         }
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Low">Low</SelectItem>
-                          <SelectItem value="Medium">Medium</SelectItem>
-                          <SelectItem value="High">High</SelectItem>
-                          <SelectItem value="Critical">Critical</SelectItem>
-                        </SelectContent>
-                      </Select>
+                        className="border-2 border-slate-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
+                      />
                     </div>
 
                     <div className="grid gap-2">
-                      <Label htmlFor="taskProject">Project</Label>
+                      <Label htmlFor="taskDescription" className="text-slate-700 font-medium">Description</Label>
+                      <Textarea
+                        id="taskDescription"
+                        placeholder="Describe the task in detail..."
+                        value={newTask.description}
+                        onChange={(e) =>
+                          setNewTask({ ...newTask, description: e.target.value })
+                        }
+                        rows={4}
+                        className="border-2 border-slate-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="taskPriority" className="text-slate-700 font-medium">Priority</Label>
+                        <Select
+                          value={newTask.priority}
+                          onValueChange={(value) =>
+                            setNewTask({
+                              ...newTask,
+                              priority: value as Task["priority"],
+                            })
+                          }
+                        >
+                          <SelectTrigger className="border-2 border-slate-200 focus:border-purple-400">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Low">Low</SelectItem>
+                            <SelectItem value="Medium">Medium</SelectItem>
+                            <SelectItem value="High">High</SelectItem>
+                            <SelectItem value="Critical">Critical</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="grid gap-2">
+                        <Label htmlFor="taskProject" className="text-slate-700 font-medium">Project</Label>
+                        <Select
+                          value={newTask.project}
+                          onValueChange={(value) =>
+                            setNewTask({ ...newTask, project: value })
+                          }
+                        >
+                          <SelectTrigger className="border-2 border-slate-200 focus:border-purple-400">
+                            <SelectValue placeholder="Select project" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {availableProjects.map((project) => (
+                              <SelectItem key={project} value={project}>
+                                {project}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="assignment" className="space-y-4 mt-6">
+                  <div className="grid gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="taskAssignee" className="text-slate-700 font-medium">Assignee *</Label>
                       <Select
-                        value={newTask.project}
+                        value={newTask.assigneeEmail}
                         onValueChange={(value) =>
-                          setNewTask({ ...newTask, project: value })
+                          setNewTask({ ...newTask, assigneeEmail: value })
                         }
                       >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select project" />
+                        <SelectTrigger className="border-2 border-slate-200 focus:border-purple-400">
+                          <SelectValue placeholder="Select team member" />
                         </SelectTrigger>
                         <SelectContent>
-                          {availableProjects.map((project) => (
-                            <SelectItem key={project} value={project}>
-                              {project}
+                          {availableTeamMembers.map((member) => (
+                            <SelectItem key={member.email} value={member.email}>
+                              <div className="flex items-center gap-2">
+                                <Avatar className="h-6 w-6">
+                                  <AvatarFallback className="text-xs bg-gradient-to-r from-purple-400 to-pink-500 text-white">
+                                    {member.name
+                                      .split(" ")
+                                      .map((n) => n[0])
+                                      .join("")}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <div className="font-medium">{member.name}</div>
+                                  <div className="text-xs text-muted-foreground">
+                                    {member.role}
+                                  </div>
+                                </div>
+                              </div>
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     </div>
                   </div>
+                </TabsContent>
 
-                  <div className="grid gap-2">
-                    <Label>Tags</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="Add tag"
-                        value={newTag}
-                        onChange={(e) => setNewTag(e.target.value)}
-                        onKeyPress={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            addTagToNewTask();
+                <TabsContent value="timeline" className="space-y-4 mt-6">
+                  <div className="grid gap-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="startDate" className="text-slate-700 font-medium">Start Date</Label>
+                        <Input
+                          id="startDate"
+                          type="date"
+                          value={newTask.startDate}
+                          onChange={(e) =>
+                            setNewTask({ ...newTask, startDate: e.target.value })
                           }
-                        }}
-                      />
-                      <Button type="button" onClick={addTagToNewTask} size="sm">
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    {newTask.tags.length > 0 && (
-                      <div className="flex gap-2 flex-wrap mt-2">
-                        {newTask.tags.map((tag) => (
-                          <Badge
-                            key={tag}
-                            variant="secondary"
-                            className="flex items-center gap-1"
-                          >
-                            {tag}
-                            <button
-                              type="button"
-                              onClick={() => removeTagFromNewTask(tag)}
-                              className="ml-1 hover:text-destructive"
-                            >
-                              <X className="h-3 w-3" />
-                            </button>
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="assignment" className="space-y-4 mt-6">
-                <div className="grid gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="taskAssignee">Assignee *</Label>
-                    <Select
-                      value={newTask.assigneeEmail}
-                      onValueChange={(value) =>
-                        setNewTask({ ...newTask, assigneeEmail: value })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select team member" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableTeamMembers.map((member) => (
-                          <SelectItem key={member.email} value={member.email}>
-                            <div className="flex items-center gap-2">
-                              <Avatar className="h-6 w-6">
-                                <AvatarFallback className="text-xs">
-                                  {member.name
-                                    .split(" ")
-                                    .map((n) => n[0])
-                                    .join("")}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div>
-                                <div className="font-medium">{member.name}</div>
-                                <div className="text-xs text-muted-foreground">
-                                  {member.role}
-                                </div>
-                              </div>
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="grid gap-2">
-                    <Label>Collaborators</Label>
-                    <div className="flex gap-2">
-                      <Select
-                        value={newCollaboratorEmail}
-                        onValueChange={setNewCollaboratorEmail}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Add collaborator" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {availableTeamMembers
-                            .filter(
-                              (member) =>
-                                member.email !== newTask.assigneeEmail &&
-                                !newTask.collaboratorEmails.includes(
-                                  member.email,
-                                ),
-                            )
-                            .map((member) => (
-                              <SelectItem
-                                key={member.email}
-                                value={member.email}
-                              >
-                                <div className="flex items-center gap-2">
-                                  <Avatar className="h-6 w-6">
-                                    <AvatarFallback className="text-xs">
-                                      {member.name
-                                        .split(" ")
-                                        .map((n) => n[0])
-                                        .join("")}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                  <div>
-                                    <div className="font-medium">
-                                      {member.name}
-                                    </div>
-                                    <div className="text-xs text-muted-foreground">
-                                      {member.role}
-                                    </div>
-                                  </div>
-                                </div>
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
-                      <Button
-                        type="button"
-                        onClick={addCollaboratorToNewTask}
-                        size="sm"
-                        disabled={!newCollaboratorEmail}
-                      >
-                        <UserPlus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    {newTask.collaboratorEmails.length > 0 && (
-                      <div className="space-y-2 mt-2">
-                        {newTask.collaboratorEmails.map((email) => {
-                          const member = availableTeamMembers.find(
-                            (m) => m.email === email,
-                          );
-                          return (
-                            <div
-                              key={email}
-                              className="flex items-center justify-between p-2 border rounded"
-                            >
-                              <div className="flex items-center gap-2">
-                                <Avatar className="h-6 w-6">
-                                  <AvatarFallback className="text-xs">
-                                    {member?.name
-                                      .split(" ")
-                                      .map((n) => n[0])
-                                      .join("") || email[0].toUpperCase()}
-                                  </AvatarFallback>
-                                </Avatar>
-                                <div>
-                                  <div className="text-sm font-medium">
-                                    {member?.name || email}
-                                  </div>
-                                  <div className="text-xs text-muted-foreground">
-                                    {member?.role || "External"}
-                                  </div>
-                                </div>
-                              </div>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                onClick={() =>
-                                  removeCollaboratorFromNewTask(email)
-                                }
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="checklist" className="space-y-4 mt-6">
-                <div className="grid gap-4">
-                  <div className="grid gap-2">
-                    <Label>Initial Checklist Items</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="Add checklist item"
-                        value={newChecklistItemForm}
-                        onChange={(e) =>
-                          setNewChecklistItemForm(e.target.value)
-                        }
-                        onKeyPress={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            addChecklistItemToNewTask();
-                          }
-                        }}
-                      />
-                      <Button
-                        type="button"
-                        onClick={addChecklistItemToNewTask}
-                        size="sm"
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    {newTask.initialChecklist.length > 0 && (
-                      <div className="space-y-2 mt-2">
-                        {newTask.initialChecklist.map((item, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center justify-between p-2 border rounded"
-                          >
-                            <div className="flex items-center gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
-                              <span className="text-sm">{item}</span>
-                            </div>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              onClick={() =>
-                                removeChecklistItemFromNewTask(item)
-                              }
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="timeline" className="space-y-4 mt-6">
-                <div className="grid gap-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="startDate">Start Date</Label>
-                      <Input
-                        id="startDate"
-                        type="date"
-                        value={newTask.startDate}
-                        onChange={(e) =>
-                          setNewTask({ ...newTask, startDate: e.target.value })
-                        }
-                      />
-                    </div>
-
-                    <div className="grid gap-2">
-                      <Label htmlFor="dueDate">Due Date</Label>
-                      <Input
-                        id="dueDate"
-                        type="date"
-                        value={newTask.dueDate}
-                        onChange={(e) =>
-                          setNewTask({ ...newTask, dueDate: e.target.value })
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid gap-2">
-                    <Label htmlFor="estimatedHours">Estimated Hours</Label>
-                    <Input
-                      id="estimatedHours"
-                      type="number"
-                      min="0"
-                      step="0.5"
-                      placeholder="0"
-                      value={newTask.estimatedHours || ""}
-                      onChange={(e) =>
-                        setNewTask({
-                          ...newTask,
-                          estimatedHours: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                    />
-                  </div>
-
-                  <div className="grid gap-2">
-                    <Label>Task Summary</Label>
-                    <div className="space-y-2 p-4 bg-muted/50 rounded-lg">
-                      <div className="flex justify-between text-sm">
-                        <span>Title:</span>
-                        <span className="font-medium">
-                          {newTask.title || "Untitled Task"}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>Priority:</span>
-                        <Badge
-                          variant="outline"
-                          className={getPriorityColor(newTask.priority)}
-                        >
-                          {newTask.priority}
-                        </Badge>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>Assignee:</span>
-                        <span className="font-medium">
-                          {availableTeamMembers.find(
-                            (m) => m.email === newTask.assigneeEmail,
-                          )?.name || "Not assigned"}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>Collaborators:</span>
-                        <span className="font-medium">
-                          {newTask.collaboratorEmails.length}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>Checklist Items:</span>
-                        <span className="font-medium">
-                          {newTask.initialChecklist.length}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>Estimated Hours:</span>
-                        <span className="font-medium">
-                          {newTask.estimatedHours}h
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-            </Tabs>
-
-            <DialogFooter className="mt-6">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShowTaskDialog(false);
-                  // Reset form
-                  setNewTask({
-                    title: "",
-                    description: "",
-                    priority: "Medium",
-                    project: "",
-                    assigneeEmail: "",
-                    startDate: "",
-                    dueDate: "",
-                    estimatedHours: 0,
-                    tags: [],
-                    collaboratorEmails: [],
-                    initialChecklist: [],
-                  });
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={createTask}
-                disabled={!newTask.title.trim() || !newTask.assigneeEmail}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Create Task
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
-
-      {/* Enhanced Filters with Date Range */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="space-y-4">
-            <div className="flex flex-col lg:flex-row gap-4">
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search tasks..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full lg:w-[180px]">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="Todo">Todo</SelectItem>
-                  <SelectItem value="In Progress">In Progress</SelectItem>
-                  <SelectItem value="Done">Done</SelectItem>
-                  <SelectItem value="Blocked">Blocked</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-                <SelectTrigger className="w-full lg:w-[180px]">
-                  <SelectValue placeholder="Filter by priority" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Priority</SelectItem>
-                  <SelectItem value="Low">Low</SelectItem>
-                  <SelectItem value="Medium">Medium</SelectItem>
-                  <SelectItem value="High">High</SelectItem>
-                  <SelectItem value="Critical">Critical</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Date Range Filters */}
-            <div className="flex flex-col lg:flex-row gap-4 items-center border-t pt-4">
-              <div className="flex items-center gap-2">
-                <CalendarDays className="h-4 w-4 text-muted-foreground" />
-                <Label className="text-sm font-medium">Date Range:</Label>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-2 items-center">
-                <DatePicker
-                  date={startDateFilter}
-                  onDateChange={setStartDateFilter}
-                  placeholder="Start date"
-                  className="w-full sm:w-[160px]"
-                />
-                <span className="text-sm text-muted-foreground">to</span>
-                <DatePicker
-                  date={endDateFilter}
-                  onDateChange={setEndDateFilter}
-                  placeholder="End date"
-                  className="w-full sm:w-[160px]"
-                />
-              </div>
-              {(startDateFilter || endDateFilter) && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={clearDateFilters}
-                  className="flex items-center gap-2"
-                >
-                  <X className="h-3 w-3" />
-                  Clear Dates
-                </Button>
-              )}
-              <div className="text-sm text-muted-foreground">
-                {filteredTasks.length} of {tasks.length} tasks
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Tasks Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {filteredTasks.map((task) => {
-          const progress = calculateProgress(task.checklist);
-          return (
-            <Card key={task.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1">
-                    <CardTitle className="text-lg">{task.title}</CardTitle>
-                    <div className="flex items-center gap-2">
-                      <Badge
-                        variant="outline"
-                        className={getStatusColor(task.status)}
-                      >
-                        {task.status}
-                      </Badge>
-                      <Badge
-                        variant="outline"
-                        className={getPriorityColor(task.priority)}
-                      >
-                        {task.priority}
-                      </Badge>
-                    </div>
-                  </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem
-                        onClick={() => {
-                          setSelectedTask(task);
-                          setEditingTask(task);
-                        }}
-                      >
-                        <Edit className="h-4 w-4 mr-2" />
-                        Edit Task
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={() => updateTaskStatus(task.id, "In Progress")}
-                      >
-                        <PlayCircle className="h-4 w-4 mr-2" />
-                        Start Task
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => updateTaskStatus(task.id, "Done")}
-                      >
-                        <CheckCircle2 className="h-4 w-4 mr-2" />
-                        Mark Complete
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem className="text-destructive">
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Delete Task
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </CardHeader>
-
-              <CardContent className="space-y-4">
-                <p className="text-sm text-muted-foreground line-clamp-2">
-                  {task.description}
-                </p>
-
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span>Progress</span>
-                    <span className="font-medium">{progress}%</span>
-                  </div>
-                  <Progress value={progress} className="h-2" />
-                </div>
-
-                {/* Checklist Preview */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">Checklist</Label>
-                  <div className="space-y-1">
-                    {task.checklist.slice(0, 3).map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex items-center space-x-2"
-                      >
-                        <Checkbox
-                          checked={item.completed}
-                          onCheckedChange={() =>
-                            handleChecklistToggle(task.id, item.id)
-                          }
+                          className="border-2 border-slate-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
                         />
-                        <span
-                          className={`text-sm ${
-                            item.completed
-                              ? "line-through text-muted-foreground"
-                              : ""
-                          }`}
-                        >
-                          {item.title}
-                        </span>
                       </div>
-                    ))}
-                    {task.checklist.length > 3 && (
-                      <p className="text-xs text-muted-foreground">
-                        +{task.checklist.length - 3} more items
-                      </p>
-                    )}
-                  </div>
-                </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Avatar className="h-6 w-6">
-                      <AvatarImage src={task.assignee.avatar} />
-                      <AvatarFallback className="text-xs">
-                        {task.assignee.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="text-sm">{task.assignee.name}</span>
-                    {task.collaborators.length > 0 && (
-                      <Badge variant="secondary" className="text-xs">
-                        +{task.collaborators.length}
-                      </Badge>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1 text-muted-foreground">
-                    <MessageSquare className="h-4 w-4" />
-                    <span className="text-sm">{task.comments.length}</span>
-                  </div>
-                </div>
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full"
-                  onClick={() => setSelectedTask(task)}
-                >
-                  View Details
-                </Button>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-
-      {/* Task Detail Dialog */}
-      <Dialog
-        open={selectedTask !== null}
-        onOpenChange={() => setSelectedTask(null)}
-      >
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          {selectedTask && (
-            <>
-              <DialogHeader>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <DialogTitle className="text-xl">
-                      {selectedTask.title}
-                    </DialogTitle>
-                    <DialogDescription>
-                      {selectedTask.project} • {selectedTask.id}
-                    </DialogDescription>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge className={getStatusColor(selectedTask.status)}>
-                      {selectedTask.status}
-                    </Badge>
-                    <Badge
-                      variant="outline"
-                      className={getPriorityColor(selectedTask.priority)}
-                    >
-                      {selectedTask.priority}
-                    </Badge>
-                  </div>
-                </div>
-              </DialogHeader>
-
-              <Tabs defaultValue="details" className="w-full">
-                <TabsList className="grid w-full grid-cols-4">
-                  <TabsTrigger value="details">Details</TabsTrigger>
-                  <TabsTrigger value="checklist">Checklist</TabsTrigger>
-                  <TabsTrigger value="comments">Comments</TabsTrigger>
-                  <TabsTrigger value="collaborators">Team</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="details" className="space-y-4 mt-6">
-                  <div className="space-y-4">
-                    <div>
-                      <Label className="text-sm font-medium">Description</Label>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {selectedTask.description}
-                      </p>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label className="text-sm font-medium">Assignee</Label>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Avatar className="h-6 w-6">
-                            <AvatarImage src={selectedTask.assignee.avatar} />
-                            <AvatarFallback className="text-xs">
-                              {selectedTask.assignee.name
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span className="text-sm">
-                            {selectedTask.assignee.name}
-                          </span>
-                        </div>
-                      </div>
-                      <div>
-                        <Label className="text-sm font-medium">Reporter</Label>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {selectedTask.reporter}
-                        </p>
+                      <div className="grid gap-2">
+                        <Label htmlFor="dueDate" className="text-slate-700 font-medium">Due Date</Label>
+                        <Input
+                          id="dueDate"
+                          type="date"
+                          value={newTask.dueDate}
+                          onChange={(e) =>
+                            setNewTask({ ...newTask, dueDate: e.target.value })
+                          }
+                          className="border-2 border-slate-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
+                        />
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label className="text-sm font-medium">
-                          Start Date
-                        </Label>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {new Date(
-                            selectedTask.startDate,
-                          ).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <div>
-                        <Label className="text-sm font-medium">Due Date</Label>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {new Date(selectedTask.dueDate).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label className="text-sm font-medium">
-                          Estimated Hours
-                        </Label>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {selectedTask.estimatedHours}h
-                        </p>
-                      </div>
-                      <div>
-                        <Label className="text-sm font-medium">
-                          Logged Hours
-                        </Label>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {selectedTask.loggedHours}h
-                        </p>
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label className="text-sm font-medium">Tags</Label>
-                      <div className="flex gap-2 mt-1">
-                        {selectedTask.tags.map((tag) => (
-                          <Badge key={tag} variant="secondary">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="estimatedHours" className="text-slate-700 font-medium">Estimated Hours</Label>
+                      <Input
+                        id="estimatedHours"
+                        type="number"
+                        min="0"
+                        step="0.5"
+                        placeholder="0"
+                        value={newTask.estimatedHours || ""}
+                        onChange={(e) =>
+                          setNewTask({
+                            ...newTask,
+                            estimatedHours: parseFloat(e.target.value) || 0,
+                          })
+                        }
+                        className="border-2 border-slate-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
+                      />
                     </div>
                   </div>
                 </TabsContent>
+              </Tabs>
 
-                <TabsContent value="checklist" className="space-y-4 mt-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-sm font-medium">
-                        Task Checklist (
-                        {calculateProgress(selectedTask.checklist)}% Complete)
-                      </Label>
-                      <Progress
-                        value={calculateProgress(selectedTask.checklist)}
-                        className="w-24 h-2"
-                      />
+              <DialogFooter className="mt-6">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowTaskDialog(false)}
+                  className="border-2 border-slate-300 hover:bg-slate-100"
+                >
+                  Cancel
+                </Button>
+                <Button className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white border-0">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Task
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        {/* Enhanced Filters with Date Range */}
+        <Card className="border-0 shadow-lg bg-gradient-to-r from-white to-slate-50">
+          <CardContent className="p-6">
+            <div className="space-y-4">
+              <div className="flex flex-col lg:flex-row gap-4">
+                <div className="flex-1">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search tasks..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10 border-2 border-slate-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
+                    />
+                  </div>
+                </div>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-full lg:w-[180px] border-2 border-slate-200 focus:border-purple-400">
+                    <SelectValue placeholder="Filter by status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="Todo">Todo</SelectItem>
+                    <SelectItem value="In Progress">In Progress</SelectItem>
+                    <SelectItem value="Done">Done</SelectItem>
+                    <SelectItem value="Blocked">Blocked</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+                  <SelectTrigger className="w-full lg:w-[180px] border-2 border-slate-200 focus:border-purple-400">
+                    <SelectValue placeholder="Filter by priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Priority</SelectItem>
+                    <SelectItem value="Low">Low</SelectItem>
+                    <SelectItem value="Medium">Medium</SelectItem>
+                    <SelectItem value="High">High</SelectItem>
+                    <SelectItem value="Critical">Critical</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Date Range Filters */}
+              <div className="flex flex-col lg:flex-row gap-4 items-center border-t pt-4">
+                <div className="flex items-center gap-2">
+                  <CalendarDays className="h-4 w-4 text-muted-foreground" />
+                  <Label className="text-sm font-medium">Date Range:</Label>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2 items-center">
+                  <DatePicker
+                    date={startDateFilter}
+                    onDateChange={setStartDateFilter}
+                    placeholder="Start date"
+                    className="w-full sm:w-[160px]"
+                  />
+                  <span className="text-sm text-muted-foreground">to</span>
+                  <DatePicker
+                    date={endDateFilter}
+                    onDateChange={setEndDateFilter}
+                    placeholder="End date"
+                    className="w-full sm:w-[160px]"
+                  />
+                </div>
+                {(startDateFilter || endDateFilter) && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={clearDateFilters}
+                    className="flex items-center gap-2 border-2 border-slate-300 hover:bg-slate-100"
+                  >
+                    <X className="h-3 w-3" />
+                    Clear Dates
+                  </Button>
+                )}
+                <div className="text-sm text-muted-foreground">
+                  {filteredTasks.length} of {tasks.length} tasks
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Tasks Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          {filteredTasks.map((task) => {
+            const progress = calculateProgress(task.checklist);
+            return (
+              <Card key={task.id} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-slate-50">
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-1">
+                      <CardTitle className="text-lg text-slate-800">{task.title}</CardTitle>
+                      <div className="flex items-center gap-2">
+                        <Badge className={getStatusColor(task.status)}>
+                          {task.status}
+                        </Badge>
+                        <Badge className={getPriorityColor(task.priority)}>
+                          {task.priority}
+                        </Badge>
+                      </div>
                     </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setSelectedTask(task);
+                            setEditingTask(task);
+                          }}
+                        >
+                          <Edit className="h-4 w-4 mr-2" />
+                          Edit Task
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => updateTaskStatus(task.id, "In Progress")}
+                        >
+                          <PlayCircle className="h-4 w-4 mr-2" />
+                          Start Task
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => updateTaskStatus(task.id, "Done")}
+                        >
+                          <CheckCircle2 className="h-4 w-4 mr-2" />
+                          Mark Complete
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="text-destructive">
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete Task
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </CardHeader>
 
-                    <div className="space-y-2">
-                      {selectedTask.checklist.map((item) => (
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    {task.description}
+                  </p>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span>Progress</span>
+                      <span className="font-medium">{progress}%</span>
+                    </div>
+                    <Progress value={progress} className="h-2" />
+                  </div>
+
+                  {/* Checklist Preview */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">Checklist</Label>
+                    <div className="space-y-1">
+                      {task.checklist.slice(0, 3).map((item) => (
                         <div
                           key={item.id}
-                          className="flex items-center space-x-3 p-2 rounded-lg hover:bg-muted/50"
+                          className="flex items-center space-x-2"
                         >
                           <Checkbox
                             checked={item.completed}
                             onCheckedChange={() =>
-                              handleChecklistToggle(selectedTask.id, item.id)
+                              handleChecklistToggle(task.id, item.id)
                             }
                           />
                           <span
-                            className={`flex-1 text-sm ${
+                            className={`text-sm ${
                               item.completed
                                 ? "line-through text-muted-foreground"
                                 : ""
@@ -1511,127 +877,309 @@ const Tasks = () => {
                           >
                             {item.title}
                           </span>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-6 w-6 p-0"
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
                         </div>
                       ))}
-                    </div>
-
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="Add new checklist item..."
-                        value={newChecklistItem}
-                        onChange={(e) => setNewChecklistItem(e.target.value)}
-                        onKeyPress={(e) => {
-                          if (e.key === "Enter") {
-                            addChecklistItem(selectedTask.id);
-                          }
-                        }}
-                      />
-                      <Button
-                        size="sm"
-                        onClick={() => addChecklistItem(selectedTask.id)}
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
+                      {task.checklist.length > 3 && (
+                        <p className="text-xs text-muted-foreground">
+                          +{task.checklist.length - 3} more items
+                        </p>
+                      )}
                     </div>
                   </div>
-                </TabsContent>
 
-                <TabsContent value="comments" className="space-y-4 mt-6">
-                  <div className="space-y-4">
-                    <Label className="text-sm font-medium">Comments</Label>
-
-                    <div className="space-y-4 max-h-60 overflow-y-auto">
-                      {selectedTask.comments.map((comment) => (
-                        <div key={comment.id} className="flex gap-3">
-                          <Avatar className="h-8 w-8">
-                            <AvatarImage src={comment.avatar} />
-                            <AvatarFallback className="text-xs">
-                              {comment.author
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1 space-y-1">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-medium">
-                                {comment.author}
-                              </span>
-                              <span className="text-xs text-muted-foreground">
-                                {comment.timestamp.toLocaleString()}
-                              </span>
-                            </div>
-                            <p className="text-sm text-muted-foreground">
-                              {comment.content}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Avatar className="h-6 w-6">
+                        <AvatarImage src={task.assignee.avatar} />
+                        <AvatarFallback className="text-xs bg-gradient-to-r from-purple-400 to-pink-500 text-white">
+                          {task.assignee.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm">{task.assignee.name}</span>
+                      {task.collaborators.length > 0 && (
+                        <Badge variant="secondary" className="text-xs bg-gradient-to-r from-cyan-100 to-blue-100 text-cyan-700 border-0">
+                          +{task.collaborators.length}
+                        </Badge>
+                      )}
                     </div>
-
-                    <div className="space-y-2">
-                      <Textarea
-                        placeholder="Add a comment..."
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        rows={3}
-                      />
-                      <Button
-                        size="sm"
-                        onClick={() => addComment(selectedTask.id)}
-                      >
-                        <MessageSquare className="h-4 w-4 mr-2" />
-                        Add Comment
-                      </Button>
+                    <div className="flex items-center gap-1 text-muted-foreground">
+                      <MessageSquare className="h-4 w-4" />
+                      <span className="text-sm">{task.comments.length}</span>
                     </div>
                   </div>
-                </TabsContent>
 
-                <TabsContent value="collaborators" className="space-y-4 mt-6">
-                  <div className="space-y-4">
-                    <Label className="text-sm font-medium">Team Members</Label>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full border-2 border-purple-200 hover:bg-purple-50"
+                    onClick={() => setSelectedTask(task)}
+                  >
+                    View Details
+                  </Button>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
 
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between p-3 border rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-8 w-8">
-                            <AvatarImage src={selectedTask.assignee.avatar} />
-                            <AvatarFallback className="text-xs">
-                              {selectedTask.assignee.name
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="text-sm font-medium">
-                              {selectedTask.assignee.name}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {selectedTask.assignee.email}
-                            </p>
-                          </div>
-                        </div>
-                        <Badge variant="secondary">Assignee</Badge>
+        {/* Task Detail Dialog */}
+        <Dialog
+          open={selectedTask !== null}
+          onOpenChange={() => setSelectedTask(null)}
+        >
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto border-0 shadow-2xl bg-gradient-to-br from-white to-slate-50">
+            {selectedTask && (
+              <>
+                <DialogHeader>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <DialogTitle className="text-xl text-slate-800">
+                        {selectedTask.title}
+                      </DialogTitle>
+                      <DialogDescription className="text-slate-600">
+                        {selectedTask.project} • {selectedTask.id}
+                      </DialogDescription>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge className={getStatusColor(selectedTask.status)}>
+                        {selectedTask.status}
+                      </Badge>
+                      <Badge className={getPriorityColor(selectedTask.priority)}>
+                        {selectedTask.priority}
+                      </Badge>
+                    </div>
+                  </div>
+                </DialogHeader>
+
+                <Tabs defaultValue="details" className="w-full">
+                  <TabsList className="grid w-full grid-cols-4 bg-gradient-to-r from-slate-100 to-slate-200 rounded-xl p-1 h-12">
+                    <TabsTrigger value="details" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-600 data-[state=active]:text-white rounded-lg">Details</TabsTrigger>
+                    <TabsTrigger value="checklist" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-600 data-[state=active]:text-white rounded-lg">Checklist</TabsTrigger>
+                    <TabsTrigger value="comments" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-600 data-[state=active]:text-white rounded-lg">Comments</TabsTrigger>
+                    <TabsTrigger value="collaborators" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-600 data-[state=active]:text-white rounded-lg">Team</TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="details" className="space-y-4 mt-6">
+                    <div className="space-y-4">
+                      <div>
+                        <Label className="text-sm font-medium">Description</Label>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {selectedTask.description}
+                        </p>
                       </div>
 
-                      {selectedTask.collaborators.map((collaborator, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between p-3 border rounded-lg"
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label className="text-sm font-medium">Assignee</Label>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Avatar className="h-6 w-6">
+                              <AvatarImage src={selectedTask.assignee.avatar} />
+                              <AvatarFallback className="text-xs bg-gradient-to-r from-purple-400 to-pink-500 text-white">
+                                {selectedTask.assignee.name
+                                  .split(" ")
+                                  .map((n) => n[0])
+                                  .join("")}
+                              </AvatarFallback>
+                            </Avatar>
+                            <span className="text-sm">
+                              {selectedTask.assignee.name}
+                            </span>
+                          </div>
+                        </div>
+                        <div>
+                          <Label className="text-sm font-medium">Reporter</Label>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {selectedTask.reporter}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label className="text-sm font-medium">
+                            Start Date
+                          </Label>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {new Date(
+                              selectedTask.startDate,
+                            ).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <div>
+                          <Label className="text-sm font-medium">Due Date</Label>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {new Date(selectedTask.dueDate).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label className="text-sm font-medium">
+                            Estimated Hours
+                          </Label>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {selectedTask.estimatedHours}h
+                          </p>
+                        </div>
+                        <div>
+                          <Label className="text-sm font-medium">
+                            Logged Hours
+                          </Label>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {selectedTask.loggedHours}h
+                          </p>
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label className="text-sm font-medium">Tags</Label>
+                        <div className="flex gap-2 mt-1">
+                          {selectedTask.tags.map((tag) => (
+                            <Badge key={tag} variant="secondary" className="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 border-0">
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="checklist" className="space-y-4 mt-6">
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-sm font-medium">
+                          Task Checklist (
+                          {calculateProgress(selectedTask.checklist)}% Complete)
+                        </Label>
+                        <Progress
+                          value={calculateProgress(selectedTask.checklist)}
+                          className="w-24 h-2"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        {selectedTask.checklist.map((item) => (
+                          <div
+                            key={item.id}
+                            className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50"
+                          >
+                            <Checkbox
+                              checked={item.completed}
+                              onCheckedChange={() =>
+                                handleChecklistToggle(selectedTask.id, item.id)
+                              }
+                            />
+                            <span
+                              className={`flex-1 text-sm ${
+                                item.completed
+                                  ? "line-through text-muted-foreground"
+                                  : ""
+                              }`}
+                            >
+                              {item.title}
+                            </span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 w-6 p-0"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="Add new checklist item..."
+                          value={newChecklistItem}
+                          onChange={(e) => setNewChecklistItem(e.target.value)}
+                          onKeyPress={(e) => {
+                            if (e.key === "Enter") {
+                              addChecklistItem(selectedTask.id);
+                            }
+                          }}
+                          className="border-2 border-slate-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
+                        />
+                        <Button
+                          size="sm"
+                          onClick={() => addChecklistItem(selectedTask.id)}
+                          className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white border-0"
                         >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="comments" className="space-y-4 mt-6">
+                    <div className="space-y-4">
+                      <Label className="text-sm font-medium">Comments</Label>
+
+                      <div className="space-y-4 max-h-60 overflow-y-auto">
+                        {selectedTask.comments.map((comment) => (
+                          <div key={comment.id} className="flex gap-3">
+                            <Avatar className="h-8 w-8">
+                              <AvatarImage src={comment.avatar} />
+                              <AvatarFallback className="text-xs bg-gradient-to-r from-indigo-400 to-purple-500 text-white">
+                                {comment.author
+                                  .split(" ")
+                                  .map((n) => n[0])
+                                  .join("")}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 space-y-1">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-medium">
+                                  {comment.author}
+                                </span>
+                                <span className="text-xs text-muted-foreground">
+                                  {comment.timestamp.toLocaleString()}
+                                </span>
+                              </div>
+                              <p className="text-sm text-muted-foreground">
+                                {comment.content}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Textarea
+                          placeholder="Add a comment..."
+                          value={newComment}
+                          onChange={(e) => setNewComment(e.target.value)}
+                          rows={3}
+                          className="border-2 border-slate-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
+                        />
+                        <Button
+                          size="sm"
+                          onClick={() => addComment(selectedTask.id)}
+                          className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white border-0"
+                        >
+                          <MessageSquare className="h-4 w-4 mr-2" />
+                          Add Comment
+                        </Button>
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="collaborators" className="space-y-4 mt-6">
+                    <div className="space-y-4">
+                      <Label className="text-sm font-medium">Team Members</Label>
+
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between p-3 border-2 border-slate-200 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50">
                           <div className="flex items-center gap-3">
                             <Avatar className="h-8 w-8">
-                              <AvatarImage src={collaborator.avatar} />
-                              <AvatarFallback className="text-xs">
-                                {collaborator.name
+                              <AvatarImage src={selectedTask.assignee.avatar} />
+                              <AvatarFallback className="text-xs bg-gradient-to-r from-blue-400 to-indigo-500 text-white">
+                                {selectedTask.assignee.name
                                   .split(" ")
                                   .map((n) => n[0])
                                   .join("")}
@@ -1639,59 +1187,89 @@ const Tasks = () => {
                             </Avatar>
                             <div>
                               <p className="text-sm font-medium">
-                                {collaborator.name}
+                                {selectedTask.assignee.name}
                               </p>
                               <p className="text-xs text-muted-foreground">
-                                {collaborator.email}
+                                {selectedTask.assignee.email}
                               </p>
                             </div>
                           </div>
-                          <Badge variant="outline">Collaborator</Badge>
+                          <Badge className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white border-0">Assignee</Badge>
                         </div>
-                      ))}
-                    </div>
 
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">
-                        Add Collaborator
-                      </Label>
-                      <div className="flex gap-2">
-                        <Input
-                          placeholder="Enter email address..."
-                          onKeyPress={(e) => {
-                            if (e.key === "Enter") {
-                              const email = (e.target as HTMLInputElement)
-                                .value;
-                              if (email) {
-                                assignCollaborator(selectedTask.id, email);
-                                (e.target as HTMLInputElement).value = "";
+                        {selectedTask.collaborators.map((collaborator, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center justify-between p-3 border-2 border-slate-200 rounded-lg bg-gradient-to-r from-purple-50 to-pink-50"
+                          >
+                            <div className="flex items-center gap-3">
+                              <Avatar className="h-8 w-8">
+                                <AvatarImage src={collaborator.avatar} />
+                                <AvatarFallback className="text-xs bg-gradient-to-r from-purple-400 to-pink-500 text-white">
+                                  {collaborator.name
+                                    .split(" ")
+                                    .map((n) => n[0])
+                                    .join("")}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <p className="text-sm font-medium">
+                                  {collaborator.name}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  {collaborator.email}
+                                </p>
+                              </div>
+                            </div>
+                            <Badge variant="outline" className="border-2 border-purple-300 text-purple-700">Collaborator</Badge>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium">
+                          Add Collaborator
+                        </Label>
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="Enter email address..."
+                            onKeyPress={(e) => {
+                              if (e.key === "Enter") {
+                                const email = (e.target as HTMLInputElement)
+                                  .value;
+                                if (email) {
+                                  assignCollaborator(selectedTask.id, email);
+                                  (e.target as HTMLInputElement).value = "";
+                                }
                               }
-                            }
-                          }}
-                        />
-                        <Button
-                          size="sm"
-                          onClick={(e) => {
-                            const input = (
-                              e.target as HTMLElement
-                            ).parentElement?.querySelector("input");
-                            if (input?.value) {
-                              assignCollaborator(selectedTask.id, input.value);
-                              input.value = "";
-                            }
-                          }}
-                        >
-                          <UserPlus className="h-4 w-4" />
-                        </Button>
+                            }}
+                            className="border-2 border-slate-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
+                          />
+                          <Button
+                            size="sm"
+                            onClick={(e) => {
+                              const input = (
+                                e.target as HTMLElement
+                              ).parentElement?.querySelector("input");
+                              if (input?.value) {
+                                assignCollaborator(selectedTask.id, input.value);
+                                input.value = "";
+                              }
+                            }}
+                            className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white border-0"
+                          >
+                            <UserPlus className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+                  </TabsContent>
+                </Tabs>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 };
