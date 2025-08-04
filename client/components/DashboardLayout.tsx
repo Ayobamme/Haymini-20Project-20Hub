@@ -87,6 +87,7 @@ const navigation = [
   {
     title: "Human Resources",
     items: [
+      { title: "HR Dashboard", url: "/human-resources", icon: UserCog },
       { title: "Attendance", url: "/attendance", icon: Clock },
       { title: "Leave Management", url: "/leave-management", icon: Calendar },
       { title: "Payroll", url: "/payroll", icon: Calculator },
