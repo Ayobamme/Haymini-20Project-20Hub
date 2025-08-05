@@ -83,7 +83,6 @@ const OffboardingManagement = () => {
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [isAddEmployeeOpen, setIsAddEmployeeOpen] = useState(false);
   const [isClearanceOpen, setIsClearanceOpen] = useState(false);
-  const [selectedEmployeeForOffboarding, setSelectedEmployeeForOffboarding] = useState("");
 
   const [clearanceItems, setClearanceItems] = useState<ClearanceItem[]>([
     { id: "1", title: "IT Equipment Return", description: "Return laptop, monitor, accessories", completed: true, required: true, category: "assets", assignedTo: "IT Department" },
@@ -110,35 +109,24 @@ const OffboardingManagement = () => {
     { id: "EMP005", name: "Lisa Wilson", position: "HR Specialist", department: "HR" }
   ];
 
-  const getStatusColor = (status: Employee["status"]) => {
+  const getStatusVariant = (status: Employee["status"]) => {
     switch (status) {
-      case "initiated": return "bg-gradient-to-r from-blue-400 to-blue-600 text-white border-0";
-      case "clearance": return "bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0";
-      case "documentation": return "bg-gradient-to-r from-purple-400 to-purple-600 text-white border-0";
-      case "exit-interview": return "bg-gradient-to-r from-indigo-400 to-indigo-600 text-white border-0";
-      case "archived": return "bg-gradient-to-r from-gray-400 to-gray-600 text-white border-0";
-      default: return "bg-gray-100 text-gray-800";
+      case "initiated": return "default";
+      case "clearance": return "secondary";
+      case "documentation": return "outline";
+      case "exit-interview": return "default";
+      case "archived": return "secondary";
+      default: return "outline";
     }
   };
 
-  const getReasonColor = (reason: Employee["reason"]) => {
+  const getReasonVariant = (reason: Employee["reason"]) => {
     switch (reason) {
-      case "resignation": return "bg-blue-100 text-blue-800";
-      case "termination": return "bg-red-100 text-red-800";
-      case "retirement": return "bg-green-100 text-green-800";
-      case "contract-end": return "bg-yellow-100 text-yellow-800";
-      default: return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getStatusIcon = (status: Employee["status"]) => {
-    switch (status) {
-      case "initiated": return <Clock className="h-4 w-4" />;
-      case "clearance": return <CheckCircle className="h-4 w-4" />;
-      case "documentation": return <FileText className="h-4 w-4" />;
-      case "exit-interview": return <AlertCircle className="h-4 w-4" />;
-      case "archived": return <Archive className="h-4 w-4" />;
-      default: return <Clock className="h-4 w-4" />;
+      case "resignation": return "default";
+      case "termination": return "destructive";
+      case "retirement": return "secondary";
+      case "contract-end": return "outline";
+      default: return "outline";
     }
   };
 
@@ -199,12 +187,12 @@ const OffboardingManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50">
+    <div className="min-h-screen bg-background">
       <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-red-600 via-orange-600 to-amber-600 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold text-foreground">
               Offboarding Management
             </h1>
             <p className="text-muted-foreground mt-2">
@@ -213,7 +201,7 @@ const OffboardingManagement = () => {
           </div>
           <Dialog open={isAddEmployeeOpen} onOpenChange={setIsAddEmployeeOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-gradient-to-r from-red-500 to-orange-600 hover:from-red-600 hover:to-orange-700 text-white border-0">
+              <Button>
                 <UserMinus className="mr-2 h-4 w-4" />
                 Add to Offboarding
               </Button>
@@ -279,7 +267,7 @@ const OffboardingManagement = () => {
                 <Button variant="outline" onClick={() => setIsAddEmployeeOpen(false)}>
                   Cancel
                 </Button>
-                <Button onClick={handleAddOffboarding} className="bg-gradient-to-r from-red-500 to-orange-600 hover:from-red-600 hover:to-orange-700 text-white border-0">
+                <Button onClick={handleAddOffboarding}>
                   Initiate Offboarding
                 </Button>
               </DialogFooter>
@@ -291,10 +279,10 @@ const OffboardingManagement = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Employees List */}
           <div className="lg:col-span-2">
-            <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+            <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <UserMinus className="h-5 w-5 text-red-600" />
+                  <UserMinus className="h-5 w-5" />
                   Offboarding Pipeline
                 </CardTitle>
                 <CardDescription>
@@ -304,12 +292,12 @@ const OffboardingManagement = () => {
               <CardContent>
                 <div className="space-y-4">
                   {employees.map((employee) => (
-                    <div key={employee.id} className="p-4 border rounded-lg hover:shadow-md transition-shadow bg-gradient-to-r from-white to-red-50/30">
+                    <div key={employee.id} className="p-4 border rounded-lg hover:bg-accent/50 transition-colors">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
                           <Avatar className="h-10 w-10">
                             <AvatarImage src={employee.avatar} alt={employee.name} />
-                            <AvatarFallback className="bg-gradient-to-r from-red-400 to-orange-500 text-white">
+                            <AvatarFallback>
                               {employee.name.split(' ').map(n => n[0]).join('')}
                             </AvatarFallback>
                           </Avatar>
@@ -317,19 +305,18 @@ const OffboardingManagement = () => {
                             <h3 className="font-semibold">{employee.name}</h3>
                             <p className="text-sm text-muted-foreground">{employee.position} • {employee.department}</p>
                             <div className="flex items-center gap-2 mt-1">
-                              <span className="text-xs text-gray-600">ID: {employee.employeeId}</span>
-                              <span className="text-xs text-gray-400">•</span>
-                              <span className="text-xs text-gray-600">{employee.email}</span>
+                              <span className="text-xs text-muted-foreground">ID: {employee.employeeId}</span>
+                              <span className="text-xs text-muted-foreground">•</span>
+                              <span className="text-xs text-muted-foreground">{employee.email}</span>
                             </div>
                           </div>
                         </div>
                         <div className="text-right space-y-2">
                           <div className="flex gap-2">
-                            <Badge className={getStatusColor(employee.status)}>
-                              {getStatusIcon(employee.status)}
-                              <span className="ml-1 capitalize">{employee.status.replace('-', ' ')}</span>
+                            <Badge variant={getStatusVariant(employee.status)}>
+                              <span className="capitalize">{employee.status.replace('-', ' ')}</span>
                             </Badge>
-                            <Badge className={getReasonColor(employee.reason)}>
+                            <Badge variant={getReasonVariant(employee.reason)}>
                               {employee.reason.replace('-', ' ')}
                             </Badge>
                           </div>
@@ -388,9 +375,9 @@ const OffboardingManagement = () => {
                           </Button>
                           {employee.progress === 100 && employee.status !== "archived" && (
                             <Button
+                              variant="secondary"
                               size="sm"
                               onClick={() => archiveEmployee(employee.id)}
-                              className="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white border-0"
                             >
                               <Archive className="mr-1 h-3 w-3" />
                               Archive
@@ -400,7 +387,7 @@ const OffboardingManagement = () => {
                       </div>
                       
                       {employee.notes && (
-                        <div className="mt-2 p-2 bg-orange-50 rounded text-sm">
+                        <div className="mt-2 p-2 bg-muted rounded text-sm">
                           <strong>Notes:</strong> {employee.notes}
                         </div>
                       )}
@@ -413,24 +400,24 @@ const OffboardingManagement = () => {
 
           {/* Summary Stats */}
           <div className="space-y-4">
-            <Card className="shadow-lg border-0 bg-gradient-to-br from-red-500 to-orange-600 text-white">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-white">Offboarding Overview</CardTitle>
+            <Card>
+              <CardHeader>
+                <CardTitle>Offboarding Overview</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-red-100">Total Offboarding</span>
+                    <span>Total Offboarding</span>
                     <span className="text-2xl font-bold">{employees.length}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-red-100">In Progress</span>
+                    <span>In Progress</span>
                     <span className="text-xl font-semibold">
                       {employees.filter(e => e.status !== "archived").length}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-red-100">Archived</span>
+                    <span>Archived</span>
                     <span className="text-xl font-semibold">
                       {employees.filter(e => e.status === "archived").length}
                     </span>
@@ -439,7 +426,7 @@ const OffboardingManagement = () => {
               </CardContent>
             </Card>
 
-            <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+            <Card>
               <CardHeader>
                 <CardTitle className="text-sm">Status Distribution</CardTitle>
               </CardHeader>
@@ -458,7 +445,7 @@ const OffboardingManagement = () => {
               </CardContent>
             </Card>
 
-            <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+            <Card>
               <CardHeader>
                 <CardTitle className="text-sm">Leaving Reasons</CardTitle>
               </CardHeader>
