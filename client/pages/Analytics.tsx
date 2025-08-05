@@ -151,9 +151,9 @@ export default function Analytics() {
   const [selectedMetric, setSelectedMetric] = useState("all");
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-NG', {
-      style: 'currency',
-      currency: 'NGN',
+    return new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: "NGN",
       minimumFractionDigits: 0,
     }).format(amount);
   };
@@ -168,7 +168,8 @@ export default function Analytics() {
               Analytics Dashboard
             </h1>
             <p className="text-lg text-slate-600">
-              Comprehensive insights and performance metrics across all business areas
+              Comprehensive insights and performance metrics across all business
+              areas
             </p>
           </div>
           <div className="flex items-center space-x-2">
@@ -196,10 +197,17 @@ export default function Analytics() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-100 text-sm font-medium">Total Projects</p>
-                  <div className="text-3xl font-bold">{projectReports.totalProjects}</div>
+                  <p className="text-blue-100 text-sm font-medium">
+                    Total Projects
+                  </p>
+                  <div className="text-3xl font-bold">
+                    {projectReports.totalProjects}
+                  </div>
                   <p className="text-blue-100 text-sm">
-                    <span className="text-white font-semibold">{projectReports.completedProjects}</span> completed
+                    <span className="text-white font-semibold">
+                      {projectReports.completedProjects}
+                    </span>{" "}
+                    completed
                   </p>
                 </div>
                 <FolderKanban className="h-10 w-10 text-blue-200" />
@@ -211,10 +219,17 @@ export default function Analytics() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-emerald-100 text-sm font-medium">Total Tasks</p>
-                  <div className="text-3xl font-bold">{taskReports.totalTasks}</div>
+                  <p className="text-emerald-100 text-sm font-medium">
+                    Total Tasks
+                  </p>
+                  <div className="text-3xl font-bold">
+                    {taskReports.totalTasks}
+                  </div>
                   <p className="text-emerald-100 text-sm">
-                    <span className="text-white font-semibold">{taskReports.avgCompletionRate}%</span> completion rate
+                    <span className="text-white font-semibold">
+                      {taskReports.avgCompletionRate}%
+                    </span>{" "}
+                    completion rate
                   </p>
                 </div>
                 <CheckSquare className="h-10 w-10 text-emerald-200" />
@@ -226,10 +241,17 @@ export default function Analytics() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-orange-100 text-sm font-medium">Team Members</p>
-                  <div className="text-3xl font-bold">{teamPerformance.activeMembers}</div>
+                  <p className="text-orange-100 text-sm font-medium">
+                    Team Members
+                  </p>
+                  <div className="text-3xl font-bold">
+                    {teamPerformance.activeMembers}
+                  </div>
                   <p className="text-orange-100 text-sm">
-                    <span className="text-white font-semibold">{teamPerformance.productivityScore}%</span> productivity
+                    <span className="text-white font-semibold">
+                      {teamPerformance.productivityScore}%
+                    </span>{" "}
+                    productivity
                   </p>
                 </div>
                 <Users className="h-10 w-10 text-orange-200" />
@@ -241,10 +263,13 @@ export default function Analytics() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-purple-100 text-sm font-medium">Monthly Revenue</p>
+                  <p className="text-purple-100 text-sm font-medium">
+                    Monthly Revenue
+                  </p>
                   <div className="text-3xl font-bold">₦720K</div>
                   <p className="text-purple-100 text-sm">
-                    <span className="text-white font-semibold">+15%</span> from last month
+                    <span className="text-white font-semibold">+15%</span> from
+                    last month
                   </p>
                 </div>
                 <DollarSign className="h-10 w-10 text-purple-200" />
@@ -255,19 +280,48 @@ export default function Analytics() {
 
         <Tabs defaultValue="projects" className="w-full">
           <TabsList className="grid w-full grid-cols-5 bg-gradient-to-r from-slate-100 to-slate-200 rounded-xl p-1 h-12">
-            <TabsTrigger value="projects" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-cyan-600 data-[state=active]:text-white rounded-lg">Projects</TabsTrigger>
-            <TabsTrigger value="tasks" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white rounded-lg">Tasks</TabsTrigger>
-            <TabsTrigger value="teams" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-red-500 data-[state=active]:text-white rounded-lg">Teams</TabsTrigger>
-            <TabsTrigger value="revenue" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-violet-600 data-[state=active]:text-white rounded-lg">Revenue</TabsTrigger>
-            <TabsTrigger value="hr" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-rose-600 data-[state=active]:text-white rounded-lg">HR Analytics</TabsTrigger>
+            <TabsTrigger
+              value="projects"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-cyan-600 data-[state=active]:text-white rounded-lg"
+            >
+              Projects
+            </TabsTrigger>
+            <TabsTrigger
+              value="tasks"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white rounded-lg"
+            >
+              Tasks
+            </TabsTrigger>
+            <TabsTrigger
+              value="teams"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-red-500 data-[state=active]:text-white rounded-lg"
+            >
+              Teams
+            </TabsTrigger>
+            <TabsTrigger
+              value="revenue"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-violet-600 data-[state=active]:text-white rounded-lg"
+            >
+              Revenue
+            </TabsTrigger>
+            <TabsTrigger
+              value="hr"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-rose-600 data-[state=active]:text-white rounded-lg"
+            >
+              HR Analytics
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="projects" className="space-y-6 mt-6">
             <div className="grid gap-6 md:grid-cols-2">
               <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
                 <CardHeader className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-t-lg">
-                  <CardTitle className="text-xl">Project Status Distribution</CardTitle>
-                  <CardDescription className="text-blue-100">Overview of all project statuses</CardDescription>
+                  <CardTitle className="text-xl">
+                    Project Status Distribution
+                  </CardTitle>
+                  <CardDescription className="text-blue-100">
+                    Overview of all project statuses
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="p-6">
                   <ResponsiveContainer width="100%" height={300}>
@@ -290,12 +344,17 @@ export default function Analytics() {
                   </ResponsiveContainer>
                   <div className="mt-4 grid grid-cols-2 gap-2">
                     {projectReports.projectsByStatus.map((item) => (
-                      <div key={item.name} className="flex items-center gap-2 text-sm">
+                      <div
+                        key={item.name}
+                        className="flex items-center gap-2 text-sm"
+                      >
                         <div
                           className="h-3 w-3 rounded-full"
                           style={{ backgroundColor: item.color }}
                         />
-                        <span className="font-medium">{item.name}: {item.value}</span>
+                        <span className="font-medium">
+                          {item.name}: {item.value}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -304,8 +363,12 @@ export default function Analytics() {
 
               <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
                 <CardHeader className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-t-lg">
-                  <CardTitle className="text-xl">Monthly Project Trends</CardTitle>
-                  <CardDescription className="text-emerald-100">Project completion and budget trends</CardDescription>
+                  <CardTitle className="text-xl">
+                    Monthly Project Trends
+                  </CardTitle>
+                  <CardDescription className="text-emerald-100">
+                    Project completion and budget trends
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="p-6">
                   <ResponsiveContainer width="100%" height={300}>
@@ -341,8 +404,12 @@ export default function Analytics() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-green-100 text-sm font-medium">Budget Utilization</p>
-                      <div className="text-3xl font-bold">{projectReports.budgetUtilization}%</div>
+                      <p className="text-green-100 text-sm font-medium">
+                        Budget Utilization
+                      </p>
+                      <div className="text-3xl font-bold">
+                        {projectReports.budgetUtilization}%
+                      </div>
                     </div>
                     <DollarSign className="h-10 w-10 text-green-200" />
                   </div>
@@ -353,8 +420,12 @@ export default function Analytics() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-blue-100 text-sm font-medium">Avg Completion Time</p>
-                      <div className="text-3xl font-bold">{projectReports.avgCompletionTime}</div>
+                      <p className="text-blue-100 text-sm font-medium">
+                        Avg Completion Time
+                      </p>
+                      <div className="text-3xl font-bold">
+                        {projectReports.avgCompletionTime}
+                      </div>
                       <p className="text-blue-100 text-sm">days</p>
                     </div>
                     <Clock className="h-10 w-10 text-blue-200" />
@@ -366,7 +437,9 @@ export default function Analytics() {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-purple-100 text-sm font-medium">Success Rate</p>
+                      <p className="text-purple-100 text-sm font-medium">
+                        Success Rate
+                      </p>
                       <div className="text-3xl font-bold">94%</div>
                     </div>
                     <TrendingUp className="h-10 w-10 text-purple-200" />
@@ -380,8 +453,12 @@ export default function Analytics() {
             <div className="grid gap-6 md:grid-cols-2">
               <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
                 <CardHeader className="bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-t-lg">
-                  <CardTitle className="text-xl">Task Priority Distribution</CardTitle>
-                  <CardDescription className="text-orange-100">Tasks categorized by priority levels</CardDescription>
+                  <CardTitle className="text-xl">
+                    Task Priority Distribution
+                  </CardTitle>
+                  <CardDescription className="text-orange-100">
+                    Tasks categorized by priority levels
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="p-6">
                   <ResponsiveContainer width="100%" height={300}>
@@ -405,8 +482,12 @@ export default function Analytics() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-emerald-100 text-sm font-medium">Completed Tasks</p>
-                        <div className="text-3xl font-bold">{taskReports.completedTasks}</div>
+                        <p className="text-emerald-100 text-sm font-medium">
+                          Completed Tasks
+                        </p>
+                        <div className="text-3xl font-bold">
+                          {taskReports.completedTasks}
+                        </div>
                       </div>
                       <CheckSquare className="h-10 w-10 text-emerald-200" />
                     </div>
@@ -417,8 +498,12 @@ export default function Analytics() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-red-100 text-sm font-medium">Overdue Tasks</p>
-                        <div className="text-3xl font-bold">{taskReports.overdueTasks}</div>
+                        <p className="text-red-100 text-sm font-medium">
+                          Overdue Tasks
+                        </p>
+                        <div className="text-3xl font-bold">
+                          {taskReports.overdueTasks}
+                        </div>
                       </div>
                       <AlertTriangle className="h-10 w-10 text-red-200" />
                     </div>
@@ -429,8 +514,12 @@ export default function Analytics() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-blue-100 text-sm font-medium">Completion Rate</p>
-                        <div className="text-3xl font-bold">{taskReports.avgCompletionRate}%</div>
+                        <p className="text-blue-100 text-sm font-medium">
+                          Completion Rate
+                        </p>
+                        <div className="text-3xl font-bold">
+                          {taskReports.avgCompletionRate}%
+                        </div>
                       </div>
                       <Activity className="h-10 w-10 text-blue-200" />
                     </div>
@@ -443,8 +532,12 @@ export default function Analytics() {
           <TabsContent value="teams" className="space-y-6 mt-6">
             <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
               <CardHeader className="bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-t-lg">
-                <CardTitle className="text-xl">Team Performance Overview</CardTitle>
-                <CardDescription className="text-violet-100">Productivity and collaboration metrics by team</CardDescription>
+                <CardTitle className="text-xl">
+                  Team Performance Overview
+                </CardTitle>
+                <CardDescription className="text-violet-100">
+                  Productivity and collaboration metrics by team
+                </CardDescription>
               </CardHeader>
               <CardContent className="p-6">
                 <ResponsiveContainer width="100%" height={400}>
@@ -453,8 +546,18 @@ export default function Analytics() {
                     <XAxis dataKey="team" />
                     <YAxis />
                     <Tooltip />
-                    <Bar dataKey="productivity" fill="#8b5cf6" name="Productivity %" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="collaboration" fill="#06b6d4" name="Collaboration %" radius={[4, 4, 0, 0]} />
+                    <Bar
+                      dataKey="productivity"
+                      fill="#8b5cf6"
+                      name="Productivity %"
+                      radius={[4, 4, 0, 0]}
+                    />
+                    <Bar
+                      dataKey="collaboration"
+                      fill="#06b6d4"
+                      name="Collaboration %"
+                      radius={[4, 4, 0, 0]}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -465,7 +568,9 @@ export default function Analytics() {
             <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
               <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-t-lg">
                 <CardTitle className="text-xl">Revenue Analysis</CardTitle>
-                <CardDescription className="text-green-100">Monthly revenue, expenses, and profit trends</CardDescription>
+                <CardDescription className="text-green-100">
+                  Monthly revenue, expenses, and profit trends
+                </CardDescription>
               </CardHeader>
               <CardContent className="p-6">
                 <ResponsiveContainer width="100%" height={400}>
@@ -473,7 +578,12 @@ export default function Analytics() {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="month" />
                     <YAxis />
-                    <Tooltip formatter={(value) => [formatCurrency(value as number), ""]} />
+                    <Tooltip
+                      formatter={(value) => [
+                        formatCurrency(value as number),
+                        "",
+                      ]}
+                    />
                     <Area
                       type="monotone"
                       dataKey="revenue"
@@ -508,25 +618,40 @@ export default function Analytics() {
             <div className="grid gap-6 md:grid-cols-2">
               <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
                 <CardHeader className="bg-gradient-to-r from-pink-500 to-rose-600 text-white rounded-t-lg">
-                  <CardTitle className="text-xl">Department Distribution</CardTitle>
-                  <CardDescription className="text-pink-100">Employee count by department</CardDescription>
+                  <CardTitle className="text-xl">
+                    Department Distribution
+                  </CardTitle>
+                  <CardDescription className="text-pink-100">
+                    Employee count by department
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="p-6">
                   <div className="space-y-4">
                     {hrAnalytics.departmentDistribution.map((dept, index) => (
                       <div key={dept.department} className="space-y-2">
                         <div className="flex justify-between items-center">
-                          <span className="text-sm font-medium">{dept.department}</span>
+                          <span className="text-sm font-medium">
+                            {dept.department}
+                          </span>
                           <div className="flex items-center gap-2">
-                            <span className="text-sm text-muted-foreground">{dept.count} employees</span>
-                            <Badge className={`${
-                              index === 0 ? "bg-gradient-to-r from-blue-500 to-cyan-600 text-white border-0" :
-                              index === 1 ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-0" :
-                              index === 2 ? "bg-gradient-to-r from-orange-500 to-red-500 text-white border-0" :
-                              index === 3 ? "bg-gradient-to-r from-purple-500 to-violet-600 text-white border-0" :
-                              index === 4 ? "bg-gradient-to-r from-pink-500 to-rose-600 text-white border-0" :
-                              "bg-gradient-to-r from-gray-500 to-gray-600 text-white border-0"
-                            }`}>
+                            <span className="text-sm text-muted-foreground">
+                              {dept.count} employees
+                            </span>
+                            <Badge
+                              className={`${
+                                index === 0
+                                  ? "bg-gradient-to-r from-blue-500 to-cyan-600 text-white border-0"
+                                  : index === 1
+                                    ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-0"
+                                    : index === 2
+                                      ? "bg-gradient-to-r from-orange-500 to-red-500 text-white border-0"
+                                      : index === 3
+                                        ? "bg-gradient-to-r from-purple-500 to-violet-600 text-white border-0"
+                                        : index === 4
+                                          ? "bg-gradient-to-r from-pink-500 to-rose-600 text-white border-0"
+                                          : "bg-gradient-to-r from-gray-500 to-gray-600 text-white border-0"
+                              }`}
+                            >
                               {dept.percentage}%
                             </Badge>
                           </div>
@@ -534,12 +659,17 @@ export default function Analytics() {
                         <div className="w-full bg-slate-200 rounded-full h-2">
                           <div
                             className={`h-2 rounded-full ${
-                              index === 0 ? "bg-gradient-to-r from-blue-500 to-cyan-600" :
-                              index === 1 ? "bg-gradient-to-r from-green-500 to-emerald-600" :
-                              index === 2 ? "bg-gradient-to-r from-orange-500 to-red-500" :
-                              index === 3 ? "bg-gradient-to-r from-purple-500 to-violet-600" :
-                              index === 4 ? "bg-gradient-to-r from-pink-500 to-rose-600" :
-                              "bg-gradient-to-r from-gray-500 to-gray-600"
+                              index === 0
+                                ? "bg-gradient-to-r from-blue-500 to-cyan-600"
+                                : index === 1
+                                  ? "bg-gradient-to-r from-green-500 to-emerald-600"
+                                  : index === 2
+                                    ? "bg-gradient-to-r from-orange-500 to-red-500"
+                                    : index === 3
+                                      ? "bg-gradient-to-r from-purple-500 to-violet-600"
+                                      : index === 4
+                                        ? "bg-gradient-to-r from-pink-500 to-rose-600"
+                                        : "bg-gradient-to-r from-gray-500 to-gray-600"
                             }`}
                             style={{ width: `${dept.percentage}%` }}
                           />
@@ -555,8 +685,12 @@ export default function Analytics() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-blue-100 text-sm font-medium">Total Employees</p>
-                        <div className="text-3xl font-bold">{hrAnalytics.totalEmployees}</div>
+                        <p className="text-blue-100 text-sm font-medium">
+                          Total Employees
+                        </p>
+                        <div className="text-3xl font-bold">
+                          {hrAnalytics.totalEmployees}
+                        </div>
                       </div>
                       <Users className="h-10 w-10 text-blue-200" />
                     </div>
@@ -567,8 +701,12 @@ export default function Analytics() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-emerald-100 text-sm font-medium">New Hires</p>
-                        <div className="text-3xl font-bold">{hrAnalytics.newHires}</div>
+                        <p className="text-emerald-100 text-sm font-medium">
+                          New Hires
+                        </p>
+                        <div className="text-3xl font-bold">
+                          {hrAnalytics.newHires}
+                        </div>
                       </div>
                       <UserCheck className="h-10 w-10 text-emerald-200" />
                     </div>
@@ -579,8 +717,12 @@ export default function Analytics() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-purple-100 text-sm font-medium">Retention Rate</p>
-                        <div className="text-3xl font-bold">{hrAnalytics.retentionRate}%</div>
+                        <p className="text-purple-100 text-sm font-medium">
+                          Retention Rate
+                        </p>
+                        <div className="text-3xl font-bold">
+                          {hrAnalytics.retentionRate}%
+                        </div>
                       </div>
                       <Shield className="h-10 w-10 text-purple-200" />
                     </div>

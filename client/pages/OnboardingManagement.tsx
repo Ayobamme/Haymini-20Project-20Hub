@@ -1,17 +1,49 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { UserPlus, CheckCircle, Clock, AlertCircle, Calendar, Mail, Phone, MapPin, GraduationCap, FileText, Users } from "lucide-react";
+import {
+  UserPlus,
+  CheckCircle,
+  Clock,
+  AlertCircle,
+  Calendar,
+  Mail,
+  Phone,
+  MapPin,
+  GraduationCap,
+  FileText,
+  Users,
+} from "lucide-react";
 
 interface Prospect {
   id: string;
@@ -20,7 +52,12 @@ interface Prospect {
   phone: string;
   position: string;
   department: string;
-  status: "interview" | "documentation" | "background-check" | "onboarding" | "completed";
+  status:
+    | "interview"
+    | "documentation"
+    | "background-check"
+    | "onboarding"
+    | "completed";
   startDate: string;
   progress: number;
   avatar?: string;
@@ -48,7 +85,7 @@ const OnboardingManagement = () => {
       status: "onboarding",
       startDate: "2024-01-15",
       progress: 75,
-      notes: "Strong technical background, excited to join the team"
+      notes: "Strong technical background, excited to join the team",
     },
     {
       id: "2",
@@ -60,23 +97,81 @@ const OnboardingManagement = () => {
       status: "documentation",
       startDate: "2024-01-20",
       progress: 45,
-      notes: "Previous experience at tech startups"
-    }
+      notes: "Previous experience at tech startups",
+    },
   ]);
 
-  const [selectedProspect, setSelectedProspect] = useState<Prospect | null>(null);
+  const [selectedProspect, setSelectedProspect] = useState<Prospect | null>(
+    null,
+  );
   const [isAddProspectOpen, setIsAddProspectOpen] = useState(false);
   const [isChecklistOpen, setIsChecklistOpen] = useState(false);
 
   const [checklistItems, setChecklistItems] = useState<ChecklistItem[]>([
-    { id: "1", title: "Initial Interview", description: "Conduct technical and cultural fit interview", completed: true, required: true, category: "interview" },
-    { id: "2", title: "Background Verification", description: "Verify employment history and references", completed: true, required: true, category: "background-check" },
-    { id: "3", title: "Offer Letter Signed", description: "Candidate has signed and returned offer letter", completed: true, required: true, category: "documentation" },
-    { id: "4", title: "Contract Documentation", description: "Employment contract and policies signed", completed: false, required: true, category: "documentation" },
-    { id: "5", title: "IT Setup Request", description: "Request laptop, accounts, and access permissions", completed: false, required: true, category: "onboarding" },
-    { id: "6", title: "Workspace Assignment", description: "Assign desk/office space and equipment", completed: false, required: true, category: "onboarding" },
-    { id: "7", title: "Orientation Schedule", description: "Schedule first week orientation sessions", completed: false, required: true, category: "onboarding" },
-    { id: "8", title: "Buddy Assignment", description: "Assign workplace buddy/mentor", completed: false, required: false, category: "onboarding" }
+    {
+      id: "1",
+      title: "Initial Interview",
+      description: "Conduct technical and cultural fit interview",
+      completed: true,
+      required: true,
+      category: "interview",
+    },
+    {
+      id: "2",
+      title: "Background Verification",
+      description: "Verify employment history and references",
+      completed: true,
+      required: true,
+      category: "background-check",
+    },
+    {
+      id: "3",
+      title: "Offer Letter Signed",
+      description: "Candidate has signed and returned offer letter",
+      completed: true,
+      required: true,
+      category: "documentation",
+    },
+    {
+      id: "4",
+      title: "Contract Documentation",
+      description: "Employment contract and policies signed",
+      completed: false,
+      required: true,
+      category: "documentation",
+    },
+    {
+      id: "5",
+      title: "IT Setup Request",
+      description: "Request laptop, accounts, and access permissions",
+      completed: false,
+      required: true,
+      category: "onboarding",
+    },
+    {
+      id: "6",
+      title: "Workspace Assignment",
+      description: "Assign desk/office space and equipment",
+      completed: false,
+      required: true,
+      category: "onboarding",
+    },
+    {
+      id: "7",
+      title: "Orientation Schedule",
+      description: "Schedule first week orientation sessions",
+      completed: false,
+      required: true,
+      category: "onboarding",
+    },
+    {
+      id: "8",
+      title: "Buddy Assignment",
+      description: "Assign workplace buddy/mentor",
+      completed: false,
+      required: false,
+      category: "onboarding",
+    },
   ]);
 
   const [newProspect, setNewProspect] = useState({
@@ -86,17 +181,23 @@ const OnboardingManagement = () => {
     position: "",
     department: "",
     startDate: "",
-    notes: ""
+    notes: "",
   });
 
   const getStatusVariant = (status: Prospect["status"]) => {
     switch (status) {
-      case "interview": return "default";
-      case "documentation": return "secondary";
-      case "background-check": return "outline";
-      case "onboarding": return "default";
-      case "completed": return "default";
-      default: return "outline";
+      case "interview":
+        return "default";
+      case "documentation":
+        return "secondary";
+      case "background-check":
+        return "outline";
+      case "onboarding":
+        return "default";
+      case "completed":
+        return "default";
+      default:
+        return "outline";
     }
   };
 
@@ -105,39 +206,52 @@ const OnboardingManagement = () => {
       id: Date.now().toString(),
       ...newProspect,
       status: "interview",
-      progress: 0
+      progress: 0,
     };
     setProspects([...prospects, prospect]);
-    setNewProspect({ name: "", email: "", phone: "", position: "", department: "", startDate: "", notes: "" });
+    setNewProspect({
+      name: "",
+      email: "",
+      phone: "",
+      position: "",
+      department: "",
+      startDate: "",
+      notes: "",
+    });
     setIsAddProspectOpen(false);
   };
 
   const handleChecklistUpdate = (itemId: string, completed: boolean) => {
-    setChecklistItems(prev => 
-      prev.map(item => 
-        item.id === itemId ? { ...item, completed } : item
-      )
+    setChecklistItems((prev) =>
+      prev.map((item) => (item.id === itemId ? { ...item, completed } : item)),
     );
-    
+
     // Update prospect progress
     if (selectedProspect) {
-      const totalItems = checklistItems.filter(item => item.required).length;
-      const completedItems = checklistItems.filter(item => item.required && (item.id === itemId ? completed : item.completed)).length;
+      const totalItems = checklistItems.filter((item) => item.required).length;
+      const completedItems = checklistItems.filter(
+        (item) =>
+          item.required && (item.id === itemId ? completed : item.completed),
+      ).length;
       const progress = Math.round((completedItems / totalItems) * 100);
-      
-      setProspects(prev => 
-        prev.map(prospect => 
-          prospect.id === selectedProspect.id ? { ...prospect, progress } : prospect
-        )
+
+      setProspects((prev) =>
+        prev.map((prospect) =>
+          prospect.id === selectedProspect.id
+            ? { ...prospect, progress }
+            : prospect,
+        ),
       );
     }
   };
 
   const graduateToEmployee = (prospectId: string) => {
-    setProspects(prev => 
-      prev.map(prospect => 
-        prospect.id === prospectId ? { ...prospect, status: "completed", progress: 100 } : prospect
-      )
+    setProspects((prev) =>
+      prev.map((prospect) =>
+        prospect.id === prospectId
+          ? { ...prospect, status: "completed", progress: 100 }
+          : prospect,
+      ),
     );
   };
 
@@ -174,7 +288,12 @@ const OnboardingManagement = () => {
                   <Input
                     id="name"
                     value={newProspect.name}
-                    onChange={(e) => setNewProspect(prev => ({ ...prev, name: e.target.value }))}
+                    onChange={(e) =>
+                      setNewProspect((prev) => ({
+                        ...prev,
+                        name: e.target.value,
+                      }))
+                    }
                     placeholder="Enter full name"
                   />
                 </div>
@@ -184,7 +303,12 @@ const OnboardingManagement = () => {
                     id="email"
                     type="email"
                     value={newProspect.email}
-                    onChange={(e) => setNewProspect(prev => ({ ...prev, email: e.target.value }))}
+                    onChange={(e) =>
+                      setNewProspect((prev) => ({
+                        ...prev,
+                        email: e.target.value,
+                      }))
+                    }
                     placeholder="Enter email address"
                   />
                 </div>
@@ -193,7 +317,12 @@ const OnboardingManagement = () => {
                   <Input
                     id="phone"
                     value={newProspect.phone}
-                    onChange={(e) => setNewProspect(prev => ({ ...prev, phone: e.target.value }))}
+                    onChange={(e) =>
+                      setNewProspect((prev) => ({
+                        ...prev,
+                        phone: e.target.value,
+                      }))
+                    }
                     placeholder="Enter phone number"
                   />
                 </div>
@@ -202,13 +331,23 @@ const OnboardingManagement = () => {
                   <Input
                     id="position"
                     value={newProspect.position}
-                    onChange={(e) => setNewProspect(prev => ({ ...prev, position: e.target.value }))}
+                    onChange={(e) =>
+                      setNewProspect((prev) => ({
+                        ...prev,
+                        position: e.target.value,
+                      }))
+                    }
                     placeholder="Enter position title"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="department">Department</Label>
-                  <Select value={newProspect.department} onValueChange={(value) => setNewProspect(prev => ({ ...prev, department: value }))}>
+                  <Select
+                    value={newProspect.department}
+                    onValueChange={(value) =>
+                      setNewProspect((prev) => ({ ...prev, department: value }))
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select department" />
                     </SelectTrigger>
@@ -228,7 +367,12 @@ const OnboardingManagement = () => {
                     id="startDate"
                     type="date"
                     value={newProspect.startDate}
-                    onChange={(e) => setNewProspect(prev => ({ ...prev, startDate: e.target.value }))}
+                    onChange={(e) =>
+                      setNewProspect((prev) => ({
+                        ...prev,
+                        startDate: e.target.value,
+                      }))
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -236,19 +380,25 @@ const OnboardingManagement = () => {
                   <Textarea
                     id="notes"
                     value={newProspect.notes}
-                    onChange={(e) => setNewProspect(prev => ({ ...prev, notes: e.target.value }))}
+                    onChange={(e) =>
+                      setNewProspect((prev) => ({
+                        ...prev,
+                        notes: e.target.value,
+                      }))
+                    }
                     placeholder="Additional notes about the prospect"
                     rows={3}
                   />
                 </div>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setIsAddProspectOpen(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsAddProspectOpen(false)}
+                >
                   Cancel
                 </Button>
-                <Button onClick={handleAddProspect}>
-                  Add Prospect
-                </Button>
+                <Button onClick={handleAddProspect}>Add Prospect</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -271,31 +421,51 @@ const OnboardingManagement = () => {
               <CardContent>
                 <div className="space-y-4">
                   {prospects.map((prospect) => (
-                    <div key={prospect.id} className="p-4 border rounded-lg hover:bg-accent/50 transition-colors">
+                    <div
+                      key={prospect.id}
+                      className="p-4 border rounded-lg hover:bg-accent/50 transition-colors"
+                    >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
                           <Avatar className="h-10 w-10">
-                            <AvatarImage src={prospect.avatar} alt={prospect.name} />
+                            <AvatarImage
+                              src={prospect.avatar}
+                              alt={prospect.name}
+                            />
                             <AvatarFallback>
-                              {prospect.name.split(' ').map(n => n[0]).join('')}
+                              {prospect.name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")}
                             </AvatarFallback>
                           </Avatar>
                           <div>
                             <h3 className="font-semibold">{prospect.name}</h3>
-                            <p className="text-sm text-muted-foreground">{prospect.position} • {prospect.department}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {prospect.position} • {prospect.department}
+                            </p>
                             <div className="flex items-center gap-2 mt-1">
                               <Mail className="h-3 w-3 text-muted-foreground" />
-                              <span className="text-xs text-muted-foreground">{prospect.email}</span>
+                              <span className="text-xs text-muted-foreground">
+                                {prospect.email}
+                              </span>
                             </div>
                           </div>
                         </div>
                         <div className="text-right space-y-2">
                           <Badge variant={getStatusVariant(prospect.status)}>
-                            <span className="capitalize">{prospect.status.replace('-', ' ')}</span>
+                            <span className="capitalize">
+                              {prospect.status.replace("-", " ")}
+                            </span>
                           </Badge>
                           <div className="flex items-center gap-2">
-                            <Progress value={prospect.progress} className="w-20" />
-                            <span className="text-sm text-muted-foreground">{prospect.progress}%</span>
+                            <Progress
+                              value={prospect.progress}
+                              className="w-20"
+                            />
+                            <span className="text-sm text-muted-foreground">
+                              {prospect.progress}%
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -303,7 +473,8 @@ const OnboardingManagement = () => {
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           <div className="flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
-                            Start: {new Date(prospect.startDate).toLocaleDateString()}
+                            Start:{" "}
+                            {new Date(prospect.startDate).toLocaleDateString()}
                           </div>
                           <div className="flex items-center gap-1">
                             <Phone className="h-3 w-3" />
@@ -321,15 +492,16 @@ const OnboardingManagement = () => {
                           >
                             View Checklist
                           </Button>
-                          {prospect.progress === 100 && prospect.status !== "completed" && (
-                            <Button
-                              size="sm"
-                              onClick={() => graduateToEmployee(prospect.id)}
-                            >
-                              <GraduationCap className="mr-1 h-3 w-3" />
-                              Graduate to Employee
-                            </Button>
-                          )}
+                          {prospect.progress === 100 &&
+                            prospect.status !== "completed" && (
+                              <Button
+                                size="sm"
+                                onClick={() => graduateToEmployee(prospect.id)}
+                              >
+                                <GraduationCap className="mr-1 h-3 w-3" />
+                                Graduate to Employee
+                              </Button>
+                            )}
                         </div>
                       </div>
                       {prospect.notes && (
@@ -354,18 +526,20 @@ const OnboardingManagement = () => {
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <span>Total Prospects</span>
-                    <span className="text-2xl font-bold">{prospects.length}</span>
+                    <span className="text-2xl font-bold">
+                      {prospects.length}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span>In Progress</span>
                     <span className="text-xl font-semibold">
-                      {prospects.filter(p => p.status !== "completed").length}
+                      {prospects.filter((p) => p.status !== "completed").length}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span>Completed</span>
                     <span className="text-xl font-semibold">
-                      {prospects.filter(p => p.status === "completed").length}
+                      {prospects.filter((p) => p.status === "completed").length}
                     </span>
                   </div>
                 </div>
@@ -378,11 +552,24 @@ const OnboardingManagement = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {["interview", "documentation", "background-check", "onboarding", "completed"].map(status => {
-                    const count = prospects.filter(p => p.status === status).length;
+                  {[
+                    "interview",
+                    "documentation",
+                    "background-check",
+                    "onboarding",
+                    "completed",
+                  ].map((status) => {
+                    const count = prospects.filter(
+                      (p) => p.status === status,
+                    ).length;
                     return (
-                      <div key={status} className="flex justify-between items-center text-sm">
-                        <span className="capitalize">{status.replace('-', ' ')}</span>
+                      <div
+                        key={status}
+                        className="flex justify-between items-center text-sm"
+                      >
+                        <span className="capitalize">
+                          {status.replace("-", " ")}
+                        </span>
                         <Badge variant="secondary">{count}</Badge>
                       </div>
                     );
@@ -404,7 +591,7 @@ const OnboardingManagement = () => {
                 Track progress through the onboarding process
               </DialogDescription>
             </DialogHeader>
-            
+
             <Tabs defaultValue="interview" className="w-full">
               <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="interview">Interview</TabsTrigger>
@@ -412,38 +599,62 @@ const OnboardingManagement = () => {
                 <TabsTrigger value="background-check">Background</TabsTrigger>
                 <TabsTrigger value="onboarding">Onboarding</TabsTrigger>
               </TabsList>
-              
-              {["interview", "documentation", "background-check", "onboarding"].map(category => (
-                <TabsContent key={category} value={category} className="space-y-3">
+
+              {[
+                "interview",
+                "documentation",
+                "background-check",
+                "onboarding",
+              ].map((category) => (
+                <TabsContent
+                  key={category}
+                  value={category}
+                  className="space-y-3"
+                >
                   {checklistItems
-                    .filter(item => item.category === category)
-                    .map(item => (
-                      <div key={item.id} className="flex items-start space-x-3 p-3 border rounded-lg">
+                    .filter((item) => item.category === category)
+                    .map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex items-start space-x-3 p-3 border rounded-lg"
+                      >
                         <Checkbox
                           id={item.id}
                           checked={item.completed}
-                          onCheckedChange={(checked) => handleChecklistUpdate(item.id, checked as boolean)}
+                          onCheckedChange={(checked) =>
+                            handleChecklistUpdate(item.id, checked as boolean)
+                          }
                           className="mt-1"
                         />
                         <div className="flex-1 space-y-1">
                           <div className="flex items-center gap-2">
-                            <label htmlFor={item.id} className="text-sm font-medium cursor-pointer">
+                            <label
+                              htmlFor={item.id}
+                              className="text-sm font-medium cursor-pointer"
+                            >
                               {item.title}
                             </label>
                             {item.required && (
-                              <Badge variant="destructive" className="text-xs">Required</Badge>
+                              <Badge variant="destructive" className="text-xs">
+                                Required
+                              </Badge>
                             )}
                           </div>
-                          <p className="text-xs text-muted-foreground">{item.description}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {item.description}
+                          </p>
                         </div>
                       </div>
                     ))}
                 </TabsContent>
               ))}
             </Tabs>
-            
+
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsChecklistOpen(false)}>
+              <Button
+                variant="outline"
+                onClick={() => setIsChecklistOpen(false)}
+              >
                 Close
               </Button>
             </DialogFooter>

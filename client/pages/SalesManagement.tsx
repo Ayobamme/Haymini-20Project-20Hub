@@ -117,7 +117,7 @@ const SalesManagement = () => {
       lastContact: "2024-01-15",
       source: "Website",
       assignedTo: "Sarah Johnson",
-      notes: "Interested in enterprise package"
+      notes: "Interested in enterprise package",
     },
     {
       id: "2",
@@ -130,7 +130,7 @@ const SalesManagement = () => {
       lastContact: "2024-01-14",
       source: "Referral",
       assignedTo: "Michael Chen",
-      notes: "Ready to sign contract next week"
+      notes: "Ready to sign contract next week",
     },
     {
       id: "3",
@@ -143,8 +143,8 @@ const SalesManagement = () => {
       lastContact: "2024-01-13",
       source: "LinkedIn",
       assignedTo: "Sarah Johnson",
-      notes: "Looking to upgrade plan"
-    }
+      notes: "Looking to upgrade plan",
+    },
   ]);
 
   const [teamStats] = useState<TeamMemberStats[]>([
@@ -158,10 +158,10 @@ const SalesManagement = () => {
       meetings: 15,
       dealsWon: 8,
       revenue: 180000,
-      target: 200000
+      target: 200000,
     },
     {
-      id: "2", 
+      id: "2",
       name: "Michael Chen",
       avatar: "",
       role: "Sales Representative",
@@ -170,20 +170,20 @@ const SalesManagement = () => {
       meetings: 12,
       dealsWon: 6,
       revenue: 145000,
-      target: 150000
+      target: 150000,
     },
     {
       id: "3",
       name: "Emily Davis",
       avatar: "",
-      role: "Account Executive", 
+      role: "Account Executive",
       coldCalls: 52,
       emailsSent: 140,
       meetings: 18,
       dealsWon: 10,
       revenue: 220000,
-      target: 180000
-    }
+      target: 180000,
+    },
   ]);
 
   const [isAddCustomerOpen, setIsAddCustomerOpen] = useState(false);
@@ -196,7 +196,7 @@ const SalesManagement = () => {
     estimatedValue: "",
     source: "",
     assignedTo: "",
-    notes: ""
+    notes: "",
   });
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -208,30 +208,37 @@ const SalesManagement = () => {
     { month: "Mar", revenue: 180000, target: 170000 },
     { month: "Apr", revenue: 195000, target: 180000 },
     { month: "May", revenue: 220000, target: 200000 },
-    { month: "Jun", revenue: 245000, target: 220000 }
+    { month: "Jun", revenue: 245000, target: 220000 },
   ];
 
   const statusDistribution = [
     { name: "Leads", value: 45, color: "#3b82f6" },
     { name: "Onboarding", value: 25, color: "#f59e0b" },
     { name: "Paying", value: 20, color: "#22c55e" },
-    { name: "Returning", value: 10, color: "#8b5cf6" }
+    { name: "Returning", value: 10, color: "#8b5cf6" },
   ];
 
-  const filteredCustomers = customers.filter(customer => {
-    const matchesSearch = customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         customer.company.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "All" || customer.status === statusFilter;
+  const filteredCustomers = customers.filter((customer) => {
+    const matchesSearch =
+      customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      customer.company.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus =
+      statusFilter === "All" || customer.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
   const getStatusVariant = (status: Customer["status"]) => {
     switch (status) {
-      case "Leads": return "default";
-      case "Onboarding": return "secondary";
-      case "Paying": return "default";
-      case "Returning": return "outline";
-      default: return "outline";
+      case "Leads":
+        return "default";
+      case "Onboarding":
+        return "secondary";
+      case "Paying":
+        return "default";
+      case "Returning":
+        return "outline";
+      default:
+        return "outline";
     }
   };
 
@@ -249,14 +256,21 @@ const SalesManagement = () => {
       id: Date.now().toString(),
       ...newCustomer,
       estimatedValue: parseInt(newCustomer.estimatedValue) || 0,
-      lastContact: new Date().toISOString().split('T')[0],
-      status: newCustomer.status as Customer["status"]
+      lastContact: new Date().toISOString().split("T")[0],
+      status: newCustomer.status as Customer["status"],
     };
 
     setCustomers([...customers, customer]);
     setNewCustomer({
-      name: "", email: "", phone: "", company: "", status: "Leads",
-      estimatedValue: "", source: "", assignedTo: "", notes: ""
+      name: "",
+      email: "",
+      phone: "",
+      company: "",
+      status: "Leads",
+      estimatedValue: "",
+      source: "",
+      assignedTo: "",
+      notes: "",
     });
     setIsAddCustomerOpen(false);
 
@@ -266,7 +280,10 @@ const SalesManagement = () => {
     });
   };
 
-  const totalRevenue = teamStats.reduce((sum, member) => sum + member.revenue, 0);
+  const totalRevenue = teamStats.reduce(
+    (sum, member) => sum + member.revenue,
+    0,
+  );
   const totalTarget = teamStats.reduce((sum, member) => sum + member.target, 0);
   const achievementRate = Math.round((totalRevenue / totalTarget) * 100);
 
@@ -280,7 +297,8 @@ const SalesManagement = () => {
               Sales Management
             </h1>
             <p className="text-muted-foreground mt-2">
-              Track sales performance, manage customer relationships, and monitor team activities
+              Track sales performance, manage customer relationships, and
+              monitor team activities
             </p>
           </div>
           <div className="flex items-center space-x-2">
@@ -288,7 +306,10 @@ const SalesManagement = () => {
               <Download className="mr-2 h-4 w-4" />
               Export Data
             </Button>
-            <Dialog open={isAddCustomerOpen} onOpenChange={setIsAddCustomerOpen}>
+            <Dialog
+              open={isAddCustomerOpen}
+              onOpenChange={setIsAddCustomerOpen}
+            >
               <DialogTrigger asChild>
                 <Button>
                   <Plus className="mr-2 h-4 w-4" />
@@ -303,11 +324,15 @@ const SalesManagement = () => {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Total Revenue
+              </CardTitle>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">₦{(totalRevenue / 1000000).toFixed(1)}M</div>
+              <div className="text-2xl font-bold">
+                ₦{(totalRevenue / 1000000).toFixed(1)}M
+              </div>
               <p className="text-xs text-muted-foreground">
                 {achievementRate}% of target achieved
               </p>
@@ -316,20 +341,25 @@ const SalesManagement = () => {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Customers</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Active Customers
+              </CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{customers.length}</div>
               <p className="text-xs text-muted-foreground">
-                {customers.filter(c => c.status === "Paying").length} paying customers
+                {customers.filter((c) => c.status === "Paying").length} paying
+                customers
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Conversion Rate</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Conversion Rate
+              </CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -342,7 +372,9 @@ const SalesManagement = () => {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Team Performance</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Team Performance
+              </CardTitle>
               <Award className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -359,7 +391,9 @@ const SalesManagement = () => {
           <Card className="col-span-2">
             <CardHeader>
               <CardTitle>Revenue vs Target</CardTitle>
-              <CardDescription>Monthly revenue performance against targets</CardDescription>
+              <CardDescription>
+                Monthly revenue performance against targets
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -367,7 +401,12 @@ const SalesManagement = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip formatter={(value) => [`₦${(value as number / 1000).toFixed(0)}K`, ""]} />
+                  <Tooltip
+                    formatter={(value) => [
+                      `₦${((value as number) / 1000).toFixed(0)}K`,
+                      "",
+                    ]}
+                  />
                   <Legend />
                   <Bar dataKey="revenue" fill="#3b82f6" name="Revenue" />
                   <Bar dataKey="target" fill="#e5e7eb" name="Target" />
@@ -379,7 +418,9 @@ const SalesManagement = () => {
           <Card>
             <CardHeader>
               <CardTitle>Customer Status</CardTitle>
-              <CardDescription>Distribution of customer pipeline</CardDescription>
+              <CardDescription>
+                Distribution of customer pipeline
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -402,9 +443,15 @@ const SalesManagement = () => {
               </ResponsiveContainer>
               <div className="mt-4 space-y-2">
                 {statusDistribution.map((item) => (
-                  <div key={item.name} className="flex items-center justify-between text-sm">
+                  <div
+                    key={item.name}
+                    className="flex items-center justify-between text-sm"
+                  >
                     <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 rounded-full" style={{ backgroundColor: item.color }} />
+                      <div
+                        className="h-3 w-3 rounded-full"
+                        style={{ backgroundColor: item.color }}
+                      />
                       <span>{item.name}</span>
                     </div>
                     <span className="font-medium">{item.value}%</span>
@@ -453,18 +500,26 @@ const SalesManagement = () => {
             {/* Customer List */}
             <div className="grid gap-4">
               {filteredCustomers.map((customer) => (
-                <Card key={customer.id} className="hover:shadow-md transition-shadow">
+                <Card
+                  key={customer.id}
+                  className="hover:shadow-md transition-shadow"
+                >
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
                         <Avatar className="h-12 w-12">
                           <AvatarFallback>
-                            {customer.name.split(' ').map(n => n[0]).join('')}
+                            {customer.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
                           </AvatarFallback>
                         </Avatar>
                         <div className="space-y-1">
                           <h3 className="font-semibold">{customer.name}</h3>
-                          <p className="text-sm text-muted-foreground">{customer.company}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {customer.company}
+                          </p>
                           <div className="flex items-center space-x-4 text-xs text-muted-foreground">
                             <div className="flex items-center gap-1">
                               <Mail className="h-3 w-3" />
@@ -484,12 +539,15 @@ const SalesManagement = () => {
                             {customer.status}
                           </Badge>
                         </div>
-                        <div className="text-lg font-bold">₦{customer.estimatedValue.toLocaleString()}</div>
+                        <div className="text-lg font-bold">
+                          ₦{customer.estimatedValue.toLocaleString()}
+                        </div>
                         <div className="text-xs text-muted-foreground">
                           Assigned to: {customer.assignedTo}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          Last contact: {new Date(customer.lastContact).toLocaleDateString()}
+                          Last contact:{" "}
+                          {new Date(customer.lastContact).toLocaleDateString()}
                         </div>
                       </div>
 
@@ -523,7 +581,9 @@ const SalesManagement = () => {
                     </div>
                     {customer.notes && (
                       <div className="mt-4 p-3 bg-muted rounded-md">
-                        <p className="text-sm"><strong>Notes:</strong> {customer.notes}</p>
+                        <p className="text-sm">
+                          <strong>Notes:</strong> {customer.notes}
+                        </p>
                       </div>
                     )}
                   </CardContent>
@@ -535,47 +595,83 @@ const SalesManagement = () => {
           <TabsContent value="team" className="space-y-4">
             <div className="grid gap-4">
               {teamStats.map((member) => (
-                <Card key={member.id} className="hover:shadow-md transition-shadow">
+                <Card
+                  key={member.id}
+                  className="hover:shadow-md transition-shadow"
+                >
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
                         <Avatar className="h-12 w-12">
                           <AvatarImage src={member.avatar} alt={member.name} />
                           <AvatarFallback>
-                            {member.name.split(' ').map(n => n[0]).join('')}
+                            {member.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
                           </AvatarFallback>
                         </Avatar>
                         <div>
                           <h3 className="font-semibold">{member.name}</h3>
-                          <p className="text-sm text-muted-foreground">{member.role}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {member.role}
+                          </p>
                         </div>
                       </div>
 
                       <div className="grid grid-cols-3 gap-8 text-center">
                         <div>
-                          <div className="text-lg font-bold">{member.coldCalls}</div>
-                          <div className="text-xs text-muted-foreground">Cold Calls</div>
+                          <div className="text-lg font-bold">
+                            {member.coldCalls}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            Cold Calls
+                          </div>
                         </div>
                         <div>
-                          <div className="text-lg font-bold">{member.emailsSent}</div>
-                          <div className="text-xs text-muted-foreground">Emails Sent</div>
+                          <div className="text-lg font-bold">
+                            {member.emailsSent}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            Emails Sent
+                          </div>
                         </div>
                         <div>
-                          <div className="text-lg font-bold">{member.meetings}</div>
-                          <div className="text-xs text-muted-foreground">Meetings</div>
+                          <div className="text-lg font-bold">
+                            {member.meetings}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            Meetings
+                          </div>
                         </div>
                         <div>
-                          <div className="text-lg font-bold">{member.dealsWon}</div>
-                          <div className="text-xs text-muted-foreground">Deals Won</div>
+                          <div className="text-lg font-bold">
+                            {member.dealsWon}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            Deals Won
+                          </div>
                         </div>
                         <div>
-                          <div className="text-lg font-bold">₦{(member.revenue / 1000).toFixed(0)}K</div>
-                          <div className="text-xs text-muted-foreground">Revenue</div>
+                          <div className="text-lg font-bold">
+                            ₦{(member.revenue / 1000).toFixed(0)}K
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            Revenue
+                          </div>
                         </div>
                         <div>
-                          <div className="text-lg font-bold">{Math.round((member.revenue / member.target) * 100)}%</div>
-                          <div className="text-xs text-muted-foreground">Target Achievement</div>
-                          <Progress value={(member.revenue / member.target) * 100} className="mt-1" />
+                          <div className="text-lg font-bold">
+                            {Math.round((member.revenue / member.target) * 100)}
+                            %
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            Target Achievement
+                          </div>
+                          <Progress
+                            value={(member.revenue / member.target) * 100}
+                            className="mt-1"
+                          />
                         </div>
                       </div>
                     </div>
@@ -601,7 +697,12 @@ const SalesManagement = () => {
                 <Input
                   id="name"
                   value={newCustomer.name}
-                  onChange={(e) => setNewCustomer(prev => ({ ...prev, name: e.target.value }))}
+                  onChange={(e) =>
+                    setNewCustomer((prev) => ({
+                      ...prev,
+                      name: e.target.value,
+                    }))
+                  }
                   placeholder="Enter customer name"
                 />
               </div>
@@ -611,7 +712,12 @@ const SalesManagement = () => {
                   id="email"
                   type="email"
                   value={newCustomer.email}
-                  onChange={(e) => setNewCustomer(prev => ({ ...prev, email: e.target.value }))}
+                  onChange={(e) =>
+                    setNewCustomer((prev) => ({
+                      ...prev,
+                      email: e.target.value,
+                    }))
+                  }
                   placeholder="Enter email address"
                 />
               </div>
@@ -620,7 +726,12 @@ const SalesManagement = () => {
                 <Input
                   id="phone"
                   value={newCustomer.phone}
-                  onChange={(e) => setNewCustomer(prev => ({ ...prev, phone: e.target.value }))}
+                  onChange={(e) =>
+                    setNewCustomer((prev) => ({
+                      ...prev,
+                      phone: e.target.value,
+                    }))
+                  }
                   placeholder="Enter phone number"
                 />
               </div>
@@ -629,13 +740,23 @@ const SalesManagement = () => {
                 <Input
                   id="company"
                   value={newCustomer.company}
-                  onChange={(e) => setNewCustomer(prev => ({ ...prev, company: e.target.value }))}
+                  onChange={(e) =>
+                    setNewCustomer((prev) => ({
+                      ...prev,
+                      company: e.target.value,
+                    }))
+                  }
                   placeholder="Enter company name"
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="status">Status</Label>
-                <Select value={newCustomer.status} onValueChange={(value) => setNewCustomer(prev => ({ ...prev, status: value }))}>
+                <Select
+                  value={newCustomer.status}
+                  onValueChange={(value) =>
+                    setNewCustomer((prev) => ({ ...prev, status: value }))
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -653,13 +774,23 @@ const SalesManagement = () => {
                   id="estimatedValue"
                   type="number"
                   value={newCustomer.estimatedValue}
-                  onChange={(e) => setNewCustomer(prev => ({ ...prev, estimatedValue: e.target.value }))}
+                  onChange={(e) =>
+                    setNewCustomer((prev) => ({
+                      ...prev,
+                      estimatedValue: e.target.value,
+                    }))
+                  }
                   placeholder="Enter estimated value"
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="source">Source</Label>
-                <Select value={newCustomer.source} onValueChange={(value) => setNewCustomer(prev => ({ ...prev, source: value }))}>
+                <Select
+                  value={newCustomer.source}
+                  onValueChange={(value) =>
+                    setNewCustomer((prev) => ({ ...prev, source: value }))
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select source" />
                   </SelectTrigger>
@@ -668,13 +799,20 @@ const SalesManagement = () => {
                     <SelectItem value="Referral">Referral</SelectItem>
                     <SelectItem value="LinkedIn">LinkedIn</SelectItem>
                     <SelectItem value="Cold Call">Cold Call</SelectItem>
-                    <SelectItem value="Email Campaign">Email Campaign</SelectItem>
+                    <SelectItem value="Email Campaign">
+                      Email Campaign
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="assignedTo">Assigned To</Label>
-                <Select value={newCustomer.assignedTo} onValueChange={(value) => setNewCustomer(prev => ({ ...prev, assignedTo: value }))}>
+                <Select
+                  value={newCustomer.assignedTo}
+                  onValueChange={(value) =>
+                    setNewCustomer((prev) => ({ ...prev, assignedTo: value }))
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select team member" />
                   </SelectTrigger>
@@ -692,14 +830,22 @@ const SalesManagement = () => {
                 <Textarea
                   id="notes"
                   value={newCustomer.notes}
-                  onChange={(e) => setNewCustomer(prev => ({ ...prev, notes: e.target.value }))}
+                  onChange={(e) =>
+                    setNewCustomer((prev) => ({
+                      ...prev,
+                      notes: e.target.value,
+                    }))
+                  }
                   placeholder="Additional notes about the customer"
                   rows={3}
                 />
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsAddCustomerOpen(false)}>
+              <Button
+                variant="outline"
+                onClick={() => setIsAddCustomerOpen(false)}
+              >
                 Cancel
               </Button>
               <Button onClick={handleAddCustomer}>Add Customer</Button>

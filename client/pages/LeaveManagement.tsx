@@ -822,7 +822,9 @@ const LeaveManagement = () => {
                                 <SelectValue placeholder="Select contract type" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="all">All Contracts</SelectItem>
+                                <SelectItem value="all">
+                                  All Contracts
+                                </SelectItem>
                                 <SelectItem value="permanent">
                                   Permanent
                                 </SelectItem>

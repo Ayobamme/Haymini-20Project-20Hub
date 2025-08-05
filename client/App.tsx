@@ -44,203 +44,203 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <DashboardLayout>
-                <Dashboard />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/projects"
-            element={
-              <DashboardLayout>
-                <Projects />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/teams"
-            element={
-              <DashboardLayout>
-                <Teams />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/tasks"
-            element={
-              <DashboardLayout>
-                <Tasks />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/okrs"
-            element={
-              <DashboardLayout>
-                <OKRs />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/analytics"
-            element={
-              <DashboardLayout>
-                <Analytics />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/sales"
-            element={
-              <DashboardLayout>
-                <SalesManagement />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/documents"
-            element={
-              <DashboardLayout>
-                <Documents />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/communication"
-            element={
-              <DashboardLayout>
-                <Communication />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/issues"
-            element={
-              <DashboardLayout>
-                <Issues />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/risks"
-            element={
-              <DashboardLayout>
-                <RiskManagement />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/inventory"
-            element={
-              <DashboardLayout>
-                <Inventory />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/departments"
-            element={
-              <DashboardLayout>
-                <Departments />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/integrations"
-            element={
-              <DashboardLayout>
-                <Integrations />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <DashboardLayout>
-                <ProfileSettings />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/notifications"
-            element={
-              <DashboardLayout>
-                <Notifications />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/attendance"
-            element={
-              <DashboardLayout>
-                <Attendance />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/leave-management"
-            element={
-              <DashboardLayout>
-                <LeaveManagement />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/payroll"
-            element={
-              <DashboardLayout>
-                <Payroll />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/human-resources"
-            element={
-              <DashboardLayout>
-                <HumanResources />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/onboarding"
-            element={
-              <DashboardLayout>
-                <OnboardingManagement />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/offboarding"
-            element={
-              <DashboardLayout>
-                <OffboardingManagement />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/training"
-            element={
-              <DashboardLayout>
-                <TrainingManagement />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/meetings"
-            element={
-              <DashboardLayout>
-                <MeetingManagement />
-              </DashboardLayout>
-            }
-          />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <DashboardLayout>
+                  <Dashboard />
+                </DashboardLayout>
+              }
+            />
+            <Route
+              path="/projects"
+              element={
+                <DashboardLayout>
+                  <Projects />
+                </DashboardLayout>
+              }
+            />
+            <Route
+              path="/teams"
+              element={
+                <DashboardLayout>
+                  <Teams />
+                </DashboardLayout>
+              }
+            />
+            <Route
+              path="/tasks"
+              element={
+                <DashboardLayout>
+                  <Tasks />
+                </DashboardLayout>
+              }
+            />
+            <Route
+              path="/okrs"
+              element={
+                <DashboardLayout>
+                  <OKRs />
+                </DashboardLayout>
+              }
+            />
+            <Route
+              path="/analytics"
+              element={
+                <DashboardLayout>
+                  <Analytics />
+                </DashboardLayout>
+              }
+            />
+            <Route
+              path="/sales"
+              element={
+                <DashboardLayout>
+                  <SalesManagement />
+                </DashboardLayout>
+              }
+            />
+            <Route
+              path="/documents"
+              element={
+                <DashboardLayout>
+                  <Documents />
+                </DashboardLayout>
+              }
+            />
+            <Route
+              path="/communication"
+              element={
+                <DashboardLayout>
+                  <Communication />
+                </DashboardLayout>
+              }
+            />
+            <Route
+              path="/issues"
+              element={
+                <DashboardLayout>
+                  <Issues />
+                </DashboardLayout>
+              }
+            />
+            <Route
+              path="/risks"
+              element={
+                <DashboardLayout>
+                  <RiskManagement />
+                </DashboardLayout>
+              }
+            />
+            <Route
+              path="/inventory"
+              element={
+                <DashboardLayout>
+                  <Inventory />
+                </DashboardLayout>
+              }
+            />
+            <Route
+              path="/departments"
+              element={
+                <DashboardLayout>
+                  <Departments />
+                </DashboardLayout>
+              }
+            />
+            <Route
+              path="/integrations"
+              element={
+                <DashboardLayout>
+                  <Integrations />
+                </DashboardLayout>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <DashboardLayout>
+                  <ProfileSettings />
+                </DashboardLayout>
+              }
+            />
+            <Route
+              path="/notifications"
+              element={
+                <DashboardLayout>
+                  <Notifications />
+                </DashboardLayout>
+              }
+            />
+            <Route
+              path="/attendance"
+              element={
+                <DashboardLayout>
+                  <Attendance />
+                </DashboardLayout>
+              }
+            />
+            <Route
+              path="/leave-management"
+              element={
+                <DashboardLayout>
+                  <LeaveManagement />
+                </DashboardLayout>
+              }
+            />
+            <Route
+              path="/payroll"
+              element={
+                <DashboardLayout>
+                  <Payroll />
+                </DashboardLayout>
+              }
+            />
+            <Route
+              path="/human-resources"
+              element={
+                <DashboardLayout>
+                  <HumanResources />
+                </DashboardLayout>
+              }
+            />
+            <Route
+              path="/onboarding"
+              element={
+                <DashboardLayout>
+                  <OnboardingManagement />
+                </DashboardLayout>
+              }
+            />
+            <Route
+              path="/offboarding"
+              element={
+                <DashboardLayout>
+                  <OffboardingManagement />
+                </DashboardLayout>
+              }
+            />
+            <Route
+              path="/training"
+              element={
+                <DashboardLayout>
+                  <TrainingManagement />
+                </DashboardLayout>
+              }
+            />
+            <Route
+              path="/meetings"
+              element={
+                <DashboardLayout>
+                  <MeetingManagement />
+                </DashboardLayout>
+              }
+            />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
       </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>

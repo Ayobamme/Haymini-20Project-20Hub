@@ -276,9 +276,7 @@ export default function Dashboard() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-foreground">
-              Dashboard
-            </h1>
+            <h1 className="text-4xl font-bold text-foreground">Dashboard</h1>
             <p className="text-lg text-muted-foreground">
               Welcome back! Here's what's happening with your projects and team
               members.
@@ -294,9 +292,7 @@ export default function Dashboard() {
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>
-                    Invite Team Member
-                  </DialogTitle>
+                  <DialogTitle>Invite Team Member</DialogTitle>
                   <DialogDescription>
                     Send an invitation to join your organization
                   </DialogDescription>
@@ -321,7 +317,10 @@ export default function Dashboard() {
                         type="email"
                         value={inviteData.email}
                         onChange={(e) =>
-                          setInviteData({ ...inviteData, email: e.target.value })
+                          setInviteData({
+                            ...inviteData,
+                            email: e.target.value,
+                          })
                         }
                         placeholder="Enter email address"
                       />
@@ -338,7 +337,9 @@ export default function Dashboard() {
                           <SelectValue placeholder="Select department" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Engineering">Engineering</SelectItem>
+                          <SelectItem value="Engineering">
+                            Engineering
+                          </SelectItem>
                           <SelectItem value="Design">Design</SelectItem>
                           <SelectItem value="Marketing">Marketing</SelectItem>
                           <SelectItem value="Sales">Sales</SelectItem>
@@ -368,7 +369,10 @@ export default function Dashboard() {
                       id="message"
                       value={inviteData.message}
                       onChange={(e) =>
-                        setInviteData({ ...inviteData, message: e.target.value })
+                        setInviteData({
+                          ...inviteData,
+                          message: e.target.value,
+                        })
                       }
                       placeholder="Add a personal welcome message..."
                       rows={3}
@@ -390,7 +394,10 @@ export default function Dashboard() {
               </DialogContent>
             </Dialog>
 
-            <Dialog open={showProjectDialog} onOpenChange={setShowProjectDialog}>
+            <Dialog
+              open={showProjectDialog}
+              onOpenChange={setShowProjectDialog}
+            >
               <DialogTrigger asChild>
                 <Button variant="outline">
                   <Plus className="mr-2 h-4 w-4" />
@@ -399,9 +406,7 @@ export default function Dashboard() {
               </DialogTrigger>
               <DialogContent className="max-w-2xl">
                 <DialogHeader>
-                  <DialogTitle>
-                    Create New Project
-                  </DialogTitle>
+                  <DialogTitle>Create New Project</DialogTitle>
                   <DialogDescription>
                     Set up a new project with team members and timeline
                   </DialogDescription>
@@ -478,7 +483,9 @@ export default function Dashboard() {
                           <SelectValue placeholder="Select department" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Engineering">Engineering</SelectItem>
+                          <SelectItem value="Engineering">
+                            Engineering
+                          </SelectItem>
                           <SelectItem value="Design">Design</SelectItem>
                           <SelectItem value="Marketing">Marketing</SelectItem>
                           <SelectItem value="Sales">Sales</SelectItem>
@@ -523,22 +530,24 @@ export default function Dashboard() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Team Members</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Team Members
+              </CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
                 {hrSummaryData.totalEmployees}
               </div>
-              <p className="text-xs text-muted-foreground">
-                +3 new this month
-              </p>
+              <p className="text-xs text-muted-foreground">+3 new this month</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Present Today</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Present Today
+              </CardTitle>
               <UserCheck className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -787,7 +796,9 @@ export default function Dashboard() {
               <div className="flex flex-row items-center justify-between">
                 <div>
                   <CardTitle>Department Attendance</CardTitle>
-                  <CardDescription>Attendance rates by department</CardDescription>
+                  <CardDescription>
+                    Attendance rates by department
+                  </CardDescription>
                 </div>
                 <Button variant="outline" size="sm" asChild>
                   <Link to="/attendance">View Details</Link>
@@ -805,7 +816,15 @@ export default function Dashboard() {
                           {dept.department}
                         </span>
                       </div>
-                      <Badge variant={dept.rate >= 95 ? "default" : dept.rate >= 90 ? "secondary" : "destructive"}>
+                      <Badge
+                        variant={
+                          dept.rate >= 95
+                            ? "default"
+                            : dept.rate >= 90
+                              ? "secondary"
+                              : "destructive"
+                        }
+                      >
                         {dept.rate}%
                       </Badge>
                     </div>
@@ -840,7 +859,15 @@ export default function Dashboard() {
                         <p className="text-sm font-medium leading-none">
                           {project.name}
                         </p>
-                        <Badge variant={project.priority === "High" ? "destructive" : project.priority === "Medium" ? "secondary" : "outline"}>
+                        <Badge
+                          variant={
+                            project.priority === "High"
+                              ? "destructive"
+                              : project.priority === "Medium"
+                                ? "secondary"
+                                : "outline"
+                          }
+                        >
                           {project.priority}
                         </Badge>
                       </div>
@@ -894,13 +921,24 @@ export default function Dashboard() {
           <CardContent>
             <div className="space-y-4">
               {upcomingTasks.map((task) => (
-                <div key={task.id} className="flex items-start space-x-4 p-4 rounded-lg border">
+                <div
+                  key={task.id}
+                  className="flex items-start space-x-4 p-4 rounded-lg border"
+                >
                   <div className="flex-1 space-y-1">
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-medium leading-none">
                         {task.title}
                       </p>
-                      <Badge variant={task.priority === "High" ? "destructive" : task.priority === "Medium" ? "secondary" : "outline"}>
+                      <Badge
+                        variant={
+                          task.priority === "High"
+                            ? "destructive"
+                            : task.priority === "Medium"
+                              ? "secondary"
+                              : "outline"
+                        }
+                      >
                         {task.priority}
                       </Badge>
                     </div>

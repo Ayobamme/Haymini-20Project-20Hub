@@ -1,16 +1,50 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, CalendarPlus, Clock, MapPin, Video, Users, User, CheckCircle, AlertCircle, Link as LinkIcon, Phone, Mail, Building } from "lucide-react";
+import {
+  Calendar,
+  CalendarPlus,
+  Clock,
+  MapPin,
+  Video,
+  Users,
+  User,
+  CheckCircle,
+  AlertCircle,
+  Link as LinkIcon,
+  Phone,
+  Mail,
+  Building,
+} from "lucide-react";
 
 interface Meeting {
   id: string;
@@ -68,9 +102,13 @@ const MeetingManagement = () => {
       priority: "medium",
       recurring: true,
       recurrencePattern: "weekly",
-      agenda: ["Review last week's progress", "Discuss blockers", "Plan upcoming week"],
+      agenda: [
+        "Review last week's progress",
+        "Discuss blockers",
+        "Plan upcoming week",
+      ],
       documents: ["Meeting Notes Template", "Sprint Report"],
-      createdDate: "2024-01-15"
+      createdDate: "2024-01-15",
     },
     {
       id: "2",
@@ -81,14 +119,23 @@ const MeetingManagement = () => {
       startTime: "14:00",
       endTime: "17:00",
       organizer: "Michael Chen",
-      attendees: ["sarah@company.com", "emily@company.com", "robert@company.com"],
+      attendees: [
+        "sarah@company.com",
+        "emily@company.com",
+        "robert@company.com",
+      ],
       location: "Conference Room A",
       status: "scheduled",
       priority: "high",
       recurring: false,
-      agenda: ["Review Q4 performance", "Set Q1 objectives", "Resource allocation", "Timeline planning"],
+      agenda: [
+        "Review Q4 performance",
+        "Set Q1 objectives",
+        "Resource allocation",
+        "Timeline planning",
+      ],
       documents: ["Q4 Report", "Budget Proposal", "OKR Template"],
-      createdDate: "2024-01-10"
+      createdDate: "2024-01-10",
     },
     {
       id: "3",
@@ -99,7 +146,11 @@ const MeetingManagement = () => {
       startTime: "11:00",
       endTime: "12:30",
       organizer: "Emily Davis",
-      attendees: ["client@example.com", "sales@company.com", "product@company.com"],
+      attendees: [
+        "client@example.com",
+        "sales@company.com",
+        "product@company.com",
+      ],
       location: "Meeting Room B",
       meetingLink: "https://teams.microsoft.com/l/meetup-join/123",
       platform: "teams",
@@ -108,8 +159,8 @@ const MeetingManagement = () => {
       recurring: false,
       agenda: ["Product overview", "Demo", "Pricing discussion", "Q&A"],
       documents: ["Product Brochure", "Proposal Document", "Demo Script"],
-      createdDate: "2024-01-12"
-    }
+      createdDate: "2024-01-12",
+    },
   ]);
 
   const [newMeeting, setNewMeeting] = useState({
@@ -126,51 +177,96 @@ const MeetingManagement = () => {
     recurring: false,
     recurrencePattern: "",
     agenda: "",
-    attendees: ""
+    attendees: "",
   });
 
   // Mock attendee data
   const availableAttendees: Attendee[] = [
-    { id: "1", name: "John Smith", email: "john@company.com", position: "Senior Developer", department: "Engineering", status: "accepted" },
-    { id: "2", name: "Alice Johnson", email: "alice@company.com", position: "Product Manager", department: "Product", status: "accepted" },
-    { id: "3", name: "Bob Wilson", email: "bob@company.com", position: "UX Designer", department: "Design", status: "tentative" },
-    { id: "4", name: "Sarah Davis", email: "sarah@company.com", position: "Marketing Lead", department: "Marketing", status: "declined" }
+    {
+      id: "1",
+      name: "John Smith",
+      email: "john@company.com",
+      position: "Senior Developer",
+      department: "Engineering",
+      status: "accepted",
+    },
+    {
+      id: "2",
+      name: "Alice Johnson",
+      email: "alice@company.com",
+      position: "Product Manager",
+      department: "Product",
+      status: "accepted",
+    },
+    {
+      id: "3",
+      name: "Bob Wilson",
+      email: "bob@company.com",
+      position: "UX Designer",
+      department: "Design",
+      status: "tentative",
+    },
+    {
+      id: "4",
+      name: "Sarah Davis",
+      email: "sarah@company.com",
+      position: "Marketing Lead",
+      department: "Marketing",
+      status: "declined",
+    },
   ];
 
   const getStatusVariant = (status: Meeting["status"]) => {
     switch (status) {
-      case "scheduled": return "default";
-      case "in-progress": return "default";
-      case "completed": return "secondary";
-      case "cancelled": return "destructive";
-      default: return "outline";
+      case "scheduled":
+        return "default";
+      case "in-progress":
+        return "default";
+      case "completed":
+        return "secondary";
+      case "cancelled":
+        return "destructive";
+      default:
+        return "outline";
     }
   };
 
   const getTypeVariant = (type: Meeting["type"]) => {
     switch (type) {
-      case "virtual": return "default";
-      case "physical": return "secondary";
-      case "hybrid": return "outline";
-      default: return "outline";
+      case "virtual":
+        return "default";
+      case "physical":
+        return "secondary";
+      case "hybrid":
+        return "outline";
+      default:
+        return "outline";
     }
   };
 
   const getPriorityVariant = (priority: Meeting["priority"]) => {
     switch (priority) {
-      case "high": return "destructive";
-      case "medium": return "default";
-      case "low": return "secondary";
-      default: return "outline";
+      case "high":
+        return "destructive";
+      case "medium":
+        return "default";
+      case "low":
+        return "secondary";
+      default:
+        return "outline";
     }
   };
 
   const getTypeIcon = (type: Meeting["type"]) => {
     switch (type) {
-      case "virtual": return <Video className="h-4 w-4" />;
-      case "physical": return <MapPin className="h-4 w-4" />;
-      case "hybrid": return <Building className="h-4 w-4" />;
-      default: return <Calendar className="h-4 w-4" />;
+      case "virtual":
+        return <Video className="h-4 w-4" />;
+      case "physical":
+        return <MapPin className="h-4 w-4" />;
+      case "hybrid":
+        return <Building className="h-4 w-4" />;
+      default:
+        return <Calendar className="h-4 w-4" />;
     }
   };
 
@@ -179,33 +275,53 @@ const MeetingManagement = () => {
       id: Date.now().toString(),
       ...newMeeting,
       organizer: "Current User",
-      attendees: newMeeting.attendees.split(',').map(email => email.trim()).filter(Boolean),
-      agenda: newMeeting.agenda.split('\n').filter(Boolean),
+      attendees: newMeeting.attendees
+        .split(",")
+        .map((email) => email.trim())
+        .filter(Boolean),
+      agenda: newMeeting.agenda.split("\n").filter(Boolean),
       documents: [],
       status: "scheduled",
       recurring: newMeeting.recurring,
-      recurrencePattern: newMeeting.recurring ? newMeeting.recurrencePattern as any : undefined,
-      createdDate: new Date().toISOString().split('T')[0]
+      recurrencePattern: newMeeting.recurring
+        ? (newMeeting.recurrencePattern as any)
+        : undefined,
+      createdDate: new Date().toISOString().split("T")[0],
     } as Meeting;
-    
+
     setMeetings([...meetings, meeting]);
     setNewMeeting({
-      title: "", description: "", type: "virtual", date: "", startTime: "", endTime: "",
-      location: "", meetingLink: "", platform: "zoom", priority: "medium", recurring: false,
-      recurrencePattern: "", agenda: "", attendees: ""
+      title: "",
+      description: "",
+      type: "virtual",
+      date: "",
+      startTime: "",
+      endTime: "",
+      location: "",
+      meetingLink: "",
+      platform: "zoom",
+      priority: "medium",
+      recurring: false,
+      recurrencePattern: "",
+      agenda: "",
+      attendees: "",
     });
     setIsCreateMeetingOpen(false);
   };
 
   const getFilteredMeetings = () => {
     const now = new Date();
-    const today = now.toISOString().split('T')[0];
-    
+    const today = now.toISOString().split("T")[0];
+
     switch (activeTab) {
       case "upcoming":
-        return meetings.filter(m => m.date >= today && m.status === "scheduled");
+        return meetings.filter(
+          (m) => m.date >= today && m.status === "scheduled",
+        );
       case "past":
-        return meetings.filter(m => m.date < today || m.status === "completed");
+        return meetings.filter(
+          (m) => m.date < today || m.status === "completed",
+        );
       case "all":
         return meetings;
       default:
@@ -214,7 +330,7 @@ const MeetingManagement = () => {
   };
 
   const getAttendeeInfo = (email: string) => {
-    return availableAttendees.find(a => a.email === email);
+    return availableAttendees.find((a) => a.email === email);
   };
 
   return (
@@ -230,7 +346,10 @@ const MeetingManagement = () => {
               Schedule and manage physical and virtual meetings
             </p>
           </div>
-          <Dialog open={isCreateMeetingOpen} onOpenChange={setIsCreateMeetingOpen}>
+          <Dialog
+            open={isCreateMeetingOpen}
+            onOpenChange={setIsCreateMeetingOpen}
+          >
             <DialogTrigger asChild>
               <Button>
                 <CalendarPlus className="mr-2 h-4 w-4" />
@@ -246,49 +365,51 @@ const MeetingManagement = () => {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-muted-foreground text-sm">Total Meetings</p>
+                  <p className="text-muted-foreground text-sm">
+                    Total Meetings
+                  </p>
                   <p className="text-2xl font-bold">{meetings.length}</p>
                 </div>
                 <Calendar className="h-8 w-8 text-muted-foreground" />
               </div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-muted-foreground text-sm">Upcoming</p>
                   <p className="text-2xl font-bold">
-                    {meetings.filter(m => m.status === "scheduled").length}
+                    {meetings.filter((m) => m.status === "scheduled").length}
                   </p>
                 </div>
                 <Clock className="h-8 w-8 text-muted-foreground" />
               </div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-muted-foreground text-sm">Virtual</p>
                   <p className="text-2xl font-bold">
-                    {meetings.filter(m => m.type === "virtual").length}
+                    {meetings.filter((m) => m.type === "virtual").length}
                   </p>
                 </div>
                 <Video className="h-8 w-8 text-muted-foreground" />
               </div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-muted-foreground text-sm">Physical</p>
                   <p className="text-2xl font-bold">
-                    {meetings.filter(m => m.type === "physical").length}
+                    {meetings.filter((m) => m.type === "physical").length}
                   </p>
                 </div>
                 <MapPin className="h-8 w-8 text-muted-foreground" />
@@ -298,7 +419,11 @@ const MeetingManagement = () => {
         </div>
 
         {/* Main Content */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-6"
+        >
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
             <TabsTrigger value="past">Past</TabsTrigger>
@@ -308,21 +433,30 @@ const MeetingManagement = () => {
           <TabsContent value={activeTab} className="space-y-4">
             <div className="grid gap-4">
               {getFilteredMeetings().map((meeting) => (
-                <Card key={meeting.id} className="hover:shadow-md transition-shadow">
+                <Card
+                  key={meeting.id}
+                  className="hover:shadow-md transition-shadow"
+                >
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between">
                       <div className="space-y-3 flex-1">
                         <div className="flex items-center gap-3">
-                          <h3 className="text-lg font-semibold">{meeting.title}</h3>
+                          <h3 className="text-lg font-semibold">
+                            {meeting.title}
+                          </h3>
                           <div className="flex items-center gap-2">
                             <Badge variant={getTypeVariant(meeting.type)}>
                               {getTypeIcon(meeting.type)}
-                              <span className="ml-1 capitalize">{meeting.type}</span>
+                              <span className="ml-1 capitalize">
+                                {meeting.type}
+                              </span>
                             </Badge>
                             <Badge variant={getStatusVariant(meeting.status)}>
-                              {meeting.status.replace('-', ' ')}
+                              {meeting.status.replace("-", " ")}
                             </Badge>
-                            <Badge variant={getPriorityVariant(meeting.priority)}>
+                            <Badge
+                              variant={getPriorityVariant(meeting.priority)}
+                            >
                               {meeting.priority} priority
                             </Badge>
                             {meeting.recurring && (
@@ -332,21 +466,27 @@ const MeetingManagement = () => {
                             )}
                           </div>
                         </div>
-                        
-                        <p className="text-muted-foreground">{meeting.description}</p>
-                        
+
+                        <p className="text-muted-foreground">
+                          {meeting.description}
+                        </p>
+
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                           <div className="space-y-2">
                             <div className="flex items-center gap-2">
                               <Calendar className="h-4 w-4 text-muted-foreground" />
-                              <span>{new Date(meeting.date).toLocaleDateString()}</span>
+                              <span>
+                                {new Date(meeting.date).toLocaleDateString()}
+                              </span>
                             </div>
                             <div className="flex items-center gap-2">
                               <Clock className="h-4 w-4 text-muted-foreground" />
-                              <span>{meeting.startTime} - {meeting.endTime}</span>
+                              <span>
+                                {meeting.startTime} - {meeting.endTime}
+                              </span>
                             </div>
                           </div>
-                          
+
                           <div className="space-y-2">
                             <div className="flex items-center gap-2">
                               <User className="h-4 w-4 text-muted-foreground" />
@@ -357,7 +497,7 @@ const MeetingManagement = () => {
                               <span>{meeting.attendees.length} attendees</span>
                             </div>
                           </div>
-                          
+
                           <div className="space-y-2">
                             {meeting.location && (
                               <div className="flex items-center gap-2">
@@ -368,10 +508,10 @@ const MeetingManagement = () => {
                             {meeting.meetingLink && (
                               <div className="flex items-center gap-2">
                                 <LinkIcon className="h-4 w-4 text-muted-foreground" />
-                                <a 
-                                  href={meeting.meetingLink} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer" 
+                                <a
+                                  href={meeting.meetingLink}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
                                   className="text-blue-600 hover:underline"
                                 >
                                   Join Meeting
@@ -380,25 +520,42 @@ const MeetingManagement = () => {
                             )}
                           </div>
                         </div>
-                        
+
                         {/* Attendees */}
                         <div>
-                          <Label className="text-sm font-medium">Attendees:</Label>
+                          <Label className="text-sm font-medium">
+                            Attendees:
+                          </Label>
                           <div className="flex flex-wrap gap-2 mt-2">
-                            {meeting.attendees.slice(0, 5).map((email, index) => {
-                              const attendee = getAttendeeInfo(email);
-                              return (
-                                <div key={index} className="flex items-center gap-1 bg-muted rounded-full px-3 py-1">
-                                  <Avatar className="h-5 w-5">
-                                    <AvatarImage src={attendee?.avatar} alt={attendee?.name || email} />
-                                    <AvatarFallback className="text-xs">
-                                      {attendee?.name ? attendee.name.split(' ').map(n => n[0]).join('') : email[0].toUpperCase()}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                  <span className="text-xs">{attendee?.name || email}</span>
-                                </div>
-                              );
-                            })}
+                            {meeting.attendees
+                              .slice(0, 5)
+                              .map((email, index) => {
+                                const attendee = getAttendeeInfo(email);
+                                return (
+                                  <div
+                                    key={index}
+                                    className="flex items-center gap-1 bg-muted rounded-full px-3 py-1"
+                                  >
+                                    <Avatar className="h-5 w-5">
+                                      <AvatarImage
+                                        src={attendee?.avatar}
+                                        alt={attendee?.name || email}
+                                      />
+                                      <AvatarFallback className="text-xs">
+                                        {attendee?.name
+                                          ? attendee.name
+                                              .split(" ")
+                                              .map((n) => n[0])
+                                              .join("")
+                                          : email[0].toUpperCase()}
+                                      </AvatarFallback>
+                                    </Avatar>
+                                    <span className="text-xs">
+                                      {attendee?.name || email}
+                                    </span>
+                                  </div>
+                                );
+                              })}
                             {meeting.attendees.length > 5 && (
                               <Badge variant="outline" className="text-xs">
                                 +{meeting.attendees.length - 5} more
@@ -407,7 +564,7 @@ const MeetingManagement = () => {
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="ml-4">
                         <Button
                           variant="outline"
@@ -429,7 +586,10 @@ const MeetingManagement = () => {
         </Tabs>
 
         {/* Create Meeting Dialog */}
-        <Dialog open={isCreateMeetingOpen} onOpenChange={setIsCreateMeetingOpen}>
+        <Dialog
+          open={isCreateMeetingOpen}
+          onOpenChange={setIsCreateMeetingOpen}
+        >
           <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Schedule New Meeting</DialogTitle>
@@ -443,7 +603,12 @@ const MeetingManagement = () => {
                 <Input
                   id="title"
                   value={newMeeting.title}
-                  onChange={(e) => setNewMeeting(prev => ({ ...prev, title: e.target.value }))}
+                  onChange={(e) =>
+                    setNewMeeting((prev) => ({
+                      ...prev,
+                      title: e.target.value,
+                    }))
+                  }
                   placeholder="Enter meeting title"
                 />
               </div>
@@ -452,14 +617,24 @@ const MeetingManagement = () => {
                 <Textarea
                   id="description"
                   value={newMeeting.description}
-                  onChange={(e) => setNewMeeting(prev => ({ ...prev, description: e.target.value }))}
+                  onChange={(e) =>
+                    setNewMeeting((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
                   placeholder="Enter meeting description"
                   rows={3}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="type">Meeting Type</Label>
-                <Select value={newMeeting.type} onValueChange={(value) => setNewMeeting(prev => ({ ...prev, type: value as any }))}>
+                <Select
+                  value={newMeeting.type}
+                  onValueChange={(value) =>
+                    setNewMeeting((prev) => ({ ...prev, type: value as any }))
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select meeting type" />
                   </SelectTrigger>
@@ -472,7 +647,15 @@ const MeetingManagement = () => {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="priority">Priority</Label>
-                <Select value={newMeeting.priority} onValueChange={(value) => setNewMeeting(prev => ({ ...prev, priority: value as any }))}>
+                <Select
+                  value={newMeeting.priority}
+                  onValueChange={(value) =>
+                    setNewMeeting((prev) => ({
+                      ...prev,
+                      priority: value as any,
+                    }))
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select priority" />
                   </SelectTrigger>
@@ -489,7 +672,9 @@ const MeetingManagement = () => {
                   id="date"
                   type="date"
                   value={newMeeting.date}
-                  onChange={(e) => setNewMeeting(prev => ({ ...prev, date: e.target.value }))}
+                  onChange={(e) =>
+                    setNewMeeting((prev) => ({ ...prev, date: e.target.value }))
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -498,7 +683,12 @@ const MeetingManagement = () => {
                   id="startTime"
                   type="time"
                   value={newMeeting.startTime}
-                  onChange={(e) => setNewMeeting(prev => ({ ...prev, startTime: e.target.value }))}
+                  onChange={(e) =>
+                    setNewMeeting((prev) => ({
+                      ...prev,
+                      startTime: e.target.value,
+                    }))
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -507,27 +697,47 @@ const MeetingManagement = () => {
                   id="endTime"
                   type="time"
                   value={newMeeting.endTime}
-                  onChange={(e) => setNewMeeting(prev => ({ ...prev, endTime: e.target.value }))}
+                  onChange={(e) =>
+                    setNewMeeting((prev) => ({
+                      ...prev,
+                      endTime: e.target.value,
+                    }))
+                  }
                 />
               </div>
-              
-              {(newMeeting.type === "physical" || newMeeting.type === "hybrid") && (
+
+              {(newMeeting.type === "physical" ||
+                newMeeting.type === "hybrid") && (
                 <div className="space-y-2">
                   <Label htmlFor="location">Location</Label>
                   <Input
                     id="location"
                     value={newMeeting.location}
-                    onChange={(e) => setNewMeeting(prev => ({ ...prev, location: e.target.value }))}
+                    onChange={(e) =>
+                      setNewMeeting((prev) => ({
+                        ...prev,
+                        location: e.target.value,
+                      }))
+                    }
                     placeholder="Enter meeting location"
                   />
                 </div>
               )}
-              
-              {(newMeeting.type === "virtual" || newMeeting.type === "hybrid") && (
+
+              {(newMeeting.type === "virtual" ||
+                newMeeting.type === "hybrid") && (
                 <>
                   <div className="space-y-2">
                     <Label htmlFor="platform">Platform</Label>
-                    <Select value={newMeeting.platform} onValueChange={(value) => setNewMeeting(prev => ({ ...prev, platform: value as any }))}>
+                    <Select
+                      value={newMeeting.platform}
+                      onValueChange={(value) =>
+                        setNewMeeting((prev) => ({
+                          ...prev,
+                          platform: value as any,
+                        }))
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select platform" />
                       </SelectTrigger>
@@ -544,24 +754,42 @@ const MeetingManagement = () => {
                     <Input
                       id="meetingLink"
                       value={newMeeting.meetingLink}
-                      onChange={(e) => setNewMeeting(prev => ({ ...prev, meetingLink: e.target.value }))}
+                      onChange={(e) =>
+                        setNewMeeting((prev) => ({
+                          ...prev,
+                          meetingLink: e.target.value,
+                        }))
+                      }
                       placeholder="Enter meeting link"
                     />
                   </div>
                 </>
               )}
-              
+
               <div className="col-span-2 space-y-2">
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="recurring"
                     checked={newMeeting.recurring}
-                    onCheckedChange={(checked) => setNewMeeting(prev => ({ ...prev, recurring: checked as boolean }))}
+                    onCheckedChange={(checked) =>
+                      setNewMeeting((prev) => ({
+                        ...prev,
+                        recurring: checked as boolean,
+                      }))
+                    }
                   />
                   <Label htmlFor="recurring">Recurring meeting</Label>
                 </div>
                 {newMeeting.recurring && (
-                  <Select value={newMeeting.recurrencePattern} onValueChange={(value) => setNewMeeting(prev => ({ ...prev, recurrencePattern: value }))}>
+                  <Select
+                    value={newMeeting.recurrencePattern}
+                    onValueChange={(value) =>
+                      setNewMeeting((prev) => ({
+                        ...prev,
+                        recurrencePattern: value,
+                      }))
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select recurrence pattern" />
                     </SelectTrigger>
@@ -573,48 +801,62 @@ const MeetingManagement = () => {
                   </Select>
                 )}
               </div>
-              
+
               <div className="col-span-2 space-y-2">
-                <Label htmlFor="attendees">Attendees (comma-separated emails)</Label>
+                <Label htmlFor="attendees">
+                  Attendees (comma-separated emails)
+                </Label>
                 <Textarea
                   id="attendees"
                   value={newMeeting.attendees}
-                  onChange={(e) => setNewMeeting(prev => ({ ...prev, attendees: e.target.value }))}
+                  onChange={(e) =>
+                    setNewMeeting((prev) => ({
+                      ...prev,
+                      attendees: e.target.value,
+                    }))
+                  }
                   placeholder="Enter attendee emails separated by commas"
                   rows={2}
                 />
               </div>
-              
+
               <div className="col-span-2 space-y-2">
                 <Label htmlFor="agenda">Agenda (one item per line)</Label>
                 <Textarea
                   id="agenda"
                   value={newMeeting.agenda}
-                  onChange={(e) => setNewMeeting(prev => ({ ...prev, agenda: e.target.value }))}
+                  onChange={(e) =>
+                    setNewMeeting((prev) => ({
+                      ...prev,
+                      agenda: e.target.value,
+                    }))
+                  }
                   placeholder="Enter agenda items, one per line"
                   rows={4}
                 />
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsCreateMeetingOpen(false)}>
+              <Button
+                variant="outline"
+                onClick={() => setIsCreateMeetingOpen(false)}
+              >
                 Cancel
               </Button>
-              <Button onClick={handleCreateMeeting}>
-                Schedule Meeting
-              </Button>
+              <Button onClick={handleCreateMeeting}>Schedule Meeting</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
         {/* Meeting Details Dialog */}
-        <Dialog open={isMeetingDetailsOpen} onOpenChange={setIsMeetingDetailsOpen}>
+        <Dialog
+          open={isMeetingDetailsOpen}
+          onOpenChange={setIsMeetingDetailsOpen}
+        >
           <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{selectedMeeting?.title}</DialogTitle>
-              <DialogDescription>
-                Meeting details and agenda
-              </DialogDescription>
+              <DialogDescription>Meeting details and agenda</DialogDescription>
             </DialogHeader>
             {selectedMeeting && (
               <div className="space-y-6">
@@ -623,7 +865,8 @@ const MeetingManagement = () => {
                     <div>
                       <Label className="text-sm font-medium">Date & Time</Label>
                       <p className="text-sm text-muted-foreground">
-                        {new Date(selectedMeeting.date).toLocaleDateString()} • {selectedMeeting.startTime} - {selectedMeeting.endTime}
+                        {new Date(selectedMeeting.date).toLocaleDateString()} •{" "}
+                        {selectedMeeting.startTime} - {selectedMeeting.endTime}
                       </p>
                     </div>
                     <div>
@@ -631,38 +874,48 @@ const MeetingManagement = () => {
                       <div className="flex items-center gap-2 mt-1">
                         <Badge variant={getTypeVariant(selectedMeeting.type)}>
                           {getTypeIcon(selectedMeeting.type)}
-                          <span className="ml-1 capitalize">{selectedMeeting.type}</span>
+                          <span className="ml-1 capitalize">
+                            {selectedMeeting.type}
+                          </span>
                         </Badge>
                       </div>
                     </div>
                     {selectedMeeting.location && (
                       <div>
                         <Label className="text-sm font-medium">Location</Label>
-                        <p className="text-sm text-muted-foreground">{selectedMeeting.location}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {selectedMeeting.location}
+                        </p>
                       </div>
                     )}
                   </div>
                   <div className="space-y-3">
                     <div>
                       <Label className="text-sm font-medium">Organizer</Label>
-                      <p className="text-sm text-muted-foreground">{selectedMeeting.organizer}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {selectedMeeting.organizer}
+                      </p>
                     </div>
                     <div>
                       <Label className="text-sm font-medium">Priority</Label>
                       <div className="mt-1">
-                        <Badge variant={getPriorityVariant(selectedMeeting.priority)}>
+                        <Badge
+                          variant={getPriorityVariant(selectedMeeting.priority)}
+                        >
                           {selectedMeeting.priority} priority
                         </Badge>
                       </div>
                     </div>
                     {selectedMeeting.meetingLink && (
                       <div>
-                        <Label className="text-sm font-medium">Meeting Link</Label>
+                        <Label className="text-sm font-medium">
+                          Meeting Link
+                        </Label>
                         <p className="text-sm">
-                          <a 
-                            href={selectedMeeting.meetingLink} 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
+                          <a
+                            href={selectedMeeting.meetingLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="text-blue-600 hover:underline"
                           >
                             Join Meeting
@@ -672,39 +925,59 @@ const MeetingManagement = () => {
                     )}
                   </div>
                 </div>
-                
+
                 <div>
                   <Label className="text-sm font-medium">Description</Label>
-                  <p className="text-sm text-muted-foreground mt-1">{selectedMeeting.description}</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {selectedMeeting.description}
+                  </p>
                 </div>
-                
+
                 <div>
                   <Label className="text-sm font-medium">Agenda</Label>
                   <ul className="mt-2 space-y-1">
                     {selectedMeeting.agenda.map((item, index) => (
-                      <li key={index} className="text-sm text-muted-foreground flex items-center gap-2">
+                      <li
+                        key={index}
+                        className="text-sm text-muted-foreground flex items-center gap-2"
+                      >
                         <span className="w-2 h-2 bg-primary rounded-full"></span>
                         {item}
                       </li>
                     ))}
                   </ul>
                 </div>
-                
+
                 <div>
-                  <Label className="text-sm font-medium">Attendees ({selectedMeeting.attendees.length})</Label>
+                  <Label className="text-sm font-medium">
+                    Attendees ({selectedMeeting.attendees.length})
+                  </Label>
                   <div className="mt-2 space-y-2">
                     {selectedMeeting.attendees.map((email, index) => {
                       const attendee = getAttendeeInfo(email);
                       return (
-                        <div key={index} className="flex items-center gap-3 p-2 bg-muted rounded">
+                        <div
+                          key={index}
+                          className="flex items-center gap-3 p-2 bg-muted rounded"
+                        >
                           <Avatar className="h-8 w-8">
-                            <AvatarImage src={attendee?.avatar} alt={attendee?.name || email} />
+                            <AvatarImage
+                              src={attendee?.avatar}
+                              alt={attendee?.name || email}
+                            />
                             <AvatarFallback className="text-xs">
-                              {attendee?.name ? attendee.name.split(' ').map(n => n[0]).join('') : email[0].toUpperCase()}
+                              {attendee?.name
+                                ? attendee.name
+                                    .split(" ")
+                                    .map((n) => n[0])
+                                    .join("")
+                                : email[0].toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex-1">
-                            <p className="text-sm font-medium">{attendee?.name || email}</p>
+                            <p className="text-sm font-medium">
+                              {attendee?.name || email}
+                            </p>
                             {attendee && (
                               <p className="text-xs text-muted-foreground">
                                 {attendee.position} • {attendee.department}
@@ -712,11 +985,15 @@ const MeetingManagement = () => {
                             )}
                           </div>
                           {attendee && (
-                            <Badge 
-                              variant="outline" 
-                              className={`text-xs ${attendee.status === 'accepted' ? 'border-green-500 text-green-700' : 
-                                attendee.status === 'declined' ? 'border-red-500 text-red-700' : 
-                                'border-yellow-500 text-yellow-700'}`}
+                            <Badge
+                              variant="outline"
+                              className={`text-xs ${
+                                attendee.status === "accepted"
+                                  ? "border-green-500 text-green-700"
+                                  : attendee.status === "declined"
+                                    ? "border-red-500 text-red-700"
+                                    : "border-yellow-500 text-yellow-700"
+                              }`}
                             >
                               {attendee.status}
                             </Badge>
@@ -729,7 +1006,10 @@ const MeetingManagement = () => {
               </div>
             )}
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsMeetingDetailsOpen(false)}>
+              <Button
+                variant="outline"
+                onClick={() => setIsMeetingDetailsOpen(false)}
+              >
                 Close
               </Button>
             </DialogFooter>
