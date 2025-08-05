@@ -137,31 +137,31 @@ const MeetingManagement = () => {
     { id: "4", name: "Sarah Davis", email: "sarah@company.com", position: "Marketing Lead", department: "Marketing", status: "declined" }
   ];
 
-  const getStatusColor = (status: Meeting["status"]) => {
+  const getStatusVariant = (status: Meeting["status"]) => {
     switch (status) {
-      case "scheduled": return "bg-blue-100 text-blue-800";
-      case "in-progress": return "bg-green-100 text-green-800";
-      case "completed": return "bg-gray-100 text-gray-800";
-      case "cancelled": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "scheduled": return "default";
+      case "in-progress": return "default";
+      case "completed": return "secondary";
+      case "cancelled": return "destructive";
+      default: return "outline";
     }
   };
 
-  const getTypeColor = (type: Meeting["type"]) => {
+  const getTypeVariant = (type: Meeting["type"]) => {
     switch (type) {
-      case "virtual": return "bg-gradient-to-r from-blue-400 to-blue-600 text-white border-0";
-      case "physical": return "bg-gradient-to-r from-green-400 to-green-600 text-white border-0";
-      case "hybrid": return "bg-gradient-to-r from-purple-400 to-purple-600 text-white border-0";
-      default: return "bg-gray-100 text-gray-800";
+      case "virtual": return "default";
+      case "physical": return "secondary";
+      case "hybrid": return "outline";
+      default: return "outline";
     }
   };
 
-  const getPriorityColor = (priority: Meeting["priority"]) => {
+  const getPriorityVariant = (priority: Meeting["priority"]) => {
     switch (priority) {
-      case "high": return "bg-red-100 text-red-800";
-      case "medium": return "bg-yellow-100 text-yellow-800";
-      case "low": return "bg-green-100 text-green-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "high": return "destructive";
+      case "medium": return "default";
+      case "low": return "secondary";
+      default: return "outline";
     }
   };
 
@@ -218,12 +218,12 @@ const MeetingManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-white to-blue-50">
+    <div className="min-h-screen bg-background">
       <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold text-foreground">
               Meeting Management
             </h1>
             <p className="text-muted-foreground mt-2">
@@ -232,7 +232,7 @@ const MeetingManagement = () => {
           </div>
           <Dialog open={isCreateMeetingOpen} onOpenChange={setIsCreateMeetingOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white border-0">
+              <Button>
                 <CalendarPlus className="mr-2 h-4 w-4" />
                 Schedule Meeting
               </Button>
@@ -242,56 +242,56 @@ const MeetingManagement = () => {
 
         {/* Meeting Dashboard */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <Card className="shadow-lg border-0 bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+          <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-100 text-sm">Total Meetings</p>
+                  <p className="text-muted-foreground text-sm">Total Meetings</p>
                   <p className="text-2xl font-bold">{meetings.length}</p>
                 </div>
-                <Calendar className="h-8 w-8 text-blue-200" />
+                <Calendar className="h-8 w-8 text-muted-foreground" />
               </div>
             </CardContent>
           </Card>
           
-          <Card className="shadow-lg border-0 bg-gradient-to-br from-green-500 to-green-600 text-white">
+          <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-green-100 text-sm">Upcoming</p>
+                  <p className="text-muted-foreground text-sm">Upcoming</p>
                   <p className="text-2xl font-bold">
                     {meetings.filter(m => m.status === "scheduled").length}
                   </p>
                 </div>
-                <Clock className="h-8 w-8 text-green-200" />
+                <Clock className="h-8 w-8 text-muted-foreground" />
               </div>
             </CardContent>
           </Card>
           
-          <Card className="shadow-lg border-0 bg-gradient-to-br from-purple-500 to-purple-600 text-white">
+          <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-purple-100 text-sm">Virtual</p>
+                  <p className="text-muted-foreground text-sm">Virtual</p>
                   <p className="text-2xl font-bold">
                     {meetings.filter(m => m.type === "virtual").length}
                   </p>
                 </div>
-                <Video className="h-8 w-8 text-purple-200" />
+                <Video className="h-8 w-8 text-muted-foreground" />
               </div>
             </CardContent>
           </Card>
           
-          <Card className="shadow-lg border-0 bg-gradient-to-br from-orange-500 to-orange-600 text-white">
+          <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-orange-100 text-sm">Physical</p>
+                  <p className="text-muted-foreground text-sm">Physical</p>
                   <p className="text-2xl font-bold">
                     {meetings.filter(m => m.type === "physical").length}
                   </p>
                 </div>
-                <MapPin className="h-8 w-8 text-orange-200" />
+                <MapPin className="h-8 w-8 text-muted-foreground" />
               </div>
             </CardContent>
           </Card>
@@ -299,7 +299,7 @@ const MeetingManagement = () => {
 
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 bg-white shadow-sm">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
             <TabsTrigger value="past">Past</TabsTrigger>
             <TabsTrigger value="all">All Meetings</TabsTrigger>
@@ -308,21 +308,21 @@ const MeetingManagement = () => {
           <TabsContent value={activeTab} className="space-y-4">
             <div className="grid gap-4">
               {getFilteredMeetings().map((meeting) => (
-                <Card key={meeting.id} className="shadow-lg border-0 bg-white/80 backdrop-blur-sm hover:shadow-xl transition-shadow">
+                <Card key={meeting.id} className="hover:shadow-md transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between">
                       <div className="space-y-3 flex-1">
                         <div className="flex items-center gap-3">
                           <h3 className="text-lg font-semibold">{meeting.title}</h3>
                           <div className="flex items-center gap-2">
-                            <Badge className={getTypeColor(meeting.type)}>
+                            <Badge variant={getTypeVariant(meeting.type)}>
                               {getTypeIcon(meeting.type)}
                               <span className="ml-1 capitalize">{meeting.type}</span>
                             </Badge>
-                            <Badge className={getStatusColor(meeting.status)}>
+                            <Badge variant={getStatusVariant(meeting.status)}>
                               {meeting.status.replace('-', ' ')}
                             </Badge>
-                            <Badge className={getPriorityColor(meeting.priority)}>
+                            <Badge variant={getPriorityVariant(meeting.priority)}>
                               {meeting.priority} priority
                             </Badge>
                             {meeting.recurring && (
@@ -388,10 +388,10 @@ const MeetingManagement = () => {
                             {meeting.attendees.slice(0, 5).map((email, index) => {
                               const attendee = getAttendeeInfo(email);
                               return (
-                                <div key={index} className="flex items-center gap-1 bg-gray-100 rounded-full px-3 py-1">
+                                <div key={index} className="flex items-center gap-1 bg-muted rounded-full px-3 py-1">
                                   <Avatar className="h-5 w-5">
                                     <AvatarImage src={attendee?.avatar} alt={attendee?.name || email} />
-                                    <AvatarFallback className="text-xs bg-blue-500 text-white">
+                                    <AvatarFallback className="text-xs">
                                       {attendee?.name ? attendee.name.split(' ').map(n => n[0]).join('') : email[0].toUpperCase()}
                                     </AvatarFallback>
                                   </Avatar>
@@ -600,7 +600,7 @@ const MeetingManagement = () => {
               <Button variant="outline" onClick={() => setIsCreateMeetingOpen(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleCreateMeeting} className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white border-0">
+              <Button onClick={handleCreateMeeting}>
                 Schedule Meeting
               </Button>
             </DialogFooter>
@@ -629,7 +629,7 @@ const MeetingManagement = () => {
                     <div>
                       <Label className="text-sm font-medium">Type</Label>
                       <div className="flex items-center gap-2 mt-1">
-                        <Badge className={getTypeColor(selectedMeeting.type)}>
+                        <Badge variant={getTypeVariant(selectedMeeting.type)}>
                           {getTypeIcon(selectedMeeting.type)}
                           <span className="ml-1 capitalize">{selectedMeeting.type}</span>
                         </Badge>
@@ -650,7 +650,7 @@ const MeetingManagement = () => {
                     <div>
                       <Label className="text-sm font-medium">Priority</Label>
                       <div className="mt-1">
-                        <Badge className={getPriorityColor(selectedMeeting.priority)}>
+                        <Badge variant={getPriorityVariant(selectedMeeting.priority)}>
                           {selectedMeeting.priority} priority
                         </Badge>
                       </div>
@@ -683,7 +683,7 @@ const MeetingManagement = () => {
                   <ul className="mt-2 space-y-1">
                     {selectedMeeting.agenda.map((item, index) => (
                       <li key={index} className="text-sm text-muted-foreground flex items-center gap-2">
-                        <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                        <span className="w-2 h-2 bg-primary rounded-full"></span>
                         {item}
                       </li>
                     ))}
@@ -696,10 +696,10 @@ const MeetingManagement = () => {
                     {selectedMeeting.attendees.map((email, index) => {
                       const attendee = getAttendeeInfo(email);
                       return (
-                        <div key={index} className="flex items-center gap-3 p-2 bg-gray-50 rounded">
+                        <div key={index} className="flex items-center gap-3 p-2 bg-muted rounded">
                           <Avatar className="h-8 w-8">
                             <AvatarImage src={attendee?.avatar} alt={attendee?.name || email} />
-                            <AvatarFallback className="text-xs bg-blue-500 text-white">
+                            <AvatarFallback className="text-xs">
                               {attendee?.name ? attendee.name.split(' ').map(n => n[0]).join('') : email[0].toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
@@ -714,9 +714,9 @@ const MeetingManagement = () => {
                           {attendee && (
                             <Badge 
                               variant="outline" 
-                              className={`text-xs ${attendee.status === 'accepted' ? 'bg-green-50 text-green-700' : 
-                                attendee.status === 'declined' ? 'bg-red-50 text-red-700' : 
-                                'bg-yellow-50 text-yellow-700'}`}
+                              className={`text-xs ${attendee.status === 'accepted' ? 'border-green-500 text-green-700' : 
+                                attendee.status === 'declined' ? 'border-red-500 text-red-700' : 
+                                'border-yellow-500 text-yellow-700'}`}
                             >
                               {attendee.status}
                             </Badge>
