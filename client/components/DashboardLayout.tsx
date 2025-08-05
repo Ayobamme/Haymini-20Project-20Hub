@@ -52,6 +52,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const navigation = [
   {
