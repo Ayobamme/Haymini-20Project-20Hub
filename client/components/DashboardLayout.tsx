@@ -37,6 +37,10 @@ import {
   Calculator,
   User,
   ChevronDown,
+  UserPlus,
+  UserMinus,
+  GraduationCap,
+  CalendarPlus,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
