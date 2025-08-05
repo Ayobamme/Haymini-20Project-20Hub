@@ -848,7 +848,7 @@ const LeaveManagement = () => {
                                 <SelectValue placeholder="Select department" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="">
+                                <SelectItem value="all">
                                   All Departments
                                 </SelectItem>
                                 <SelectItem value="Engineering">
