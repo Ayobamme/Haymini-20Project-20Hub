@@ -96,6 +96,10 @@ const navigation = [
       { title: "Attendance", url: "/attendance", icon: Clock },
       { title: "Leave Management", url: "/leave-management", icon: Calendar },
       { title: "Payroll", url: "/payroll", icon: Calculator },
+      { title: "Onboarding", url: "/onboarding", icon: UserPlus },
+      { title: "Offboarding", url: "/offboarding", icon: UserMinus },
+      { title: "Training", url: "/training", icon: GraduationCap },
+      { title: "Meetings", url: "/meetings", icon: CalendarPlus },
     ],
   },
   {
