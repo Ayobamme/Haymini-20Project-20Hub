@@ -271,15 +271,15 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-blue-50 p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 via-blue-600 to-teal-600 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold text-foreground">
               Dashboard
             </h1>
-            <p className="text-lg text-slate-600">
+            <p className="text-lg text-muted-foreground">
               Welcome back! Here's what's happening with your projects and team
               members.
             </p>
@@ -287,24 +287,24 @@ export default function Dashboard() {
           <div className="flex items-center space-x-2">
             <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
               <DialogTrigger asChild>
-                <Button className="bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white border-0 shadow-lg">
+                <Button>
                   <UserPlus className="mr-2 h-4 w-4" />
                   Invite Team Member
                 </Button>
               </DialogTrigger>
-              <DialogContent className="border-0 shadow-2xl bg-gradient-to-br from-white to-slate-50">
+              <DialogContent>
                 <DialogHeader>
-                  <DialogTitle className="text-2xl bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                  <DialogTitle>
                     Invite Team Member
                   </DialogTitle>
-                  <DialogDescription className="text-slate-600">
+                  <DialogDescription>
                     Send an invitation to join your organization
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="name" className="text-slate-700 font-medium">Full Name *</Label>
+                      <Label htmlFor="name">Full Name *</Label>
                       <Input
                         id="name"
                         value={inviteData.name}
@@ -312,11 +312,10 @@ export default function Dashboard() {
                           setInviteData({ ...inviteData, name: e.target.value })
                         }
                         placeholder="Enter full name"
-                        className="border-2 border-slate-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="email" className="text-slate-700 font-medium">Email Address *</Label>
+                      <Label htmlFor="email">Email Address *</Label>
                       <Input
                         id="email"
                         type="email"
@@ -325,18 +324,17 @@ export default function Dashboard() {
                           setInviteData({ ...inviteData, email: e.target.value })
                         }
                         placeholder="Enter email address"
-                        className="border-2 border-slate-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="department" className="text-slate-700 font-medium">Department</Label>
+                      <Label htmlFor="department">Department</Label>
                       <Select
                         value={inviteData.department}
                         onValueChange={(value) =>
                           setInviteData({ ...inviteData, department: value })
                         }
                       >
-                        <SelectTrigger className="border-2 border-slate-200 focus:border-purple-400">
+                        <SelectTrigger>
                           <SelectValue placeholder="Select department" />
                         </SelectTrigger>
                         <SelectContent>
@@ -350,7 +348,7 @@ export default function Dashboard() {
                       </Select>
                     </div>
                     <div>
-                      <Label htmlFor="position" className="text-slate-700 font-medium">Position</Label>
+                      <Label htmlFor="position">Position</Label>
                       <Input
                         id="position"
                         value={inviteData.position}
@@ -361,12 +359,11 @@ export default function Dashboard() {
                           })
                         }
                         placeholder="Job position"
-                        className="border-2 border-slate-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
                       />
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="message" className="text-slate-700 font-medium">Welcome Message (Optional)</Label>
+                    <Label htmlFor="message">Welcome Message (Optional)</Label>
                     <Textarea
                       id="message"
                       value={inviteData.message}
@@ -375,7 +372,6 @@ export default function Dashboard() {
                       }
                       placeholder="Add a personal welcome message..."
                       rows={3}
-                      className="border-2 border-slate-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
                     />
                   </div>
                 </div>
@@ -383,11 +379,10 @@ export default function Dashboard() {
                   <Button
                     variant="outline"
                     onClick={() => setShowInviteDialog(false)}
-                    className="border-2 border-slate-300 hover:bg-slate-100"
                   >
                     Cancel
                   </Button>
-                  <Button onClick={sendInvitation} className="bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white border-0">
+                  <Button onClick={sendInvitation}>
                     <Send className="h-4 w-4 mr-2" />
                     Send Invitation
                   </Button>
@@ -397,24 +392,24 @@ export default function Dashboard() {
 
             <Dialog open={showProjectDialog} onOpenChange={setShowProjectDialog}>
               <DialogTrigger asChild>
-                <Button className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white border-0 shadow-lg">
+                <Button variant="outline">
                   <Plus className="mr-2 h-4 w-4" />
                   New Project
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-2xl border-0 shadow-2xl bg-gradient-to-br from-white to-slate-50">
+              <DialogContent className="max-w-2xl">
                 <DialogHeader>
-                  <DialogTitle className="text-2xl bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                  <DialogTitle>
                     Create New Project
                   </DialogTitle>
-                  <DialogDescription className="text-slate-600">
+                  <DialogDescription>
                     Set up a new project with team members and timeline
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="col-span-2">
-                      <Label htmlFor="projectName" className="text-slate-700 font-medium">Project Name *</Label>
+                      <Label htmlFor="projectName">Project Name *</Label>
                       <Input
                         id="projectName"
                         value={newProject.name}
@@ -422,11 +417,10 @@ export default function Dashboard() {
                           setNewProject({ ...newProject, name: e.target.value })
                         }
                         placeholder="Enter project name"
-                        className="border-2 border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
                       />
                     </div>
                     <div className="col-span-2">
-                      <Label htmlFor="description" className="text-slate-700 font-medium">Description *</Label>
+                      <Label htmlFor="description">Description *</Label>
                       <Textarea
                         id="description"
                         value={newProject.description}
@@ -438,18 +432,17 @@ export default function Dashboard() {
                         }
                         placeholder="Describe the project objectives and scope..."
                         rows={3}
-                        className="border-2 border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="priority" className="text-slate-700 font-medium">Priority</Label>
+                      <Label htmlFor="priority">Priority</Label>
                       <Select
                         value={newProject.priority}
                         onValueChange={(value) =>
                           setNewProject({ ...newProject, priority: value })
                         }
                       >
-                        <SelectTrigger className="border-2 border-slate-200 focus:border-emerald-400">
+                        <SelectTrigger>
                           <SelectValue placeholder="Select priority" />
                         </SelectTrigger>
                         <SelectContent>
@@ -460,7 +453,7 @@ export default function Dashboard() {
                       </Select>
                     </div>
                     <div>
-                      <Label htmlFor="dueDate" className="text-slate-700 font-medium">Due Date</Label>
+                      <Label htmlFor="dueDate">Due Date</Label>
                       <Input
                         id="dueDate"
                         type="date"
@@ -471,18 +464,17 @@ export default function Dashboard() {
                             dueDate: e.target.value,
                           })
                         }
-                        className="border-2 border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="department" className="text-slate-700 font-medium">Department</Label>
+                      <Label htmlFor="department">Department</Label>
                       <Select
                         value={newProject.department}
                         onValueChange={(value) =>
                           setNewProject({ ...newProject, department: value })
                         }
                       >
-                        <SelectTrigger className="border-2 border-slate-200 focus:border-emerald-400">
+                        <SelectTrigger>
                           <SelectValue placeholder="Select department" />
                         </SelectTrigger>
                         <SelectContent>
@@ -499,11 +491,10 @@ export default function Dashboard() {
                   <Button
                     variant="outline"
                     onClick={() => setShowProjectDialog(false)}
-                    className="border-2 border-slate-300 hover:bg-slate-100"
                   >
                     Cancel
                   </Button>
-                  <Button onClick={createProject} className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white border-0">
+                  <Button onClick={createProject}>
                     <FolderKanban className="h-4 w-4 mr-2" />
                     Create Project
                   </Button>
@@ -515,70 +506,64 @@ export default function Dashboard() {
 
         {/* Key Metrics - Enhanced with HR Data */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+          <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-blue-100">
+              <CardTitle className="text-sm font-medium">
                 Total Projects
               </CardTitle>
-              <FolderKanban className="h-8 w-8 text-blue-200" />
+              <FolderKanban className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">45</div>
-              <p className="text-blue-100 text-sm">
-                <span className="text-white font-semibold">+12%</span> from last month
+              <div className="text-2xl font-bold">45</div>
+              <p className="text-xs text-muted-foreground">
+                +12% from last month
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
+          <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-emerald-100">Team Members</CardTitle>
-              <Users className="h-8 w-8 text-emerald-200" />
+              <CardTitle className="text-sm font-medium">Team Members</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">
+              <div className="text-2xl font-bold">
                 {hrSummaryData.totalEmployees}
               </div>
-              <p className="text-emerald-100 text-sm">
-                <span className="text-white font-semibold">+3</span> new this month
+              <p className="text-xs text-muted-foreground">
+                +3 new this month
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-green-500 to-green-600 text-white">
+          <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-green-100">Present Today</CardTitle>
-              <UserCheck className="h-8 w-8 text-green-200" />
+              <CardTitle className="text-sm font-medium">Present Today</CardTitle>
+              <UserCheck className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">
+              <div className="text-2xl font-bold">
                 {hrSummaryData.presentToday}
               </div>
-              <p className="text-green-100 text-sm">
-                <span className="text-white font-semibold">
-                  {hrSummaryData.averageAttendanceRate}%
-                </span>{" "}
-                attendance rate
+              <p className="text-xs text-muted-foreground">
+                {hrSummaryData.averageAttendanceRate}% attendance rate
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-purple-500 to-violet-600 text-white">
+          <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-purple-100">
+              <CardTitle className="text-sm font-medium">
                 Monthly Payroll
               </CardTitle>
-              <DollarSign className="h-8 w-8 text-purple-200" />
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">
+              <div className="text-2xl font-bold">
                 ₦{(hrSummaryData.monthlyPayrollCost / 1000000).toFixed(1)}M
               </div>
-              <p className="text-purple-100 text-sm">
-                <span className="text-white font-semibold">
-                  {hrSummaryData.pendingLeaveRequests}
-                </span>{" "}
-                pending leave requests
+              <p className="text-xs text-muted-foreground">
+                {hrSummaryData.pendingLeaveRequests} pending leave requests
               </p>
             </CardContent>
           </Card>
@@ -586,69 +571,66 @@ export default function Dashboard() {
 
         {/* HR Analytics Section */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-cyan-500 to-blue-600 text-white">
+          <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-cyan-100">
+              <CardTitle className="text-sm font-medium">
                 On Leave Today
               </CardTitle>
-              <CalendarDays className="h-8 w-8 text-cyan-200" />
+              <CalendarDays className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">
+              <div className="text-2xl font-bold">
                 {hrSummaryData.onLeaveToday}
               </div>
-              <p className="text-cyan-100 text-sm">
-                Top type:{" "}
-                <span className="text-white font-semibold">
-                  {hrSummaryData.topLeaveType}
-                </span>
+              <p className="text-xs text-muted-foreground">
+                Top type: {hrSummaryData.topLeaveType}
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-amber-500 to-orange-500 text-white">
+          <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-amber-100">Late Today</CardTitle>
-              <Clock className="h-8 w-8 text-amber-200" />
+              <CardTitle className="text-sm font-medium">Late Today</CardTitle>
+              <Clock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">
+              <div className="text-2xl font-bold">
                 {hrSummaryData.lateToday}
               </div>
-              <p className="text-amber-100 text-sm">
-                <span className="text-white font-semibold">-50%</span> from yesterday
+              <p className="text-xs text-muted-foreground">
+                -50% from yesterday
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-rose-500 to-pink-600 text-white">
+          <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-rose-100">
+              <CardTitle className="text-sm font-medium">
                 Pending Leaves
               </CardTitle>
-              <AlertTriangle className="h-8 w-8 text-rose-200" />
+              <AlertTriangle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">
+              <div className="text-2xl font-bold">
                 {hrSummaryData.pendingLeaveRequests}
               </div>
-              <p className="text-rose-100 text-sm">Requires approval</p>
+              <p className="text-xs text-muted-foreground">Requires approval</p>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-indigo-500 to-purple-600 text-white">
+          <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-indigo-100">
+              <CardTitle className="text-sm font-medium">
                 Attendance Rate
               </CardTitle>
-              <TrendingUp className="h-8 w-8 text-indigo-200" />
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">
+              <div className="text-2xl font-bold">
                 {hrSummaryData.averageAttendanceRate}%
               </div>
-              <p className="text-indigo-100 text-sm">
-                <span className="text-white font-semibold">+2%</span> from last month
+              <p className="text-xs text-muted-foreground">
+                +2% from last month
               </p>
             </CardContent>
           </Card>
@@ -657,14 +639,14 @@ export default function Dashboard() {
         {/* Enhanced Charts Section */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {/* Attendance Overview Chart */}
-          <Card className="col-span-2 border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
-            <CardHeader className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-t-lg">
-              <CardTitle className="text-xl">Attendance Overview</CardTitle>
-              <CardDescription className="text-emerald-100">
+          <Card className="col-span-2">
+            <CardHeader>
+              <CardTitle>Attendance Overview</CardTitle>
+              <CardDescription>
                 Monthly attendance tracking with leave integration
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-6">
+            <CardContent>
               <ResponsiveContainer width="100%" height={300}>
                 <AreaChart data={attendanceData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -709,12 +691,12 @@ export default function Dashboard() {
           </Card>
 
           {/* Leave Analytics */}
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
-            <CardHeader className="bg-gradient-to-r from-purple-500 to-violet-600 text-white rounded-t-lg">
-              <CardTitle className="text-xl">Leave Distribution</CardTitle>
-              <CardDescription className="text-purple-100">Types of leave requests</CardDescription>
+          <Card>
+            <CardHeader>
+              <CardTitle>Leave Distribution</CardTitle>
+              <CardDescription>Types of leave requests</CardDescription>
             </CardHeader>
-            <CardContent className="p-6">
+            <CardContent>
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
@@ -755,14 +737,14 @@ export default function Dashboard() {
         </div>
 
         {/* Payroll Analysis */}
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
-          <CardHeader className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-t-lg">
-            <CardTitle className="text-xl">Payroll Analysis</CardTitle>
-            <CardDescription className="text-blue-100">
+        <Card>
+          <CardHeader>
+            <CardTitle>Payroll Analysis</CardTitle>
+            <CardDescription>
               Monthly payroll breakdown and cost analysis
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-6">
+          <CardContent>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={payrollData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -800,19 +782,19 @@ export default function Dashboard() {
         {/* Department Attendance and Recent Projects */}
         <div className="grid gap-4 md:grid-cols-2">
           {/* Department Attendance Rates */}
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
-            <CardHeader className="bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-t-lg">
+          <Card>
+            <CardHeader>
               <div className="flex flex-row items-center justify-between">
                 <div>
-                  <CardTitle className="text-xl">Department Attendance</CardTitle>
-                  <CardDescription className="text-orange-100">Attendance rates by department</CardDescription>
+                  <CardTitle>Department Attendance</CardTitle>
+                  <CardDescription>Attendance rates by department</CardDescription>
                 </div>
-                <Button variant="ghost" size="sm" asChild className="text-white hover:bg-white/20">
+                <Button variant="outline" size="sm" asChild>
                   <Link to="/attendance">View Details</Link>
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="p-6">
+            <CardContent>
               <div className="space-y-4">
                 {departmentAttendanceData.map((dept) => (
                   <div key={dept.department} className="space-y-2">
@@ -823,15 +805,7 @@ export default function Dashboard() {
                           {dept.department}
                         </span>
                       </div>
-                      <Badge
-                        className={
-                          dept.rate >= 95
-                            ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-0"
-                            : dept.rate >= 90
-                              ? "bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0"
-                              : "bg-gradient-to-r from-red-500 to-red-600 text-white border-0"
-                        }
-                      >
+                      <Badge variant={dept.rate >= 95 ? "default" : dept.rate >= 90 ? "secondary" : "destructive"}>
                         {dept.rate}%
                       </Badge>
                     </div>
@@ -843,21 +817,21 @@ export default function Dashboard() {
           </Card>
 
           {/* Recent Projects */}
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
-            <CardHeader className="bg-gradient-to-r from-teal-500 to-cyan-600 text-white rounded-t-lg">
+          <Card>
+            <CardHeader>
               <div className="flex flex-row items-center justify-between">
                 <div>
-                  <CardTitle className="text-xl">Recent Projects</CardTitle>
-                  <CardDescription className="text-teal-100">
+                  <CardTitle>Recent Projects</CardTitle>
+                  <CardDescription>
                     Latest project updates and progress
                   </CardDescription>
                 </div>
-                <Button variant="ghost" size="sm" asChild className="text-white hover:bg-white/20">
+                <Button variant="outline" size="sm" asChild>
                   <Link to="/projects">View All</Link>
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="p-6">
+            <CardContent>
               <div className="space-y-4">
                 {recentProjects.map((project) => (
                   <div key={project.id} className="flex items-center space-x-4">
@@ -866,15 +840,7 @@ export default function Dashboard() {
                         <p className="text-sm font-medium leading-none">
                           {project.name}
                         </p>
-                        <Badge
-                          className={
-                            project.priority === "High"
-                              ? "bg-gradient-to-r from-red-500 to-red-600 text-white border-0"
-                              : project.priority === "Medium"
-                                ? "bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0"
-                                : "bg-gradient-to-r from-green-500 to-green-600 text-white border-0"
-                          }
-                        >
+                        <Badge variant={project.priority === "High" ? "destructive" : project.priority === "Medium" ? "secondary" : "outline"}>
                           {project.priority}
                         </Badge>
                       </div>
@@ -896,13 +862,13 @@ export default function Dashboard() {
                               key={index}
                               className="h-6 w-6 border-2 border-background"
                             >
-                              <AvatarFallback className="text-xs bg-gradient-to-r from-indigo-400 to-purple-500 text-white">
+                              <AvatarFallback className="text-xs">
                                 {member}
                               </AvatarFallback>
                             </Avatar>
                           ))}
                         </div>
-                        <Badge variant="outline" className="border-2 border-slate-300">{project.status}</Badge>
+                        <Badge variant="outline">{project.status}</Badge>
                       </div>
                     </div>
                   </div>
@@ -913,36 +879,28 @@ export default function Dashboard() {
         </div>
 
         {/* Upcoming Tasks */}
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
-          <CardHeader className="bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-t-lg">
+        <Card>
+          <CardHeader>
             <div className="flex flex-row items-center justify-between">
               <div>
-                <CardTitle className="text-xl">Upcoming Tasks</CardTitle>
-                <CardDescription className="text-violet-100">Tasks requiring attention</CardDescription>
+                <CardTitle>Upcoming Tasks</CardTitle>
+                <CardDescription>Tasks requiring attention</CardDescription>
               </div>
-              <Button variant="ghost" size="sm" asChild className="text-white hover:bg-white/20">
+              <Button variant="outline" size="sm" asChild>
                 <Link to="/tasks">View All</Link>
               </Button>
             </div>
           </CardHeader>
-          <CardContent className="p-6">
+          <CardContent>
             <div className="space-y-4">
               {upcomingTasks.map((task) => (
-                <div key={task.id} className="flex items-start space-x-4 p-4 rounded-lg bg-gradient-to-r from-slate-50 to-white border border-slate-200 hover:shadow-md transition-all duration-200">
+                <div key={task.id} className="flex items-start space-x-4 p-4 rounded-lg border">
                   <div className="flex-1 space-y-1">
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-medium leading-none">
                         {task.title}
                       </p>
-                      <Badge
-                        className={
-                          task.priority === "High"
-                            ? "bg-gradient-to-r from-red-500 to-red-600 text-white border-0"
-                            : task.priority === "Medium"
-                              ? "bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0"
-                              : "bg-gradient-to-r from-green-500 to-green-600 text-white border-0"
-                        }
-                      >
+                      <Badge variant={task.priority === "High" ? "destructive" : task.priority === "Medium" ? "secondary" : "outline"}>
                         {task.priority}
                       </Badge>
                     </div>
@@ -963,51 +921,51 @@ export default function Dashboard() {
         </Card>
 
         {/* Quick Actions - Enhanced */}
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
-          <CardHeader className="bg-gradient-to-r from-indigo-500 to-blue-600 text-white rounded-t-lg">
-            <CardTitle className="text-xl">Quick Actions</CardTitle>
-            <CardDescription className="text-indigo-100">Common tasks and shortcuts</CardDescription>
+        <Card>
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+            <CardDescription>Common tasks and shortcuts</CardDescription>
           </CardHeader>
-          <CardContent className="p-6">
+          <CardContent>
             <div className="grid gap-4 md:grid-cols-6">
               <Button
                 variant="outline"
-                className="h-20 flex-col gap-2 border-2 border-emerald-200 hover:bg-emerald-50"
+                className="h-20 flex-col gap-2"
                 onClick={() => setShowProjectDialog(true)}
               >
-                <FolderKanban className="h-6 w-6 text-emerald-600" />
-                <span className="text-emerald-700">Create Project</span>
+                <FolderKanban className="h-6 w-6" />
+                <span>Create Project</span>
               </Button>
               <Button
                 variant="outline"
-                className="h-20 flex-col gap-2 border-2 border-purple-200 hover:bg-purple-50"
+                className="h-20 flex-col gap-2"
                 onClick={() => setShowInviteDialog(true)}
               >
-                <UserPlus className="h-6 w-6 text-purple-600" />
-                <span className="text-purple-700">Invite Team Member</span>
+                <UserPlus className="h-6 w-6" />
+                <span>Invite Team Member</span>
               </Button>
-              <Button variant="outline" className="h-20 flex-col gap-2 border-2 border-green-200 hover:bg-green-50" asChild>
+              <Button variant="outline" className="h-20 flex-col gap-2" asChild>
                 <Link to="/attendance">
-                  <UserCheck className="h-6 w-6 text-green-600" />
-                  <span className="text-green-700">View Attendance</span>
+                  <UserCheck className="h-6 w-6" />
+                  <span>View Attendance</span>
                 </Link>
               </Button>
-              <Button variant="outline" className="h-20 flex-col gap-2 border-2 border-blue-200 hover:bg-blue-50" asChild>
+              <Button variant="outline" className="h-20 flex-col gap-2" asChild>
                 <Link to="/leave-management">
-                  <CalendarDays className="h-6 w-6 text-blue-600" />
-                  <span className="text-blue-700">Manage Leaves</span>
+                  <CalendarDays className="h-6 w-6" />
+                  <span>Manage Leaves</span>
                 </Link>
               </Button>
-              <Button variant="outline" className="h-20 flex-col gap-2 border-2 border-orange-200 hover:bg-orange-50" asChild>
+              <Button variant="outline" className="h-20 flex-col gap-2" asChild>
                 <Link to="/payroll">
-                  <Receipt className="h-6 w-6 text-orange-600" />
-                  <span className="text-orange-700">Run Payroll</span>
+                  <Receipt className="h-6 w-6" />
+                  <span>Run Payroll</span>
                 </Link>
               </Button>
-              <Button variant="outline" className="h-20 flex-col gap-2 border-2 border-cyan-200 hover:bg-cyan-50" asChild>
+              <Button variant="outline" className="h-20 flex-col gap-2" asChild>
                 <Link to="/documents">
-                  <Activity className="h-6 w-6 text-cyan-600" />
-                  <span className="text-cyan-700">Upload Document</span>
+                  <Activity className="h-6 w-6" />
+                  <span>Upload Document</span>
                 </Link>
               </Button>
             </div>
