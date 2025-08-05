@@ -205,6 +205,38 @@ const App = () => (
               </DashboardLayout>
             }
           />
+          <Route
+            path="/onboarding"
+            element={
+              <DashboardLayout>
+                <OnboardingManagement />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/offboarding"
+            element={
+              <DashboardLayout>
+                <OffboardingManagement />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/training"
+            element={
+              <DashboardLayout>
+                <TrainingManagement />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/meetings"
+            element={
+              <DashboardLayout>
+                <MeetingManagement />
+              </DashboardLayout>
+            }
+          />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
