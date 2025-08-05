@@ -185,34 +185,34 @@ const TrainingManagement = () => {
     { id: "DEPT-ALL", name: "All Departments" }
   ];
 
-  const getCategoryColor = (category: TrainingModule["category"]) => {
+  const getCategoryVariant = (category: TrainingModule["category"]) => {
     switch (category) {
-      case "technical": return "bg-gradient-to-r from-blue-400 to-blue-600 text-white border-0";
-      case "soft-skills": return "bg-gradient-to-r from-green-400 to-green-600 text-white border-0";
-      case "compliance": return "bg-gradient-to-r from-red-400 to-red-600 text-white border-0";
-      case "onboarding": return "bg-gradient-to-r from-purple-400 to-purple-600 text-white border-0";
-      case "leadership": return "bg-gradient-to-r from-amber-400 to-amber-600 text-white border-0";
-      default: return "bg-gray-100 text-gray-800";
+      case "technical": return "default";
+      case "soft-skills": return "secondary";
+      case "compliance": return "destructive";
+      case "onboarding": return "outline";
+      case "leadership": return "default";
+      default: return "outline";
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusVariant = (status: string) => {
     switch (status) {
-      case "active": case "in-progress": return "bg-green-100 text-green-800";
-      case "assigned": return "bg-blue-100 text-blue-800";
-      case "completed": return "bg-emerald-100 text-emerald-800";
-      case "overdue": return "bg-red-100 text-red-800";
-      case "draft": return "bg-gray-100 text-gray-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "active": case "in-progress": return "default";
+      case "assigned": return "secondary";
+      case "completed": return "secondary";
+      case "overdue": return "destructive";
+      case "draft": return "outline";
+      default: return "outline";
     }
   };
 
-  const getLevelColor = (level: TrainingModule["level"]) => {
+  const getLevelVariant = (level: TrainingModule["level"]) => {
     switch (level) {
-      case "beginner": return "bg-green-100 text-green-800";
-      case "intermediate": return "bg-yellow-100 text-yellow-800";
-      case "advanced": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "beginner": return "secondary";
+      case "intermediate": return "default";
+      case "advanced": return "destructive";
+      default: return "outline";
     }
   };
 
@@ -265,12 +265,12 @@ const TrainingManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-purple-50">
+    <div className="min-h-screen bg-background">
       <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold text-foreground">
               Training Management
             </h1>
             <p className="text-muted-foreground mt-2">
@@ -280,7 +280,7 @@ const TrainingManagement = () => {
           <div className="flex gap-2">
             <Dialog open={isCreateModuleOpen} onOpenChange={setIsCreateModuleOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white border-0">
+                <Button>
                   <Plus className="mr-2 h-4 w-4" />
                   Create Module
                 </Button>
@@ -288,7 +288,7 @@ const TrainingManagement = () => {
             </Dialog>
             <Dialog open={isAssignTrainingOpen} onOpenChange={setIsAssignTrainingOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline" className="border-violet-200 hover:bg-violet-50">
+                <Button variant="outline">
                   <GraduationCap className="mr-2 h-4 w-4" />
                   Assign Training
                 </Button>
@@ -299,7 +299,7 @@ const TrainingManagement = () => {
 
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 bg-white shadow-sm">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="modules">Training Modules</TabsTrigger>
             <TabsTrigger value="assignments">Assignments</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
@@ -311,26 +311,26 @@ const TrainingManagement = () => {
               <div className="lg:col-span-2">
                 <div className="grid gap-4">
                   {trainingModules.map((module) => (
-                    <Card key={module.id} className="shadow-lg border-0 bg-white/80 backdrop-blur-sm hover:shadow-xl transition-shadow">
+                    <Card key={module.id} className="hover:shadow-md transition-shadow">
                       <CardHeader>
                         <div className="flex items-start justify-between">
                           <div className="space-y-2">
                             <CardTitle className="text-lg">{module.title}</CardTitle>
                             <CardDescription>{module.description}</CardDescription>
                             <div className="flex items-center gap-2">
-                              <Badge className={getCategoryColor(module.category)}>
+                              <Badge variant={getCategoryVariant(module.category)}>
                                 {module.category.replace('-', ' ')}
                               </Badge>
-                              <Badge className={getLevelColor(module.level)}>
+                              <Badge variant={getLevelVariant(module.level)}>
                                 {module.level}
                               </Badge>
-                              <Badge className={getStatusColor(module.status)}>
+                              <Badge variant={getStatusVariant(module.status)}>
                                 {module.status}
                               </Badge>
                             </div>
                           </div>
                           <div className="text-right">
-                            <div className="text-2xl font-bold text-violet-600">{module.completionRate}%</div>
+                            <div className="text-2xl font-bold">{module.completionRate}%</div>
                             <div className="text-sm text-muted-foreground">Completion</div>
                           </div>
                         </div>
@@ -381,7 +381,7 @@ const TrainingManagement = () => {
                             <Label className="text-sm font-medium">Prerequisites:</Label>
                             <div className="flex flex-wrap gap-1 mt-1">
                               {module.prerequisites.map((prereq, index) => (
-                                <Badge key={index} variant="outline" className="text-xs bg-yellow-50 text-yellow-700">
+                                <Badge key={index} variant="outline" className="text-xs">
                                   {prereq}
                                 </Badge>
                               ))}
@@ -415,24 +415,24 @@ const TrainingManagement = () => {
 
               {/* Summary Stats */}
               <div className="space-y-4">
-                <Card className="shadow-lg border-0 bg-gradient-to-br from-violet-500 to-purple-600 text-white">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-white">Training Overview</CardTitle>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Training Overview</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
-                        <span className="text-violet-100">Total Modules</span>
+                        <span>Total Modules</span>
                         <span className="text-2xl font-bold">{trainingModules.length}</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-violet-100">Active</span>
+                        <span>Active</span>
                         <span className="text-xl font-semibold">
                           {trainingModules.filter(m => m.status === "active").length}
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-violet-100">Avg Completion</span>
+                        <span>Avg Completion</span>
                         <span className="text-xl font-semibold">
                           {Math.round(trainingModules.reduce((acc, m) => acc + m.completionRate, 0) / trainingModules.length)}%
                         </span>
@@ -441,7 +441,7 @@ const TrainingManagement = () => {
                   </CardContent>
                 </Card>
 
-                <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+                <Card>
                   <CardHeader>
                     <CardTitle className="text-sm">Categories</CardTitle>
                   </CardHeader>
@@ -469,7 +469,7 @@ const TrainingManagement = () => {
               {assignments.map((assignment) => {
                 const module = trainingModules.find(m => m.id === assignment.moduleId);
                 return (
-                  <Card key={assignment.id} className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+                  <Card key={assignment.id}>
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between">
                         <div className="space-y-2">
@@ -480,7 +480,7 @@ const TrainingManagement = () => {
                             <span>Due: {new Date(assignment.dueDate).toLocaleDateString()}</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Badge className={getStatusColor(assignment.status)}>
+                            <Badge variant={getStatusVariant(assignment.status)}>
                               {assignment.status.replace('-', ' ')}
                             </Badge>
                             {assignment.assignedType === "staff" && (
@@ -513,56 +513,56 @@ const TrainingManagement = () => {
           {/* Analytics Tab */}
           <TabsContent value="analytics" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card className="shadow-lg border-0 bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+              <Card>
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-blue-100">Total Assignments</p>
+                      <p className="text-muted-foreground">Total Assignments</p>
                       <p className="text-2xl font-bold">{assignments.length}</p>
                     </div>
-                    <GraduationCap className="h-8 w-8 text-blue-200" />
+                    <GraduationCap className="h-8 w-8 text-muted-foreground" />
                   </div>
                 </CardContent>
               </Card>
               
-              <Card className="shadow-lg border-0 bg-gradient-to-br from-green-500 to-green-600 text-white">
+              <Card>
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-green-100">Completed</p>
+                      <p className="text-muted-foreground">Completed</p>
                       <p className="text-2xl font-bold">
                         {assignments.filter(a => a.status === "completed").length}
                       </p>
                     </div>
-                    <CheckCircle className="h-8 w-8 text-green-200" />
+                    <CheckCircle className="h-8 w-8 text-muted-foreground" />
                   </div>
                 </CardContent>
               </Card>
               
-              <Card className="shadow-lg border-0 bg-gradient-to-br from-orange-500 to-orange-600 text-white">
+              <Card>
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-orange-100">In Progress</p>
+                      <p className="text-muted-foreground">In Progress</p>
                       <p className="text-2xl font-bold">
                         {assignments.filter(a => a.status === "in-progress").length}
                       </p>
                     </div>
-                    <PlayCircle className="h-8 w-8 text-orange-200" />
+                    <PlayCircle className="h-8 w-8 text-muted-foreground" />
                   </div>
                 </CardContent>
               </Card>
               
-              <Card className="shadow-lg border-0 bg-gradient-to-br from-red-500 to-red-600 text-white">
+              <Card>
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-red-100">Overdue</p>
+                      <p className="text-muted-foreground">Overdue</p>
                       <p className="text-2xl font-bold">
                         {assignments.filter(a => a.status === "overdue").length}
                       </p>
                     </div>
-                    <Clock className="h-8 w-8 text-red-200" />
+                    <Clock className="h-8 w-8 text-muted-foreground" />
                   </div>
                 </CardContent>
               </Card>
@@ -692,7 +692,7 @@ const TrainingManagement = () => {
               <Button variant="outline" onClick={() => setIsCreateModuleOpen(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleCreateModule} className="bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white border-0">
+              <Button onClick={handleCreateModule}>
                 Create Module
               </Button>
             </DialogFooter>
@@ -776,7 +776,7 @@ const TrainingManagement = () => {
               <Button variant="outline" onClick={() => setIsAssignTrainingOpen(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleAssignTraining} className="bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white border-0">
+              <Button onClick={handleAssignTraining}>
                 Assign Training
               </Button>
             </DialogFooter>
