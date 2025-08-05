@@ -89,25 +89,14 @@ const OnboardingManagement = () => {
     notes: ""
   });
 
-  const getStatusColor = (status: Prospect["status"]) => {
+  const getStatusVariant = (status: Prospect["status"]) => {
     switch (status) {
-      case "interview": return "bg-gradient-to-r from-blue-400 to-blue-600 text-white border-0";
-      case "documentation": return "bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0";
-      case "background-check": return "bg-gradient-to-r from-purple-400 to-purple-600 text-white border-0";
-      case "onboarding": return "bg-gradient-to-r from-indigo-400 to-indigo-600 text-white border-0";
-      case "completed": return "bg-gradient-to-r from-green-400 to-green-600 text-white border-0";
-      default: return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getStatusIcon = (status: Prospect["status"]) => {
-    switch (status) {
-      case "interview": return <Users className="h-4 w-4" />;
-      case "documentation": return <FileText className="h-4 w-4" />;
-      case "background-check": return <AlertCircle className="h-4 w-4" />;
-      case "onboarding": return <Clock className="h-4 w-4" />;
-      case "completed": return <CheckCircle className="h-4 w-4" />;
-      default: return <Clock className="h-4 w-4" />;
+      case "interview": return "default";
+      case "documentation": return "secondary";
+      case "background-check": return "outline";
+      case "onboarding": return "default";
+      case "completed": return "default";
+      default: return "outline";
     }
   };
 
@@ -153,12 +142,12 @@ const OnboardingManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50">
+    <div className="min-h-screen bg-background">
       <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold text-foreground">
               Onboarding Management
             </h1>
             <p className="text-muted-foreground mt-2">
@@ -167,7 +156,7 @@ const OnboardingManagement = () => {
           </div>
           <Dialog open={isAddProspectOpen} onOpenChange={setIsAddProspectOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white border-0">
+              <Button>
                 <UserPlus className="mr-2 h-4 w-4" />
                 Add Prospect
               </Button>
@@ -257,7 +246,7 @@ const OnboardingManagement = () => {
                 <Button variant="outline" onClick={() => setIsAddProspectOpen(false)}>
                   Cancel
                 </Button>
-                <Button onClick={handleAddProspect} className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white border-0">
+                <Button onClick={handleAddProspect}>
                   Add Prospect
                 </Button>
               </DialogFooter>
@@ -269,10 +258,10 @@ const OnboardingManagement = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Prospects List */}
           <div className="lg:col-span-2">
-            <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+            <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-emerald-600" />
+                  <Users className="h-5 w-5" />
                   Onboarding Pipeline
                 </CardTitle>
                 <CardDescription>
@@ -282,12 +271,12 @@ const OnboardingManagement = () => {
               <CardContent>
                 <div className="space-y-4">
                   {prospects.map((prospect) => (
-                    <div key={prospect.id} className="p-4 border rounded-lg hover:shadow-md transition-shadow bg-gradient-to-r from-white to-emerald-50/30">
+                    <div key={prospect.id} className="p-4 border rounded-lg hover:bg-accent/50 transition-colors">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
                           <Avatar className="h-10 w-10">
                             <AvatarImage src={prospect.avatar} alt={prospect.name} />
-                            <AvatarFallback className="bg-gradient-to-r from-emerald-400 to-teal-500 text-white">
+                            <AvatarFallback>
                               {prospect.name.split(' ').map(n => n[0]).join('')}
                             </AvatarFallback>
                           </Avatar>
@@ -295,15 +284,14 @@ const OnboardingManagement = () => {
                             <h3 className="font-semibold">{prospect.name}</h3>
                             <p className="text-sm text-muted-foreground">{prospect.position} • {prospect.department}</p>
                             <div className="flex items-center gap-2 mt-1">
-                              <Mail className="h-3 w-3 text-gray-400" />
-                              <span className="text-xs text-gray-600">{prospect.email}</span>
+                              <Mail className="h-3 w-3 text-muted-foreground" />
+                              <span className="text-xs text-muted-foreground">{prospect.email}</span>
                             </div>
                           </div>
                         </div>
                         <div className="text-right space-y-2">
-                          <Badge className={getStatusColor(prospect.status)}>
-                            {getStatusIcon(prospect.status)}
-                            <span className="ml-1 capitalize">{prospect.status.replace('-', ' ')}</span>
+                          <Badge variant={getStatusVariant(prospect.status)}>
+                            <span className="capitalize">{prospect.status.replace('-', ' ')}</span>
                           </Badge>
                           <div className="flex items-center gap-2">
                             <Progress value={prospect.progress} className="w-20" />
@@ -337,7 +325,6 @@ const OnboardingManagement = () => {
                             <Button
                               size="sm"
                               onClick={() => graduateToEmployee(prospect.id)}
-                              className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white border-0"
                             >
                               <GraduationCap className="mr-1 h-3 w-3" />
                               Graduate to Employee
@@ -346,7 +333,7 @@ const OnboardingManagement = () => {
                         </div>
                       </div>
                       {prospect.notes && (
-                        <div className="mt-2 p-2 bg-gray-50 rounded text-sm">
+                        <div className="mt-2 p-2 bg-muted rounded text-sm">
                           <strong>Notes:</strong> {prospect.notes}
                         </div>
                       )}
@@ -359,24 +346,24 @@ const OnboardingManagement = () => {
 
           {/* Summary Stats */}
           <div className="space-y-4">
-            <Card className="shadow-lg border-0 bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-white">Pipeline Overview</CardTitle>
+            <Card>
+              <CardHeader>
+                <CardTitle>Pipeline Overview</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-emerald-100">Total Prospects</span>
+                    <span>Total Prospects</span>
                     <span className="text-2xl font-bold">{prospects.length}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-emerald-100">In Progress</span>
+                    <span>In Progress</span>
                     <span className="text-xl font-semibold">
                       {prospects.filter(p => p.status !== "completed").length}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-emerald-100">Completed</span>
+                    <span>Completed</span>
                     <span className="text-xl font-semibold">
                       {prospects.filter(p => p.status === "completed").length}
                     </span>
@@ -385,7 +372,7 @@ const OnboardingManagement = () => {
               </CardContent>
             </Card>
 
-            <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+            <Card>
               <CardHeader>
                 <CardTitle className="text-sm">Status Distribution</CardTitle>
               </CardHeader>
