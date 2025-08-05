@@ -248,12 +248,9 @@ const App = () => (
 
 const container = document.getElementById("root")!;
 
-// Only create root if it doesn't already exist
-if (!container._reactRootContainer) {
+// Check if root already exists on the container
+if (!(container as any)._reactRoot) {
   const root = createRoot(container);
-  container._reactRootContainer = root;
+  (container as any)._reactRoot = root;
   root.render(<App />);
-} else {
-  // If root already exists, just re-render
-  container._reactRootContainer.render(<App />);
 }
