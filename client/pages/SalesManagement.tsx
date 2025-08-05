@@ -98,774 +98,401 @@ interface TeamMemberStats {
   role: string;
   coldCalls: number;
   emailsSent: number;
-  proposalsSent: number;
-  customerVisits: number;
-  leadsAssigned: number;
-  conversions: number;
+  meetings: number;
+  dealsWon: number;
   revenue: number;
-  efficiency: number;
+  target: number;
 }
 
 const SalesManagement = () => {
   const [customers, setCustomers] = useState<Customer[]>([
     {
-      id: "CUST-001",
-      name: "Acme Corporation",
-      email: "contact@acme.com",
-      phone: "+234-801-234-5678",
-      company: "Acme Corp",
+      id: "1",
+      name: "John Smith",
+      email: "john@company.com",
+      phone: "+234 901 234 5678",
+      company: "TechCorp Ltd",
       status: "Leads",
-      estimatedValue: 250000,
-      lastContact: "2024-01-20",
+      estimatedValue: 25000,
+      lastContact: "2024-01-15",
       source: "Website",
       assignedTo: "Sarah Johnson",
-      notes: "Interested in enterprise package",
+      notes: "Interested in enterprise package"
     },
     {
-      id: "CUST-002",
-      name: "Tech Solutions Ltd",
-      email: "info@techsolutions.com",
-      phone: "+234-802-345-6789",
-      company: "Tech Solutions",
+      id: "2",
+      name: "Mary Johnson",
+      email: "mary@startup.co",
+      phone: "+234 902 345 6789",
+      company: "StartupCo",
       status: "Onboarding",
-      estimatedValue: 180000,
-      lastContact: "2024-01-19",
+      estimatedValue: 15000,
+      lastContact: "2024-01-14",
       source: "Referral",
-      assignedTo: "Michael Brown",
-      notes: "Requires custom integration",
+      assignedTo: "Michael Chen",
+      notes: "Ready to sign contract next week"
     },
     {
-      id: "CUST-003",
-      name: "Digital Innovations",
-      email: "hello@digitalinnovations.com",
-      phone: "+234-803-456-7890",
-      company: "Digital Innovations",
+      id: "3",
+      name: "Robert Wilson",
+      email: "rob@innovate.ng",
+      phone: "+234 903 456 7890",
+      company: "Innovate Nigeria",
       status: "Paying",
-      estimatedValue: 320000,
-      lastContact: "2024-01-18",
+      estimatedValue: 45000,
+      lastContact: "2024-01-13",
       source: "LinkedIn",
-      assignedTo: "Alex Wilson",
-      notes: "Monthly subscription active",
-    },
-    {
-      id: "CUST-004",
-      name: "Global Enterprises",
-      email: "support@globalent.com",
-      phone: "+234-804-567-8901",
-      company: "Global Enterprises",
-      status: "Returning",
-      estimatedValue: 450000,
-      lastContact: "2024-01-17",
-      source: "Partnership",
-      assignedTo: "Emma Davis",
-      notes: "Looking to expand services",
-    },
+      assignedTo: "Sarah Johnson",
+      notes: "Looking to upgrade plan"
+    }
   ]);
 
-  const [teamStats, setTeamStats] = useState<TeamMemberStats[]>([
+  const [teamStats] = useState<TeamMemberStats[]>([
     {
-      id: "TM-001",
+      id: "1",
       name: "Sarah Johnson",
       avatar: "",
-      role: "Senior Sales Representative",
-      coldCalls: 145,
-      emailsSent: 89,
-      proposalsSent: 23,
-      customerVisits: 12,
-      leadsAssigned: 34,
-      conversions: 8,
-      revenue: 480000,
-      efficiency: 85,
+      role: "Senior Sales Manager",
+      coldCalls: 45,
+      emailsSent: 120,
+      meetings: 15,
+      dealsWon: 8,
+      revenue: 180000,
+      target: 200000
     },
     {
-      id: "TM-002",
-      name: "Michael Brown",
+      id: "2", 
+      name: "Michael Chen",
       avatar: "",
       role: "Sales Representative",
-      coldCalls: 112,
-      emailsSent: 67,
-      proposalsSent: 18,
-      customerVisits: 9,
-      leadsAssigned: 28,
-      conversions: 6,
-      revenue: 320000,
-      efficiency: 78,
-    },
-    {
-      id: "TM-003",
-      name: "Alex Wilson",
-      avatar: "",
-      role: "Sales Representative",
-      coldCalls: 98,
-      emailsSent: 72,
-      proposalsSent: 15,
-      customerVisits: 7,
-      leadsAssigned: 25,
-      conversions: 5,
-      revenue: 275000,
-      efficiency: 72,
-    },
-    {
-      id: "TM-004",
-      name: "Emma Davis",
-      avatar: "",
-      role: "Account Manager",
-      coldCalls: 76,
+      coldCalls: 38,
       emailsSent: 95,
-      proposalsSent: 21,
-      customerVisits: 15,
-      leadsAssigned: 30,
-      conversions: 9,
-      revenue: 550000,
-      efficiency: 92,
+      meetings: 12,
+      dealsWon: 6,
+      revenue: 145000,
+      target: 150000
     },
     {
-      id: "TM-005",
-      name: "David Chen",
+      id: "3",
+      name: "Emily Davis",
       avatar: "",
-      role: "Junior Sales Representative",
-      coldCalls: 134,
-      emailsSent: 58,
-      proposalsSent: 12,
-      customerVisits: 5,
-      leadsAssigned: 22,
-      conversions: 3,
-      revenue: 165000,
-      efficiency: 65,
-    },
+      role: "Account Executive", 
+      coldCalls: 52,
+      emailsSent: 140,
+      meetings: 18,
+      dealsWon: 10,
+      revenue: 220000,
+      target: 180000
+    }
   ]);
 
+  const [isAddCustomerOpen, setIsAddCustomerOpen] = useState(false);
+  const [newCustomer, setNewCustomer] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    company: "",
+    status: "Leads",
+    estimatedValue: "",
+    source: "",
+    assignedTo: "",
+    notes: ""
+  });
+
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [showAddCustomer, setShowAddCustomer] = useState(false);
-  const [csvData, setCsvData] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
 
-  // Sales Circle Data (previously Sales Funnel)
-  const salesCircleData = [
-    { name: "Leads", value: 45, fill: "#f59e0b" },
-    { name: "Onboarding", value: 28, fill: "#3b82f6" },
-    { name: "Paying", value: 18, fill: "#10b981" },
-    { name: "Returning", value: 9, fill: "#8b5cf6" },
+  const salesData = [
+    { month: "Jan", revenue: 145000, target: 150000 },
+    { month: "Feb", revenue: 168000, target: 160000 },
+    { month: "Mar", revenue: 180000, target: 170000 },
+    { month: "Apr", revenue: 195000, target: 180000 },
+    { month: "May", revenue: 220000, target: 200000 },
+    { month: "Jun", revenue: 245000, target: 220000 }
   ];
 
-  const teamPerformanceData = teamStats.map((member) => ({
-    name: member.name.split(" ")[0],
-    coldCalls: member.coldCalls,
-    emails: member.emailsSent,
-    proposals: member.proposalsSent,
-    visits: member.customerVisits,
-    conversions: member.conversions,
-    revenue: member.revenue / 1000, // Convert to thousands
-  }));
-
-  const revenueData = [
-    { month: "Jan", revenue: 45000 },
-    { month: "Feb", revenue: 52000 },
-    { month: "Mar", revenue: 48000 },
-    { month: "Apr", revenue: 65000 },
-    { month: "May", revenue: 58000 },
-    { month: "Jun", revenue: 72000 },
+  const statusDistribution = [
+    { name: "Leads", value: 45, color: "#3b82f6" },
+    { name: "Onboarding", value: 25, color: "#f59e0b" },
+    { name: "Paying", value: 20, color: "#22c55e" },
+    { name: "Returning", value: 10, color: "#8b5cf6" }
   ];
 
-  const handleStatusChange = (
-    customerId: string,
-    newStatus: Customer["status"],
-  ) => {
-    setCustomers(
-      customers.map((customer) =>
-        customer.id === customerId
-          ? { ...customer, status: newStatus }
-          : customer,
-      ),
-    );
-    toast({
-      title: "Customer Status Updated",
-      description: `Customer moved to ${newStatus}`,
-    });
-  };
-
-  const handleCSVUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const text = e.target?.result as string;
-        setCsvData(text);
-        // Parse CSV and add to customers
-        toast({
-          title: "CSV Uploaded",
-          description: `CSV file processed successfully`,
-        });
-      };
-      reader.readAsText(file);
-    }
-  };
-
-  const handleCSVDownload = () => {
-    const csvContent = [
-      "ID,Name,Email,Phone,Company,Status,Estimated Value,Last Contact,Source,Assigned To,Notes",
-      ...customers.map(
-        (customer) =>
-          `${customer.id},${customer.name},${customer.email},${customer.phone},${customer.company},${customer.status},${customer.estimatedValue},${customer.lastContact},${customer.source},${customer.assignedTo},"${customer.notes}"`,
-      ),
-    ].join("\n");
-
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "customers.csv";
-    a.click();
-    window.URL.revokeObjectURL(url);
-
-    toast({
-      title: "CSV Downloaded",
-      description: "Customer data exported successfully",
-    });
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Leads":
-        return "bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0";
-      case "Onboarding":
-        return "bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0";
-      case "Paying":
-        return "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-0";
-      case "Returning":
-        return "bg-gradient-to-r from-purple-500 to-violet-600 text-white border-0";
-      default:
-        return "bg-gradient-to-r from-gray-400 to-gray-500 text-white border-0";
-    }
-  };
-
-  const filteredCustomers = customers.filter((customer) => {
-    const matchesSearch =
-      customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.company.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesStatus =
-      statusFilter === "all" || customer.status === statusFilter;
-
+  const filteredCustomers = customers.filter(customer => {
+    const matchesSearch = customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         customer.company.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === "All" || customer.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
-  const totalLeads = customers.filter((c) => c.status === "Leads").length;
-  const totalOnboarding = customers.filter(
-    (c) => c.status === "Onboarding",
-  ).length;
-  const totalPaying = customers.filter((c) => c.status === "Paying").length;
-  const totalReturning = customers.filter(
-    (c) => c.status === "Returning",
-  ).length;
-  const totalRevenue = customers
-    .filter((c) => c.status === "Paying" || c.status === "Returning")
-    .reduce((sum, c) => sum + c.estimatedValue, 0);
+  const getStatusVariant = (status: Customer["status"]) => {
+    switch (status) {
+      case "Leads": return "default";
+      case "Onboarding": return "secondary";
+      case "Paying": return "default";
+      case "Returning": return "outline";
+      default: return "outline";
+    }
+  };
+
+  const handleAddCustomer = () => {
+    if (!newCustomer.name || !newCustomer.email || !newCustomer.company) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const customer: Customer = {
+      id: Date.now().toString(),
+      ...newCustomer,
+      estimatedValue: parseInt(newCustomer.estimatedValue) || 0,
+      lastContact: new Date().toISOString().split('T')[0],
+      status: newCustomer.status as Customer["status"]
+    };
+
+    setCustomers([...customers, customer]);
+    setNewCustomer({
+      name: "", email: "", phone: "", company: "", status: "Leads",
+      estimatedValue: "", source: "", assignedTo: "", notes: ""
+    });
+    setIsAddCustomerOpen(false);
+
+    toast({
+      title: "Customer Added",
+      description: `${customer.name} has been added to the sales pipeline.`,
+    });
+  };
+
+  const totalRevenue = teamStats.reduce((sum, member) => sum + member.revenue, 0);
+  const totalTarget = teamStats.reduce((sum, member) => sum + member.target, 0);
+  const achievementRate = Math.round((totalRevenue / totalTarget) * 100);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 p-6">
-      <div className="space-y-6">
+    <div className="min-h-screen bg-background">
+      <div className="p-6 space-y-6">
+        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold text-foreground">
               Sales Management
             </h1>
-            <p className="text-lg text-slate-600">
-              Manage customer relationships through the complete sales circle
+            <p className="text-muted-foreground mt-2">
+              Track sales performance, manage customer relationships, and monitor team activities
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              onClick={handleCSVDownload}
-              className="border-2 border-emerald-300 hover:bg-emerald-50 text-emerald-700"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Export CSV
+          <div className="flex items-center space-x-2">
+            <Button variant="outline">
+              <Download className="mr-2 h-4 w-4" />
+              Export Data
             </Button>
-            <Button
-              variant="outline"
-              asChild
-              className="border-2 border-teal-300 hover:bg-teal-50 text-teal-700"
-            >
-              <label>
-                <Upload className="h-4 w-4 mr-2" />
-                Import CSV
-                <input
-                  type="file"
-                  accept=".csv"
-                  onChange={handleCSVUpload}
-                  className="hidden"
-                />
-              </label>
-            </Button>
-            <Dialog open={showAddCustomer} onOpenChange={setShowAddCustomer}>
+            <Dialog open={isAddCustomerOpen} onOpenChange={setIsAddCustomerOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white border-0 shadow-lg">
-                  <Plus className="h-4 w-4 mr-2" />
+                <Button>
+                  <Plus className="mr-2 h-4 w-4" />
                   Add Customer
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-2xl border-0 shadow-2xl bg-gradient-to-br from-white to-slate-50">
-                <DialogHeader>
-                  <DialogTitle className="text-2xl bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">Add New Customer</DialogTitle>
-                  <DialogDescription className="text-slate-600">
-                    Add a new customer to your sales circle
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="customerName" className="text-slate-700 font-medium">Customer Name</Label>
-                      <Input
-                        id="customerName"
-                        placeholder="Enter customer name"
-                        className="border-2 border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
-                      />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="customerEmail" className="text-slate-700 font-medium">Email Address</Label>
-                      <Input
-                        id="customerEmail"
-                        type="email"
-                        placeholder="customer@company.com"
-                        className="border-2 border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
-                      />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="customerPhone" className="text-slate-700 font-medium">Phone Number</Label>
-                      <Input
-                        id="customerPhone"
-                        placeholder="+234-XXX-XXX-XXXX"
-                        className="border-2 border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
-                      />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="customerCompany" className="text-slate-700 font-medium">Company</Label>
-                      <Input
-                        id="customerCompany"
-                        placeholder="Company Name"
-                        className="border-2 border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
-                      />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="estimatedValue" className="text-slate-700 font-medium">Estimated Value (₦)</Label>
-                      <Input
-                        id="estimatedValue"
-                        type="number"
-                        placeholder="0"
-                        className="border-2 border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
-                      />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="source" className="text-slate-700 font-medium">Source</Label>
-                      <Select>
-                        <SelectTrigger className="border-2 border-slate-200 focus:border-emerald-400">
-                          <SelectValue placeholder="Select source" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="website">Website</SelectItem>
-                          <SelectItem value="referral">Referral</SelectItem>
-                          <SelectItem value="linkedin">LinkedIn</SelectItem>
-                          <SelectItem value="cold-call">Cold Call</SelectItem>
-                          <SelectItem value="partnership">Partnership</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="notes" className="text-slate-700 font-medium">Notes</Label>
-                    <Textarea
-                      id="notes"
-                      placeholder="Add any relevant notes..."
-                      rows={3}
-                      className="border-2 border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowAddCustomer(false)}
-                    className="border-2 border-slate-300 hover:bg-slate-100"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={() => setShowAddCustomer(false)}
-                    className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white border-0"
-                  >
-                    Add Customer
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
             </Dialog>
           </div>
         </div>
 
-        <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-gradient-to-r from-slate-100 to-slate-200 rounded-xl p-1 h-12">
-            <TabsTrigger value="overview" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white rounded-lg">Overview</TabsTrigger>
-            <TabsTrigger value="customers" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white rounded-lg">Customers</TabsTrigger>
-            <TabsTrigger value="team-reports" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white rounded-lg">Team Reports</TabsTrigger>
-            <TabsTrigger value="analytics" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-600 data-[state=active]:text-white rounded-lg">Analytics</TabsTrigger>
+        {/* Key Metrics */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">₦{(totalRevenue / 1000000).toFixed(1)}M</div>
+              <p className="text-xs text-muted-foreground">
+                {achievementRate}% of target achieved
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Active Customers</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{customers.length}</div>
+              <p className="text-xs text-muted-foreground">
+                {customers.filter(c => c.status === "Paying").length} paying customers
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Conversion Rate</CardTitle>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">24%</div>
+              <p className="text-xs text-muted-foreground">
+                +2% from last month
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Team Performance</CardTitle>
+              <Award className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{achievementRate}%</div>
+              <p className="text-xs text-muted-foreground">
+                Target achievement rate
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Charts Section */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <Card className="col-span-2">
+            <CardHeader>
+              <CardTitle>Revenue vs Target</CardTitle>
+              <CardDescription>Monthly revenue performance against targets</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={salesData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip formatter={(value) => [`₦${(value as number / 1000).toFixed(0)}K`, ""]} />
+                  <Legend />
+                  <Bar dataKey="revenue" fill="#3b82f6" name="Revenue" />
+                  <Bar dataKey="target" fill="#e5e7eb" name="Target" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Customer Status</CardTitle>
+              <CardDescription>Distribution of customer pipeline</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={statusDistribution}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={40}
+                    outerRadius={100}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {statusDistribution.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="mt-4 space-y-2">
+                {statusDistribution.map((item) => (
+                  <div key={item.name} className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="h-3 w-3 rounded-full" style={{ backgroundColor: item.color }} />
+                      <span>{item.name}</span>
+                    </div>
+                    <span className="font-medium">{item.value}%</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Content Tabs */}
+        <Tabs defaultValue="customers" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="customers">Customers</TabsTrigger>
+            <TabsTrigger value="team">Team Performance</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview" className="space-y-6">
-            {/* Key Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-slate-50">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">
-                        Leads
-                      </p>
-                      <div className="text-2xl font-bold text-yellow-600">{totalLeads}</div>
-                    </div>
-                    <Target className="h-8 w-8 text-yellow-500" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-slate-50">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">
-                        Onboarding
-                      </p>
-                      <div className="text-2xl font-bold text-blue-600">{totalOnboarding}</div>
-                    </div>
-                    <Users className="h-8 w-8 text-blue-500" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-slate-50">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">
-                        Paying
-                      </p>
-                      <div className="text-2xl font-bold text-green-600">{totalPaying}</div>
-                    </div>
-                    <DollarSign className="h-8 w-8 text-green-500" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-slate-50">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">
-                        Returning
-                      </p>
-                      <div className="text-2xl font-bold text-purple-600">{totalReturning}</div>
-                    </div>
-                    <Award className="h-8 w-8 text-purple-500" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-slate-50">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">
-                        Total Revenue
-                      </p>
-                      <div className="text-2xl font-bold text-emerald-600">
-                        ₦{(totalRevenue / 1000000).toFixed(1)}M
-                      </div>
-                    </div>
-                    <TrendingUp className="h-8 w-8 text-emerald-500" />
-                  </div>
-                </CardContent>
-              </Card>
+          <TabsContent value="customers" className="space-y-4">
+            {/* Filters */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <div className="relative">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search customers..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-8 w-80"
+                  />
+                </div>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-40">
+                    <SelectValue placeholder="Filter by status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All">All Status</SelectItem>
+                    <SelectItem value="Leads">Leads</SelectItem>
+                    <SelectItem value="Onboarding">Onboarding</SelectItem>
+                    <SelectItem value="Paying">Paying</SelectItem>
+                    <SelectItem value="Returning">Returning</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            {/* Sales Circle and Analytics */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-slate-50">
-                <CardHeader>
-                  <CardTitle className="text-slate-800">Sales Circle</CardTitle>
-                  <CardDescription>
-                    Customer distribution across sales stages
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie
-                        data={salesCircleData}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, percent }) =>
-                          `${name} ${(percent * 100).toFixed(0)}%`
-                        }
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {salesCircleData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.fill} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-
-              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-slate-50">
-                <CardHeader>
-                  <CardTitle className="text-slate-800">Revenue Trend</CardTitle>
-                  <CardDescription>Monthly revenue performance</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={revenueData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" />
-                      <YAxis />
-                      <Tooltip
-                        formatter={(value) => [
-                          `₦${value.toLocaleString()}`,
-                          "Revenue",
-                        ]}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="revenue"
-                        stroke="#3b82f6"
-                        strokeWidth={2}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="team-reports" className="space-y-6">
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-slate-50">
-              <CardHeader>
-                <CardTitle className="text-slate-800">Team Member Sales Activity</CardTitle>
-                <CardDescription>
-                  Detailed performance metrics for each team member
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  {teamStats.map((member) => (
-                    <Card key={member.id} className="border-2 border-slate-200 bg-gradient-to-r from-white to-slate-50">
-                      <CardContent className="p-6">
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex items-center gap-3">
-                            <Avatar className="h-12 w-12">
-                              <AvatarImage src={member.avatar} />
-                              <AvatarFallback className="bg-gradient-to-r from-emerald-400 to-teal-500 text-white">
-                                {member.name
-                                  .split(" ")
-                                  .map((n) => n[0])
-                                  .join("")}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <h3 className="text-lg font-semibold text-slate-800">
-                                {member.name}
-                              </h3>
-                              <p className="text-sm text-muted-foreground">
-                                {member.role}
-                              </p>
+            {/* Customer List */}
+            <div className="grid gap-4">
+              {filteredCustomers.map((customer) => (
+                <Card key={customer.id} className="hover:shadow-md transition-shadow">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <Avatar className="h-12 w-12">
+                          <AvatarFallback>
+                            {customer.name.split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="space-y-1">
+                          <h3 className="font-semibold">{customer.name}</h3>
+                          <p className="text-sm text-muted-foreground">{customer.company}</p>
+                          <div className="flex items-center space-x-4 text-xs text-muted-foreground">
+                            <div className="flex items-center gap-1">
+                              <Mail className="h-3 w-3" />
+                              {customer.email}
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Phone className="h-3 w-3" />
+                              {customer.phone}
                             </div>
                           </div>
-                          <Badge
-                            className={
-                              member.efficiency >= 80
-                                ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-0"
-                                : "bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0"
-                            }
-                          >
-                            {member.efficiency}% Efficiency
+                        </div>
+                      </div>
+
+                      <div className="text-right space-y-2">
+                        <div className="flex items-center gap-2">
+                          <Badge variant={getStatusVariant(customer.status)}>
+                            {customer.status}
                           </Badge>
                         </div>
-
-                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-                          <div className="text-center p-3 rounded-lg bg-gradient-to-r from-blue-100 to-blue-200">
-                            <div className="flex items-center justify-center mb-2">
-                              <Phone className="h-5 w-5 text-blue-600" />
-                            </div>
-                            <div className="text-2xl font-bold text-blue-700">
-                              {member.coldCalls}
-                            </div>
-                            <p className="text-xs text-blue-600 font-medium">
-                              Cold Calls
-                            </p>
-                          </div>
-
-                          <div className="text-center p-3 rounded-lg bg-gradient-to-r from-green-100 to-green-200">
-                            <div className="flex items-center justify-center mb-2">
-                              <Mail className="h-5 w-5 text-green-600" />
-                            </div>
-                            <div className="text-2xl font-bold text-green-700">
-                              {member.emailsSent}
-                            </div>
-                            <p className="text-xs text-green-600 font-medium">
-                              Emails Sent
-                            </p>
-                          </div>
-
-                          <div className="text-center p-3 rounded-lg bg-gradient-to-r from-orange-100 to-orange-200">
-                            <div className="flex items-center justify-center mb-2">
-                              <FileText className="h-5 w-5 text-orange-600" />
-                            </div>
-                            <div className="text-2xl font-bold text-orange-700">
-                              {member.proposalsSent}
-                            </div>
-                            <p className="text-xs text-orange-600 font-medium">
-                              Proposals
-                            </p>
-                          </div>
-
-                          <div className="text-center p-3 rounded-lg bg-gradient-to-r from-purple-100 to-purple-200">
-                            <div className="flex items-center justify-center mb-2">
-                              <MapPin className="h-5 w-5 text-purple-600" />
-                            </div>
-                            <div className="text-2xl font-bold text-purple-700">
-                              {member.customerVisits}
-                            </div>
-                            <p className="text-xs text-purple-600 font-medium">
-                              Visits
-                            </p>
-                          </div>
-
-                          <div className="text-center p-3 rounded-lg bg-gradient-to-r from-cyan-100 to-cyan-200">
-                            <div className="flex items-center justify-center mb-2">
-                              <UserCheck className="h-5 w-5 text-cyan-600" />
-                            </div>
-                            <div className="text-2xl font-bold text-cyan-700">
-                              {member.leadsAssigned}
-                            </div>
-                            <p className="text-xs text-cyan-600 font-medium">Leads</p>
-                          </div>
-
-                          <div className="text-center p-3 rounded-lg bg-gradient-to-r from-red-100 to-red-200">
-                            <div className="flex items-center justify-center mb-2">
-                              <Target className="h-5 w-5 text-red-600" />
-                            </div>
-                            <div className="text-2xl font-bold text-red-700">
-                              {member.conversions}
-                            </div>
-                            <p className="text-xs text-red-600 font-medium">
-                              Conversions
-                            </p>
-                          </div>
-
-                          <div className="text-center p-3 rounded-lg bg-gradient-to-r from-emerald-100 to-emerald-200">
-                            <div className="flex items-center justify-center mb-2">
-                              <DollarSign className="h-5 w-5 text-emerald-600" />
-                            </div>
-                            <div className="text-2xl font-bold text-emerald-700">
-                              ₦{(member.revenue / 1000).toFixed(0)}K
-                            </div>
-                            <p className="text-xs text-emerald-600 font-medium">
-                              Revenue
-                            </p>
-                          </div>
+                        <div className="text-lg font-bold">₦{customer.estimatedValue.toLocaleString()}</div>
+                        <div className="text-xs text-muted-foreground">
+                          Assigned to: {customer.assignedTo}
                         </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Team Performance Chart */}
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-slate-50">
-              <CardHeader>
-                <CardTitle className="text-slate-800">Team Performance Comparison</CardTitle>
-                <CardDescription>
-                  Activity metrics comparison across team members
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={400}>
-                  <BarChart data={teamPerformanceData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="coldCalls" fill="#3b82f6" name="Cold Calls" />
-                    <Bar dataKey="emails" fill="#10b981" name="Emails" />
-                    <Bar dataKey="proposals" fill="#f59e0b" name="Proposals" />
-                    <Bar dataKey="visits" fill="#8b5cf6" name="Visits" />
-                    <Bar
-                      dataKey="conversions"
-                      fill="#ef4444"
-                      name="Conversions"
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="customers" className="space-y-6">
-            {/* Search and Filter */}
-            <Card className="border-0 shadow-lg bg-gradient-to-r from-white to-slate-50">
-              <CardContent className="p-6">
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-1">
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        placeholder="Search customers..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10 border-2 border-slate-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
-                      />
-                    </div>
-                  </div>
-                  <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-full md:w-[180px] border-2 border-slate-200 focus:border-emerald-400">
-                      <SelectValue placeholder="Filter by status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Status</SelectItem>
-                      <SelectItem value="Leads">Leads</SelectItem>
-                      <SelectItem value="Onboarding">Onboarding</SelectItem>
-                      <SelectItem value="Paying">Paying</SelectItem>
-                      <SelectItem value="Returning">Returning</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Customers Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredCustomers.map((customer) => (
-                <Card
-                  key={customer.id}
-                  className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-slate-50"
-                >
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="text-lg text-slate-800">{customer.name}</CardTitle>
-                        <CardDescription className="text-slate-600">{customer.company}</CardDescription>
+                        <div className="text-xs text-muted-foreground">
+                          Last contact: {new Date(customer.lastContact).toLocaleDateString()}
+                        </div>
                       </div>
+
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" className="h-8 w-8 p-0">
@@ -873,164 +500,212 @@ const SalesManagement = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Move to Stage</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() =>
-                              handleStatusChange(customer.id, "Leads")
-                            }
-                          >
-                            Leads
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() =>
-                              handleStatusChange(customer.id, "Onboarding")
-                            }
-                          >
-                            Onboarding
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() =>
-                              handleStatusChange(customer.id, "Paying")
-                            }
-                          >
-                            Paying
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() =>
-                              handleStatusChange(customer.id, "Returning")
-                            }
-                          >
-                            Returning
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuItem>
-                            <Edit className="h-4 w-4 mr-2" />
-                            Edit
+                            <Edit className="mr-2 h-4 w-4" />
+                            Edit Customer
                           </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Mail className="mr-2 h-4 w-4" />
+                            Send Email
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Phone className="mr-2 h-4 w-4" />
+                            Schedule Call
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
                           <DropdownMenuItem className="text-destructive">
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Delete
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete Customer
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
-                  </CardHeader>
-
-                  <CardContent className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <Badge className={getStatusColor(customer.status)}>
-                        {customer.status}
-                      </Badge>
-                      <span className="text-lg font-semibold text-emerald-600">
-                        ₦{customer.estimatedValue.toLocaleString()}
-                      </span>
-                    </div>
-
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-muted-foreground" />
-                        <span className="truncate">{customer.email}</span>
+                    {customer.notes && (
+                      <div className="mt-4 p-3 bg-muted rounded-md">
+                        <p className="text-sm"><strong>Notes:</strong> {customer.notes}</p>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Phone className="h-4 w-4 text-muted-foreground" />
-                        <span>{customer.phone}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4 text-muted-foreground" />
-                        <span>Assigned to {customer.assignedTo}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
-                        <span>
-                          Last contact:{" "}
-                          {new Date(customer.lastContact).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="pt-2 border-t">
-                      <p className="text-sm text-muted-foreground line-clamp-2">
-                        {customer.notes}
-                      </p>
-                    </div>
+                    )}
                   </CardContent>
                 </Card>
               ))}
             </div>
           </TabsContent>
 
-          <TabsContent value="analytics" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-slate-50">
-                <CardHeader>
-                  <CardTitle className="text-slate-800">Conversion Rates</CardTitle>
-                  <CardDescription>
-                    Performance across sales stages
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Leads to Onboarding</span>
-                        <span className="font-medium">62%</span>
+          <TabsContent value="team" className="space-y-4">
+            <div className="grid gap-4">
+              {teamStats.map((member) => (
+                <Card key={member.id} className="hover:shadow-md transition-shadow">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <Avatar className="h-12 w-12">
+                          <AvatarImage src={member.avatar} alt={member.name} />
+                          <AvatarFallback>
+                            {member.name.split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <h3 className="font-semibold">{member.name}</h3>
+                          <p className="text-sm text-muted-foreground">{member.role}</p>
+                        </div>
                       </div>
-                      <Progress value={62} className="h-3 bg-gradient-to-r from-yellow-200 to-blue-200" />
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Onboarding to Paying</span>
-                        <span className="font-medium">64%</span>
-                      </div>
-                      <Progress value={64} className="h-3 bg-gradient-to-r from-blue-200 to-green-200" />
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Paying to Returning</span>
-                        <span className="font-medium">50%</span>
-                      </div>
-                      <Progress value={50} className="h-3 bg-gradient-to-r from-green-200 to-purple-200" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
 
-              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-slate-50">
-                <CardHeader>
-                  <CardTitle className="text-slate-800">Source Performance</CardTitle>
-                  <CardDescription>
-                    Customer acquisition by source
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {["Website", "Referral", "LinkedIn", "Partnership"].map(
-                      (source, index) => {
-                        const percentage = [35, 28, 22, 15][index];
-                        const colors = [
-                          "from-blue-200 to-cyan-200",
-                          "from-green-200 to-emerald-200",
-                          "from-purple-200 to-violet-200",
-                          "from-orange-200 to-red-200"
-                        ];
-                        return (
-                          <div key={source} className="space-y-2">
-                            <div className="flex justify-between text-sm">
-                              <span>{source}</span>
-                              <span className="font-medium">{percentage}%</span>
-                            </div>
-                            <Progress value={percentage} className={`h-3 bg-gradient-to-r ${colors[index]}`} />
-                          </div>
-                        );
-                      },
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+                      <div className="grid grid-cols-3 gap-8 text-center">
+                        <div>
+                          <div className="text-lg font-bold">{member.coldCalls}</div>
+                          <div className="text-xs text-muted-foreground">Cold Calls</div>
+                        </div>
+                        <div>
+                          <div className="text-lg font-bold">{member.emailsSent}</div>
+                          <div className="text-xs text-muted-foreground">Emails Sent</div>
+                        </div>
+                        <div>
+                          <div className="text-lg font-bold">{member.meetings}</div>
+                          <div className="text-xs text-muted-foreground">Meetings</div>
+                        </div>
+                        <div>
+                          <div className="text-lg font-bold">{member.dealsWon}</div>
+                          <div className="text-xs text-muted-foreground">Deals Won</div>
+                        </div>
+                        <div>
+                          <div className="text-lg font-bold">₦{(member.revenue / 1000).toFixed(0)}K</div>
+                          <div className="text-xs text-muted-foreground">Revenue</div>
+                        </div>
+                        <div>
+                          <div className="text-lg font-bold">{Math.round((member.revenue / member.target) * 100)}%</div>
+                          <div className="text-xs text-muted-foreground">Target Achievement</div>
+                          <Progress value={(member.revenue / member.target) * 100} className="mt-1" />
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </TabsContent>
         </Tabs>
+
+        {/* Add Customer Dialog */}
+        <Dialog open={isAddCustomerOpen} onOpenChange={setIsAddCustomerOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Add New Customer</DialogTitle>
+              <DialogDescription>
+                Add a new customer to your sales pipeline
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Full Name *</Label>
+                <Input
+                  id="name"
+                  value={newCustomer.name}
+                  onChange={(e) => setNewCustomer(prev => ({ ...prev, name: e.target.value }))}
+                  placeholder="Enter customer name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address *</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={newCustomer.email}
+                  onChange={(e) => setNewCustomer(prev => ({ ...prev, email: e.target.value }))}
+                  placeholder="Enter email address"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone Number</Label>
+                <Input
+                  id="phone"
+                  value={newCustomer.phone}
+                  onChange={(e) => setNewCustomer(prev => ({ ...prev, phone: e.target.value }))}
+                  placeholder="Enter phone number"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="company">Company *</Label>
+                <Input
+                  id="company"
+                  value={newCustomer.company}
+                  onChange={(e) => setNewCustomer(prev => ({ ...prev, company: e.target.value }))}
+                  placeholder="Enter company name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="status">Status</Label>
+                <Select value={newCustomer.status} onValueChange={(value) => setNewCustomer(prev => ({ ...prev, status: value }))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Leads">Leads</SelectItem>
+                    <SelectItem value="Onboarding">Onboarding</SelectItem>
+                    <SelectItem value="Paying">Paying</SelectItem>
+                    <SelectItem value="Returning">Returning</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="estimatedValue">Estimated Value (₦)</Label>
+                <Input
+                  id="estimatedValue"
+                  type="number"
+                  value={newCustomer.estimatedValue}
+                  onChange={(e) => setNewCustomer(prev => ({ ...prev, estimatedValue: e.target.value }))}
+                  placeholder="Enter estimated value"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="source">Source</Label>
+                <Select value={newCustomer.source} onValueChange={(value) => setNewCustomer(prev => ({ ...prev, source: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select source" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Website">Website</SelectItem>
+                    <SelectItem value="Referral">Referral</SelectItem>
+                    <SelectItem value="LinkedIn">LinkedIn</SelectItem>
+                    <SelectItem value="Cold Call">Cold Call</SelectItem>
+                    <SelectItem value="Email Campaign">Email Campaign</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="assignedTo">Assigned To</Label>
+                <Select value={newCustomer.assignedTo} onValueChange={(value) => setNewCustomer(prev => ({ ...prev, assignedTo: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select team member" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {teamStats.map((member) => (
+                      <SelectItem key={member.id} value={member.name}>
+                        {member.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="col-span-2 space-y-2">
+                <Label htmlFor="notes">Notes</Label>
+                <Textarea
+                  id="notes"
+                  value={newCustomer.notes}
+                  onChange={(e) => setNewCustomer(prev => ({ ...prev, notes: e.target.value }))}
+                  placeholder="Additional notes about the customer"
+                  rows={3}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsAddCustomerOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleAddCustomer}>Add Customer</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
