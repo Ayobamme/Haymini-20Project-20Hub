@@ -64,6 +64,8 @@ interface Prospect {
   progress: number;
   avatar?: string;
   notes: string;
+  linkedInProfile?: string;
+  linkedInConnected?: boolean;
 }
 
 interface ChecklistItem {
