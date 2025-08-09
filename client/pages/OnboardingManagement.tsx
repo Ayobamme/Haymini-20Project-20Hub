@@ -90,6 +90,8 @@ const OnboardingManagement = () => {
       startDate: "2024-01-15",
       progress: 75,
       notes: "Strong technical background, excited to join the team",
+      linkedInProfile: "https://linkedin.com/in/sarah-johnson-dev",
+      linkedInConnected: true,
     },
     {
       id: "2",
@@ -102,6 +104,8 @@ const OnboardingManagement = () => {
       startDate: "2024-01-20",
       progress: 45,
       notes: "Previous experience at tech startups",
+      linkedInProfile: "https://linkedin.com/in/michael-chen-pm",
+      linkedInConnected: false,
     },
   ]);
 
