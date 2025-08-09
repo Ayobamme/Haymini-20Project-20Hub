@@ -289,6 +289,17 @@ const HumanResources = () => {
       },
       onboardingProgress: 100,
       offboardingProgress: 0,
+      attendanceData: {
+        totalDaysWorked: 180,
+        presentDays: 175,
+        lateDays: 3,
+        absentDays: 2,
+        leavesTaken: 5,
+        attendanceRate: 97.2,
+        currentStatus: "present",
+        lastClockIn: "08:45 AM",
+        lastClockOut: "05:45 PM",
+      },
     },
     {
       id: "3",
