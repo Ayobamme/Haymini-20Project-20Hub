@@ -423,6 +423,20 @@ const OnboardingManagement = () => {
                   />
                 </div>
                 <div className="space-y-2">
+                  <Label htmlFor="linkedInProfile">LinkedIn Profile (Optional)</Label>
+                  <Input
+                    id="linkedInProfile"
+                    value={newProspect.linkedInProfile}
+                    onChange={(e) =>
+                      setNewProspect((prev) => ({
+                        ...prev,
+                        linkedInProfile: e.target.value,
+                      }))
+                    }
+                    placeholder="https://linkedin.com/in/prospect-name"
+                  />
+                </div>
+                <div className="space-y-2">
                   <Label htmlFor="notes">Notes</Label>
                   <Textarea
                     id="notes"
