@@ -333,6 +333,17 @@ const HumanResources = () => {
       },
       onboardingProgress: 100,
       offboardingProgress: 45,
+      attendanceData: {
+        totalDaysWorked: 240,
+        presentDays: 225,
+        lateDays: 8,
+        absentDays: 7,
+        leavesTaken: 10,
+        attendanceRate: 93.8,
+        currentStatus: "on_leave",
+        lastClockIn: "08:30 AM",
+        lastClockOut: "05:30 PM",
+      },
     },
   ]);
 
