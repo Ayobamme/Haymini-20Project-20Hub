@@ -511,6 +511,22 @@ const OnboardingManagement = () => {
                                 {prospect.email}
                               </span>
                             </div>
+                            {prospect.linkedInProfile && (
+                              <div className="flex items-center gap-2 mt-1">
+                                <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                                <a
+                                  href={prospect.linkedInProfile}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-xs text-blue-600 hover:underline"
+                                >
+                                  LinkedIn Profile
+                                </a>
+                                {prospect.linkedInConnected && (
+                                  <span className="text-xs text-green-600">✓ Connected</span>
+                                )}
+                              </div>
+                            )}
                           </div>
                         </div>
                         <div className="text-right space-y-2">
