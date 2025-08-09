@@ -133,6 +133,17 @@ interface Employee {
   };
   onboardingProgress: number;
   offboardingProgress: number;
+  attendanceData: {
+    totalDaysWorked: number;
+    presentDays: number;
+    lateDays: number;
+    absentDays: number;
+    leavesTaken: number;
+    attendanceRate: number;
+    currentStatus: "present" | "absent" | "on_leave" | "late";
+    lastClockIn?: string;
+    lastClockOut?: string;
+  };
 }
 
 interface OnboardingTask {
