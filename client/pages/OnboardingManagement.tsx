@@ -43,7 +43,9 @@ import {
   GraduationCap,
   FileText,
   Users,
+  ExternalLink,
 } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 interface Prospect {
   id: string;
