@@ -1203,24 +1203,25 @@ const HumanResources = () => {
             </Card>
 
             {/* Employee Table */}
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
-              <CardHeader className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-t-lg">
-                <CardTitle className="text-xl">Employee Directory</CardTitle>
-                <CardDescription className="text-indigo-100">
-                  Comprehensive employee management with onboarding and offboarding tracking
+            <Card>
+              <CardHeader>
+                <CardTitle>Employee Directory</CardTitle>
+                <CardDescription>
+                  Comprehensive employee management with attendance tracking
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-0">
                 <Table>
                   <TableHeader>
-                    <TableRow className="bg-gradient-to-r from-slate-50 to-slate-100">
-                      <TableHead className="font-semibold text-slate-700">Employee</TableHead>
-                      <TableHead className="font-semibold text-slate-700">Department</TableHead>
-                      <TableHead className="font-semibold text-slate-700">Position</TableHead>
-                      <TableHead className="font-semibold text-slate-700">Manager</TableHead>
-                      <TableHead className="font-semibold text-slate-700">Status</TableHead>
-                      <TableHead className="font-semibold text-slate-700">Progress</TableHead>
-                      <TableHead className="font-semibold text-slate-700">Actions</TableHead>
+                    <TableRow>
+                      <TableHead>Employee</TableHead>
+                      <TableHead>Department</TableHead>
+                      <TableHead>Position</TableHead>
+                      <TableHead>Manager</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Attendance</TableHead>
+                      <TableHead>Progress</TableHead>
+                      <TableHead>Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
