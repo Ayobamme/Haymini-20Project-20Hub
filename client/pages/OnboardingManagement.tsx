@@ -216,6 +216,7 @@ const OnboardingManagement = () => {
       ...newProspect,
       status: "interview",
       progress: 0,
+      linkedInConnected: false,
     };
     setProspects([...prospects, prospect]);
     setNewProspect({
@@ -226,8 +227,14 @@ const OnboardingManagement = () => {
       department: "",
       startDate: "",
       notes: "",
+      linkedInProfile: "",
     });
     setIsAddProspectOpen(false);
+
+    toast({
+      title: "Prospect Added",
+      description: `${prospect.name} has been added to the onboarding pipeline.`,
+    });
   };
 
   const handleChecklistUpdate = (itemId: string, completed: boolean) => {
