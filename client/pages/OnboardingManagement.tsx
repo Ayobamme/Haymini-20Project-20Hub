@@ -190,6 +190,7 @@ const OnboardingManagement = () => {
     department: "",
     startDate: "",
     notes: "",
+    linkedInProfile: "",
   });
 
   const getStatusVariant = (status: Prospect["status"]) => {
