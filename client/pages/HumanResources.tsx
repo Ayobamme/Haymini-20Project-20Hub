@@ -1226,45 +1226,64 @@ const HumanResources = () => {
                   </TableHeader>
                   <TableBody>
                     {filteredEmployees.map((employee) => (
-                      <TableRow key={employee.id} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200">
+                      <TableRow key={employee.id} className="hover:bg-accent/50">
                         <TableCell>
                           <div className="flex items-center gap-3">
-                            <Avatar className="h-10 w-10 border-2 border-white shadow-md">
+                            <Avatar className="h-10 w-10">
                               <AvatarImage src={employee.profileImage} />
-                              <AvatarFallback className="bg-gradient-to-r from-indigo-400 to-purple-500 text-white font-semibold">
+                              <AvatarFallback>
                                 {employee.firstName[0]}{employee.lastName[0]}
                               </AvatarFallback>
                             </Avatar>
                             <div>
-                              <div className="font-semibold text-slate-800">{employee.firstName} {employee.lastName}</div>
-                              <div className="text-sm text-slate-500">{employee.employeeId}</div>
+                              <div className="font-semibold">{employee.firstName} {employee.lastName}</div>
+                              <div className="text-sm text-muted-foreground">{employee.employeeId}</div>
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell className="font-medium text-slate-700">{employee.department}</TableCell>
-                        <TableCell className="text-slate-600">{employee.position}</TableCell>
-                        <TableCell className="text-slate-600">{employee.manager}</TableCell>
+                        <TableCell className="font-medium">{employee.department}</TableCell>
+                        <TableCell>{employee.position}</TableCell>
+                        <TableCell>{employee.manager}</TableCell>
                         <TableCell>
-                          <Badge className={getStatusColor(employee.status)}>
+                          <Badge variant={getStatusVariant(employee.status)}>
                             {employee.status}
                           </Badge>
                         </TableCell>
                         <TableCell>
                           <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <Badge variant={employee.attendanceData.currentStatus === "present" ? "default" :
+                                           employee.attendanceData.currentStatus === "on_leave" ? "secondary" : "destructive"}>
+                                {employee.attendanceData.currentStatus.replace('_', ' ')}
+                              </Badge>
+                              <span className="text-sm font-medium">{employee.attendanceData.attendanceRate}%</span>
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              {employee.attendanceData.presentDays}/{employee.attendanceData.totalDaysWorked} days
+                            </div>
+                            {employee.attendanceData.lastClockIn && (
+                              <div className="text-xs text-muted-foreground">
+                                Last: {employee.attendanceData.lastClockIn} - {employee.attendanceData.lastClockOut}
+                              </div>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="space-y-1">
                             {employee.status === "onboarding" && (
                               <>
-                                <div className="text-sm font-medium text-blue-600">Onboarding: {employee.onboardingProgress}%</div>
+                                <div className="text-sm font-medium">Onboarding: {employee.onboardingProgress}%</div>
                                 <Progress value={employee.onboardingProgress} className="w-24 h-2" />
                               </>
                             )}
                             {employee.status === "offboarding" && (
                               <>
-                                <div className="text-sm font-medium text-orange-600">Offboarding: {employee.offboardingProgress}%</div>
+                                <div className="text-sm font-medium">Offboarding: {employee.offboardingProgress}%</div>
                                 <Progress value={employee.offboardingProgress} className="w-24 h-2" />
                               </>
                             )}
                             {employee.status === "active" && (
-                              <div className="text-sm font-medium text-green-600">Complete</div>
+                              <div className="text-sm font-medium">Complete</div>
                             )}
                           </div>
                         </TableCell>
