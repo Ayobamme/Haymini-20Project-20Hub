@@ -39,7 +39,12 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
-import { DatePicker } from "@/components/ui/date-picker";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Plus,
   Search,
@@ -48,7 +53,7 @@ import {
   Edit,
   Trash2,
   Users,
-  Calendar,
+  Calendar as CalendarIcon,
   DollarSign,
   Clock,
   Target,
@@ -64,10 +69,48 @@ import {
   FolderKanban,
   CalendarDays,
   X,
+  List,
+  KanbanSquare,
+  ArrowRight,
+  ArrowLeft,
+  FileText,
+  Briefcase,
+  GitBranch,
+  Activity,
+  BarChart3,
 } from "lucide-react";
+import { format } from "date-fns";
+import { toast } from "@/hooks/use-toast";
+
+interface ProjectPhase {
+  id: string;
+  name: string;
+  description: string;
+  status: "Not Started" | "In Progress" | "Completed" | "On Hold" | "Cancelled";
+  startDate: string;
+  endDate: string;
+  progress: number;
+  dependencies: string[];
+  assignedTo: string[];
+  deliverables: Deliverable[];
+  budget: number;
+  spent: number;
+  estimatedHours: number;
+  actualHours: number;
+}
+
+interface Deliverable {
+  id: string;
+  name: string;
+  description: string;
+  status: "Pending" | "In Progress" | "Review" | "Completed";
+  dueDate: string;
+  assignedTo: string;
+}
 
 interface Project {
   id: string;
+  projectId: string; // Auto-generated unique project ID
   name: string;
   description: string;
   status: "Not Started" | "In Progress" | "On Hold" | "Completed" | "Cancelled";
@@ -91,15 +134,20 @@ interface Project {
   tasksCompleted: number;
   issuesOpen: number;
   lastUpdate: string;
+  phases: ProjectPhase[];
+  createdDate: string;
+  riskLevel: "Low" | "Medium" | "High" | "Critical";
+  clientName?: string;
+  contractValue?: number;
 }
 
 const Projects = () => {
   const [projects, setProjects] = useState<Project[]>([
     {
-      id: "PRJ-001",
+      id: "1",
+      projectId: "PRJ-001",
       name: "E-commerce Platform Redesign",
-      description:
-        "Complete overhaul of the e-commerce platform with modern UI/UX and improved performance",
+      description: "Complete overhaul of the e-commerce platform with modern UI/UX and improved performance",
       status: "In Progress",
       priority: "High",
       progress: 75,
@@ -121,12 +169,125 @@ const Projects = () => {
       tasksCompleted: 34,
       issuesOpen: 3,
       lastUpdate: "2024-01-25",
+      createdDate: "2024-01-10",
+      riskLevel: "Medium",
+      clientName: "TechCorp Solutions",
+      contractValue: 1800000,
+      phases: [
+        {
+          id: "phase-1",
+          name: "Requirements Analysis",
+          description: "Gather and analyze project requirements",
+          status: "Completed",
+          startDate: "2024-01-15",
+          endDate: "2024-01-25",
+          progress: 100,
+          dependencies: [],
+          assignedTo: ["John Doe", "Sarah Wilson"],
+          budget: 200000,
+          spent: 180000,
+          estimatedHours: 80,
+          actualHours: 75,
+          deliverables: [
+            {
+              id: "del-1",
+              name: "Requirements Document",
+              description: "Detailed project requirements",
+              status: "Completed",
+              dueDate: "2024-01-22",
+              assignedTo: "John Doe"
+            }
+          ]
+        },
+        {
+          id: "phase-2",
+          name: "UI/UX Design",
+          description: "Create wireframes and design mockups",
+          status: "In Progress",
+          startDate: "2024-01-26",
+          endDate: "2024-02-10",
+          progress: 85,
+          dependencies: ["phase-1"],
+          assignedTo: ["Mike Chen", "Sarah Wilson"],
+          budget: 300000,
+          spent: 250000,
+          estimatedHours: 120,
+          actualHours: 100,
+          deliverables: [
+            {
+              id: "del-2",
+              name: "Design System",
+              description: "Complete design system and components",
+              status: "In Progress",
+              dueDate: "2024-02-08",
+              assignedTo: "Mike Chen"
+            }
+          ]
+        },
+        {
+          id: "phase-3",
+          name: "Development",
+          description: "Frontend and backend development",
+          status: "In Progress",
+          startDate: "2024-02-01",
+          endDate: "2024-02-28",
+          progress: 60,
+          dependencies: ["phase-2"],
+          assignedTo: ["Sarah Wilson", "John Doe"],
+          budget: 800000,
+          spent: 450000,
+          estimatedHours: 320,
+          actualHours: 200,
+          deliverables: [
+            {
+              id: "del-3",
+              name: "MVP Release",
+              description: "Minimum viable product release",
+              status: "In Progress",
+              dueDate: "2024-02-25",
+              assignedTo: "Sarah Wilson"
+            }
+          ]
+        },
+        {
+          id: "phase-4",
+          name: "Testing & QA",
+          description: "Quality assurance and testing",
+          status: "Not Started",
+          startDate: "2024-02-20",
+          endDate: "2024-03-10",
+          progress: 0,
+          dependencies: ["phase-3"],
+          assignedTo: ["Testing Team"],
+          budget: 150000,
+          spent: 0,
+          estimatedHours: 100,
+          actualHours: 0,
+          deliverables: []
+        },
+        {
+          id: "phase-5",
+          name: "Deployment",
+          description: "Production deployment and launch",
+          status: "Not Started",
+          startDate: "2024-03-05",
+          endDate: "2024-03-15",
+          progress: 0,
+          dependencies: ["phase-4"],
+          assignedTo: ["DevOps Team"],
+          budget: 50000,
+          spent: 0,
+          estimatedHours: 40,
+          actualHours: 0,
+          deliverables: []
+        }
+      ]
     },
     {
-      id: "PRJ-002",
+      id: "2",
+      projectId: "PRJ-002",
       name: "Mobile App Development",
-      description:
-        "Native mobile application for iOS and Android with cross-platform features",
+      description: "Native mobile application for iOS and Android with cross-platform features",
       status: "In Progress",
       priority: "Medium",
       progress: 45,
@@ -148,60 +309,45 @@ const Projects = () => {
       tasksCompleted: 27,
       issuesOpen: 5,
       lastUpdate: "2024-01-23",
-    },
-    {
-      id: "PRJ-003",
-      name: "Marketing Campaign Q1",
-      description:
-        "Comprehensive marketing strategy and campaign execution for Q1 2024",
-      status: "Completed",
-      priority: "Medium",
-      progress: 100,
-      budget: 800000,
-      spent: 750000,
-      startDate: "2023-12-01",
-      endDate: "2024-01-31",
-      owner: "Lisa Park",
-      team: "Marketing",
-      members: [
-        { name: "Lisa Park", avatar: "", role: "Marketing Manager" },
-        { name: "David Kim", avatar: "", role: "Content Strategist" },
-        { name: "Jennifer Lee", avatar: "", role: "Graphic Designer" },
-      ],
-      tags: ["Marketing", "Campaign", "Content"],
-      isPrivate: false,
-      group: "Marketing & Sales",
-      tasksTotal: 28,
-      tasksCompleted: 28,
-      issuesOpen: 0,
-      lastUpdate: "2024-01-31",
-    },
-    {
-      id: "PRJ-004",
-      name: "Data Analytics Platform",
-      description:
-        "Internal analytics platform for business intelligence and reporting",
-      status: "On Hold",
-      priority: "Low",
-      progress: 20,
-      budget: 1200000,
-      spent: 240000,
-      startDate: "2024-01-01",
-      endDate: "2024-06-30",
-      owner: "Michael Brown",
-      team: "Data Engineering",
-      members: [
-        { name: "Michael Brown", avatar: "", role: "Data Engineer" },
-        { name: "Anna Thompson", avatar: "", role: "Data Scientist" },
-      ],
-      tags: ["Analytics", "BI", "Data"],
-      isPrivate: true,
-      group: "Technology",
-      tasksTotal: 35,
-      tasksCompleted: 7,
-      issuesOpen: 2,
-      lastUpdate: "2024-01-10",
-    },
+      createdDate: "2024-01-20",
+      riskLevel: "Low",
+      clientName: "Mobile First Inc",
+      contractValue: 2200000,
+      phases: [
+        {
+          id: "phase-6",
+          name: "Planning",
+          description: "Project planning and architecture design",
+          status: "Completed",
+          startDate: "2024-02-01",
+          endDate: "2024-02-10",
+          progress: 100,
+          dependencies: [],
+          assignedTo: ["Sarah Wilson"],
+          budget: 300000,
+          spent: 280000,
+          estimatedHours: 120,
+          actualHours: 115,
+          deliverables: []
+        },
+        {
+          id: "phase-7",
+          name: "Development",
+          description: "Mobile app development for iOS and Android",
+          status: "In Progress",
+          startDate: "2024-02-11",
+          endDate: "2024-04-30",
+          progress: 35,
+          dependencies: ["phase-6"],
+          assignedTo: ["Alex Rodriguez", "Emma Davis"],
+          budget: 1400000,
+          spent: 500000,
+          estimatedHours: 600,
+          actualHours: 220,
+          deliverables: []
+        }
+      ]
+    }
   ]);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -210,10 +356,42 @@ const Projects = () => {
   const [startDateFilter, setStartDateFilter] = useState<Date | undefined>();
   const [endDateFilter, setEndDateFilter] = useState<Date | undefined>();
   const [showCreateProject, setShowCreateProject] = useState(false);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [showCreatePhase, setShowCreatePhase] = useState(false);
+  const [viewMode, setViewMode] = useState<"grid" | "list" | "kanban">("grid");
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [isProjectDetailOpen, setIsProjectDetailOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("projects");
+
+  const [newProject, setNewProject] = useState({
+    name: "",
+    description: "",
+    priority: "Medium",
+    team: "",
+    startDate: "",
+    endDate: "",
+    budget: "",
+    isPrivate: false,
+    clientName: "",
+    contractValue: ""
+  });
+
+  const [newPhase, setNewPhase] = useState({
+    projectId: "",
+    name: "",
+    description: "",
+    startDate: "",
+    endDate: "",
+    assignedTo: [],
+    budget: "",
+    estimatedHours: ""
+  });
+
+  const generateProjectId = () => {
+    const maxId = Math.max(...projects.map(p => parseInt(p.projectId.split('-')[1])), 0);
+    return `PRJ-${String(maxId + 1).padStart(3, '0')}`;
+  };
 
   const handleDateFilter = () => {
-    // Date filtering is now handled in the filteredProjects computed value
     console.log("Date filter applied:", { startDateFilter, endDateFilter });
   };
 
@@ -224,33 +402,32 @@ const Projects = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "Not Started":
-        return "bg-gradient-to-r from-gray-400 to-gray-500 text-white border-0";
-      case "In Progress":
-        return "bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0";
-      case "On Hold":
-        return "bg-gradient-to-r from-yellow-500 to-amber-500 text-white border-0";
-      case "Completed":
-        return "bg-gradient-to-r from-green-500 to-green-600 text-white border-0";
-      case "Cancelled":
-        return "bg-gradient-to-r from-red-500 to-red-600 text-white border-0";
-      default:
-        return "bg-gradient-to-r from-gray-400 to-gray-500 text-white border-0";
+      case "Not Started": return "secondary";
+      case "In Progress": return "default";
+      case "On Hold": return "outline";
+      case "Completed": return "default";
+      case "Cancelled": return "destructive";
+      default: return "secondary";
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "Low":
-        return "bg-gradient-to-r from-green-400 to-green-500 text-white border-0";
-      case "Medium":
-        return "bg-gradient-to-r from-yellow-400 to-yellow-500 text-white border-0";
-      case "High":
-        return "bg-gradient-to-r from-orange-500 to-red-500 text-white border-0";
-      case "Critical":
-        return "bg-gradient-to-r from-red-600 to-red-700 text-white border-0";
-      default:
-        return "bg-gradient-to-r from-gray-400 to-gray-500 text-white border-0";
+      case "Low": return "secondary";
+      case "Medium": return "default";
+      case "High": return "destructive";
+      case "Critical": return "destructive";
+      default: return "secondary";
+    }
+  };
+
+  const getRiskColor = (risk: string) => {
+    switch (risk) {
+      case "Low": return "text-green-600";
+      case "Medium": return "text-yellow-600";
+      case "High": return "text-orange-600";
+      case "Critical": return "text-red-600";
+      default: return "text-gray-600";
     }
   };
 
@@ -258,20 +435,16 @@ const Projects = () => {
     const projectStart = new Date(project.startDate);
     const projectEnd = new Date(project.endDate);
 
-    // If no date filters are set, include all projects
     if (!startDateFilter && !endDateFilter) return true;
 
-    // If only start date filter is set
     if (startDateFilter && !endDateFilter) {
       return projectStart >= startDateFilter || projectEnd >= startDateFilter;
     }
 
-    // If only end date filter is set
     if (!startDateFilter && endDateFilter) {
       return projectStart <= endDateFilter || projectEnd <= endDateFilter;
     }
 
-    // If both date filters are set
     if (startDateFilter && endDateFilter) {
       return (
         (projectStart >= startDateFilter && projectStart <= endDateFilter) ||
@@ -288,145 +461,258 @@ const Projects = () => {
       project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       project.owner.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.team.toLowerCase().includes(searchTerm.toLowerCase());
+      project.team.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.projectId.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesStatus =
-      statusFilter === "all" || project.status === statusFilter;
-    const matchesPriority =
-      priorityFilter === "all" || project.priority === priorityFilter;
+    const matchesStatus = statusFilter === "all" || project.status === statusFilter;
+    const matchesPriority = priorityFilter === "all" || project.priority === priorityFilter;
     const matchesDateRange = isProjectInDateRange(project);
 
-    return (
-      matchesSearch && matchesStatus && matchesPriority && matchesDateRange
-    );
+    return matchesSearch && matchesStatus && matchesPriority && matchesDateRange;
   });
 
+  const handleCreateProject = () => {
+    if (!newProject.name || !newProject.startDate || !newProject.endDate) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const project: Project = {
+      id: Date.now().toString(),
+      projectId: generateProjectId(),
+      ...newProject,
+      status: "Not Started",
+      progress: 0,
+      spent: 0,
+      budget: parseInt(newProject.budget) || 0,
+      contractValue: parseInt(newProject.contractValue) || undefined,
+      members: [],
+      tags: [],
+      group: newProject.team,
+      tasksTotal: 0,
+      tasksCompleted: 0,
+      issuesOpen: 0,
+      lastUpdate: new Date().toISOString().split('T')[0],
+      createdDate: new Date().toISOString().split('T')[0],
+      riskLevel: "Low",
+      phases: []
+    };
+
+    setProjects([...projects, project]);
+    setNewProject({
+      name: "", description: "", priority: "Medium", team: "",
+      startDate: "", endDate: "", budget: "", isPrivate: false,
+      clientName: "", contractValue: ""
+    });
+    setShowCreateProject(false);
+
+    toast({
+      title: "Project Created",
+      description: `Project "${project.projectId}" has been created successfully.`,
+    });
+  };
+
+  const handleCreatePhase = () => {
+    if (!newPhase.projectId || !newPhase.name || !newPhase.startDate || !newPhase.endDate) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const phase: ProjectPhase = {
+      id: Date.now().toString(),
+      ...newPhase,
+      status: "Not Started",
+      progress: 0,
+      dependencies: [],
+      assignedTo: [],
+      deliverables: [],
+      budget: parseInt(newPhase.budget) || 0,
+      spent: 0,
+      estimatedHours: parseInt(newPhase.estimatedHours) || 0,
+      actualHours: 0
+    };
+
+    setProjects(prev => prev.map(project => 
+      project.id === newPhase.projectId 
+        ? { ...project, phases: [...project.phases, phase] }
+        : project
+    ));
+
+    setNewPhase({
+      projectId: "", name: "", description: "", startDate: "",
+      endDate: "", assignedTo: [], budget: "", estimatedHours: ""
+    });
+    setShowCreatePhase(false);
+
+    toast({
+      title: "Phase Created",
+      description: `Phase "${phase.name}" has been added to the project.`,
+    });
+  };
+
+  const handlePhaseMove = (phaseId: string, projectId: string, direction: "left" | "right") => {
+    const project = projects.find(p => p.id === projectId);
+    if (!project) return;
+
+    const phaseIndex = project.phases.findIndex(p => p.id === phaseId);
+    if (phaseIndex === -1) return;
+
+    const newPhases = [...project.phases];
+    if (direction === "right" && phaseIndex < newPhases.length - 1) {
+      [newPhases[phaseIndex], newPhases[phaseIndex + 1]] = [newPhases[phaseIndex + 1], newPhases[phaseIndex]];
+    } else if (direction === "left" && phaseIndex > 0) {
+      [newPhases[phaseIndex], newPhases[phaseIndex - 1]] = [newPhases[phaseIndex - 1], newPhases[phaseIndex]];
+    }
+
+    setProjects(prev => prev.map(p => 
+      p.id === projectId ? { ...p, phases: newPhases } : p
+    ));
+
+    toast({
+      title: "Phase Moved",
+      description: "Phase order has been updated.",
+    });
+  };
+
+  const KanbanView = () => {
+    const allPhases = filteredProjects.flatMap(project => 
+      project.phases.map(phase => ({ ...phase, projectName: project.name, projectId: project.projectId }))
+    );
+
+    const phasesByStatus = {
+      "Not Started": allPhases.filter(p => p.status === "Not Started"),
+      "In Progress": allPhases.filter(p => p.status === "In Progress"),
+      "On Hold": allPhases.filter(p => p.status === "On Hold"),
+      "Completed": allPhases.filter(p => p.status === "Completed"),
+      "Cancelled": allPhases.filter(p => p.status === "Cancelled")
+    };
+
+    return (
+      <div className="grid grid-cols-5 gap-4 h-[600px] overflow-auto">
+        {Object.entries(phasesByStatus).map(([status, phases]) => (
+          <Card key={status} className="min-h-full">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium flex items-center justify-between">
+                {status}
+                <Badge variant="outline" className="text-xs">
+                  {phases.length}
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {phases.map(phase => (
+                <Card key={phase.id} className="p-3 hover:shadow-md transition-shadow cursor-pointer">
+                  <div className="space-y-2">
+                    <div className="flex items-start justify-between">
+                      <h4 className="text-sm font-medium line-clamp-2">{phase.name}</h4>
+                      <Badge variant="outline" className="text-xs">
+                        {phase.projectId}
+                      </Badge>
+                    </div>
+                    
+                    <p className="text-xs text-muted-foreground line-clamp-1">
+                      {phase.projectName}
+                    </p>
+                    
+                    <p className="text-xs text-muted-foreground line-clamp-2">
+                      {phase.description}
+                    </p>
+                    
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-xs">
+                        <span>Progress</span>
+                        <span>{phase.progress}%</span>
+                      </div>
+                      <Progress value={phase.progress} className="h-1" />
+                    </div>
+                    
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span>₦{(phase.budget / 1000).toFixed(0)}K</span>
+                      <span>{new Date(phase.endDate).toLocaleDateString()}</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-1">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="h-6 text-xs px-2"
+                        onClick={() => {
+                          const project = projects.find(p => p.phases.some(ph => ph.id === phase.id));
+                          if (project) {
+                            handlePhaseMove(phase.id, project.id, "left");
+                          }
+                        }}
+                      >
+                        <ArrowLeft className="h-3 w-3" />
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="h-6 text-xs px-2"
+                        onClick={() => {
+                          const project = projects.find(p => p.phases.some(ph => ph.id === phase.id));
+                          if (project) {
+                            handlePhaseMove(phase.id, project.id, "right");
+                          }
+                        }}
+                      >
+                        <ArrowRight className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 p-6">
-      <div className="space-y-6">
+    <div className="min-h-screen bg-background">
+      <div className="p-6 space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold text-foreground">
               Project Management
             </h1>
-            <p className="text-lg text-slate-600">
-              Manage and track all your projects with advanced filtering
+            <p className="text-muted-foreground mt-2">
+              Manage projects with phases, track progress, and monitor deliverables
             </p>
           </div>
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
-              className="border-2 border-slate-300 hover:bg-slate-100"
+              onClick={() => setViewMode(viewMode === "grid" ? "list" : viewMode === "list" ? "kanban" : "grid")}
             >
-              {viewMode === "grid" ? "List View" : "Grid View"}
+              {viewMode === "grid" && <List className="mr-2 h-4 w-4" />}
+              {viewMode === "list" && <KanbanSquare className="mr-2 h-4 w-4" />}
+              {viewMode === "kanban" && <FolderKanban className="mr-2 h-4 w-4" />}
+              {viewMode === "grid" ? "List View" : viewMode === "list" ? "Kanban View" : "Grid View"}
             </Button>
             <Dialog open={showCreateProject} onOpenChange={setShowCreateProject}>
               <DialogTrigger asChild>
-                <Button className="bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white border-0 shadow-lg">
+                <Button>
                   <Plus className="h-4 w-4 mr-2" />
                   New Project
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-2xl border-0 shadow-2xl bg-gradient-to-br from-white to-slate-50">
-                <DialogHeader>
-                  <DialogTitle className="text-2xl bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                    Create New Project
-                  </DialogTitle>
-                  <DialogDescription className="text-slate-600">
-                    Set up a new project with team members and timeline
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="projectName" className="text-slate-700 font-medium">Project Name</Label>
-                    <Input id="projectName" placeholder="Enter project name" className="border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100" />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="description" className="text-slate-700 font-medium">Description</Label>
-                    <Textarea
-                      id="description"
-                      placeholder="Describe the project..."
-                      rows={3}
-                      className="border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="priority" className="text-slate-700 font-medium">Priority</Label>
-                      <Select>
-                        <SelectTrigger className="border-2 border-slate-200 focus:border-blue-400">
-                          <SelectValue placeholder="Select priority" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="low">Low</SelectItem>
-                          <SelectItem value="medium">Medium</SelectItem>
-                          <SelectItem value="high">High</SelectItem>
-                          <SelectItem value="critical">Critical</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="team" className="text-slate-700 font-medium">Team</Label>
-                      <Select>
-                        <SelectTrigger className="border-2 border-slate-200 focus:border-blue-400">
-                          <SelectValue placeholder="Select team" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="frontend">
-                            Frontend Development
-                          </SelectItem>
-                          <SelectItem value="backend">
-                            Backend Development
-                          </SelectItem>
-                          <SelectItem value="mobile">
-                            Mobile Development
-                          </SelectItem>
-                          <SelectItem value="design">Design Team</SelectItem>
-                          <SelectItem value="marketing">Marketing</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="startDate" className="text-slate-700 font-medium">Start Date</Label>
-                      <DatePicker placeholder="Select start date" />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="endDate" className="text-slate-700 font-medium">End Date</Label>
-                      <DatePicker placeholder="Select end date" />
-                    </div>
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="budget" className="text-slate-700 font-medium">Budget (₦)</Label>
-                    <Input id="budget" type="number" placeholder="0" className="border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100" />
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Switch id="private" />
-                    <Label htmlFor="private" className="text-slate-700 font-medium">Make this project private</Label>
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowCreateProject(false)}
-                    className="border-2 border-slate-300 hover:bg-slate-100"
-                  >
-                    Cancel
-                  </Button>
-                  <Button onClick={() => setShowCreateProject(false)} className="bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white border-0">
-                    Create Project
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
             </Dialog>
           </div>
         </div>
 
-        {/* Enhanced Filters with Date Range */}
-        <Card className="border-0 shadow-lg bg-gradient-to-r from-white to-slate-50">
+        {/* Enhanced Filters */}
+        <Card>
           <CardContent className="p-6">
             <div className="space-y-4">
               <div className="flex flex-col lg:flex-row gap-4">
@@ -434,15 +720,15 @@ const Projects = () => {
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                      placeholder="Search projects..."
+                      placeholder="Search projects or Project ID..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                      className="pl-10"
                     />
                   </div>
                 </div>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-full lg:w-[180px] border-2 border-slate-200 focus:border-blue-400">
+                  <SelectTrigger className="w-full lg:w-[180px]">
                     <SelectValue placeholder="Filter by status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -455,7 +741,7 @@ const Projects = () => {
                   </SelectContent>
                 </Select>
                 <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-                  <SelectTrigger className="w-full lg:w-[180px] border-2 border-slate-200 focus:border-blue-400">
+                  <SelectTrigger className="w-full lg:w-[180px]">
                     <SelectValue placeholder="Filter by priority" />
                   </SelectTrigger>
                   <SelectContent>
@@ -475,32 +761,51 @@ const Projects = () => {
                   <Label className="text-sm font-medium">Date Range:</Label>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2 items-center">
-                  <DatePicker
-                    date={startDateFilter}
-                    onDateChange={setStartDateFilter}
-                    placeholder="Start date"
-                    className="w-full sm:w-[160px]"
-                  />
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {startDateFilter ? format(startDateFilter, "MMM dd") : "Start Date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={startDateFilter}
+                        onSelect={setStartDateFilter}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                   <span className="text-sm text-muted-foreground">to</span>
-                  <DatePicker
-                    date={endDateFilter}
-                    onDateChange={setEndDateFilter}
-                    placeholder="End date"
-                    className="w-full sm:w-[160px]"
-                  />
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {endDateFilter ? format(endDateFilter, "MMM dd") : "End Date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={endDateFilter}
+                        onSelect={setEndDateFilter}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </div>
                 {(startDateFilter || endDateFilter) && (
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={clearDateFilters}
-                    className="flex items-center gap-2 border-2 border-slate-300 hover:bg-slate-100"
                   >
-                    <X className="h-3 w-3" />
+                    <X className="h-3 w-3 mr-1" />
                     Clear Dates
                   </Button>
                 )}
-                <div className="text-sm text-muted-foreground">
+                <div className="text-sm text-muted-foreground ml-auto">
                   {filteredProjects.length} of {projects.length} projects
                 </div>
               </div>
@@ -510,344 +815,836 @@ const Projects = () => {
 
         {/* Project Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+          <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-blue-100">
+                  <p className="text-sm font-medium text-muted-foreground">
                     Total Projects
                   </p>
                   <div className="text-3xl font-bold">
                     {filteredProjects.length}
                   </div>
                 </div>
-                <FolderKanban className="h-10 w-10 text-blue-200" />
+                <FolderKanban className="h-10 w-10 text-muted-foreground" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-orange-500 to-red-500 text-white">
+          <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-orange-100">
+                  <p className="text-sm font-medium text-muted-foreground">
                     In Progress
                   </p>
                   <div className="text-3xl font-bold">
-                    {
-                      filteredProjects.filter((p) => p.status === "In Progress")
-                        .length
-                    }
+                    {filteredProjects.filter((p) => p.status === "In Progress").length}
                   </div>
                 </div>
-                <PlayCircle className="h-10 w-10 text-orange-200" />
+                <PlayCircle className="h-10 w-10 text-muted-foreground" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-green-500 to-green-600 text-white">
+          <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-green-100">
+                  <p className="text-sm font-medium text-muted-foreground">
                     Completed
                   </p>
                   <div className="text-3xl font-bold">
-                    {
-                      filteredProjects.filter((p) => p.status === "Completed")
-                        .length
-                    }
+                    {filteredProjects.filter((p) => p.status === "Completed").length}
                   </div>
                 </div>
-                <CheckCircle2 className="h-10 w-10 text-green-200" />
+                <CheckCircle2 className="h-10 w-10 text-muted-foreground" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
+          <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-emerald-100">
+                  <p className="text-sm font-medium text-muted-foreground">
                     Total Budget
                   </p>
                   <div className="text-3xl font-bold">
-                    ₦
-                    {(
-                      filteredProjects.reduce((sum, p) => sum + p.budget, 0) /
-                      1000000
-                    ).toFixed(1)}
-                    M
+                    ₦{(filteredProjects.reduce((sum, p) => sum + p.budget, 0) / 1000000).toFixed(1)}M
                   </div>
                 </div>
-                <DollarSign className="h-10 w-10 text-emerald-200" />
+                <DollarSign className="h-10 w-10 text-muted-foreground" />
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Projects Display */}
-        {viewMode === "grid" ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredProjects.map((project) => (
-              <Card
-                key={project.id}
-                className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-slate-50"
-              >
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <CardTitle className="text-lg text-slate-800">{project.name}</CardTitle>
-                        {project.isPrivate && (
-                          <EyeOff className="h-4 w-4 text-muted-foreground" />
-                        )}
+        {/* Main Content */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="projects">Projects</TabsTrigger>
+            <TabsTrigger value="phases">Project Phases</TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          </TabsList>
+
+          {/* Projects Tab */}
+          <TabsContent value="projects" className="space-y-4">
+            {viewMode === "kanban" ? (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">Kanban view is available in the Project Phases tab</p>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setActiveTab("phases")}
+                  className="mt-4"
+                >
+                  View Project Phases Kanban
+                </Button>
+              </div>
+            ) : viewMode === "grid" ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredProjects.map((project) => (
+                  <Card
+                    key={project.id}
+                    className="hover:shadow-lg transition-all duration-300"
+                  >
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="font-mono text-xs">
+                              {project.projectId}
+                            </Badge>
+                            <CardTitle className="text-lg">{project.name}</CardTitle>
+                            {project.isPrivate && (
+                              <EyeOff className="h-4 w-4 text-muted-foreground" />
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge variant={getStatusColor(project.status)}>
+                              {project.status}
+                            </Badge>
+                            <Badge variant={getPriorityColor(project.priority)}>
+                              {project.priority}
+                            </Badge>
+                            <span className={`text-xs font-medium ${getRiskColor(project.riskLevel)}`}>
+                              Risk: {project.riskLevel}
+                            </span>
+                          </div>
+                        </div>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedProject(project);
+                                setIsProjectDetailOpen(true);
+                              }}
+                            >
+                              <Eye className="h-4 w-4 mr-2" />
+                              View Details
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <Edit className="h-4 w-4 mr-2" />
+                              Edit Project
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                              <GitBranch className="h-4 w-4 mr-2" />
+                              Manage Phases
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                              <Archive className="h-4 w-4 mr-2" />
+                              Archive
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="text-destructive">
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Badge className={getStatusColor(project.status)}>
-                          {project.status}
-                        </Badge>
-                        <Badge className={getPriorityColor(project.priority)}>
-                          {project.priority}
-                        </Badge>
+                    </CardHeader>
+
+                    <CardContent className="space-y-4">
+                      <p className="text-sm text-muted-foreground line-clamp-2">
+                        {project.description}
+                      </p>
+
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-sm">
+                          <span>Progress</span>
+                          <span className="font-medium">{project.progress}%</span>
+                        </div>
+                        <Progress value={project.progress} className="h-2" />
                       </div>
-                    </div>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                          <Eye className="h-4 w-4 mr-2" />
-                          View Details
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Edit className="h-4 w-4 mr-2" />
-                          Edit Project
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                          <Archive className="h-4 w-4 mr-2" />
-                          Archive
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </CardHeader>
 
-                <CardContent className="space-y-4">
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {project.description}
-                  </p>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span>Progress</span>
-                      <span className="font-medium">{project.progress}%</span>
-                    </div>
-                    <Progress value={project.progress} className="h-2" />
-                  </div>
-
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">Budget</span>
-                      <span className="font-medium text-emerald-600">
-                        ₦{(project.budget / 1000000).toFixed(1)}M
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">Spent</span>
-                      <span className="font-medium text-red-600">
-                        ₦{(project.spent / 1000000).toFixed(1)}M
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">Tasks</span>
-                      <span className="font-medium">
-                        {project.tasksCompleted}/{project.tasksTotal}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-muted-foreground">
-                        {new Date(project.startDate).toLocaleDateString()} -{" "}
-                        {new Date(project.endDate).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <div className="flex -space-x-2">
-                      {project.members.slice(0, 3).map((member, index) => (
-                        <Avatar
-                          key={index}
-                          className="h-6 w-6 border-2 border-background"
-                        >
-                          <AvatarImage src={member.avatar} />
-                          <AvatarFallback className="text-xs bg-gradient-to-r from-indigo-400 to-purple-500 text-white">
-                            {member.name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
-                          </AvatarFallback>
-                        </Avatar>
-                      ))}
-                      {project.members.length > 3 && (
-                        <div className="h-6 w-6 rounded-full bg-gradient-to-r from-slate-400 to-slate-500 border-2 border-background flex items-center justify-center">
-                          <span className="text-xs text-white">
-                            +{project.members.length - 3}
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center justify-between">
+                          <span className="text-muted-foreground">Budget</span>
+                          <span className="font-medium">
+                            ₦{(project.budget / 1000000).toFixed(1)}M
                           </span>
                         </div>
-                      )}
-                    </div>
-                    <span className="text-sm text-muted-foreground">
-                      {project.team}
-                    </span>
-                  </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-muted-foreground">Spent</span>
+                          <span className="font-medium">
+                            ₦{(project.spent / 1000000).toFixed(1)}M
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-muted-foreground">Phases</span>
+                          <span className="font-medium">
+                            {project.phases.filter(p => p.status === "Completed").length}/{project.phases.length}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-muted-foreground">Tasks</span>
+                          <span className="font-medium">
+                            {project.tasksCompleted}/{project.tasksTotal}
+                          </span>
+                        </div>
+                      </div>
 
-                  <div className="flex gap-1">
-                    {project.tags.slice(0, 3).map((tag) => (
-                      <Badge key={tag} variant="secondary" className="text-xs bg-gradient-to-r from-cyan-100 to-blue-100 text-cyan-700 border-0">
-                        {tag}
-                      </Badge>
+                      <div className="flex items-center justify-between text-sm">
+                        <div className="flex items-center gap-1">
+                          <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-muted-foreground">
+                            {new Date(project.startDate).toLocaleDateString()} -{" "}
+                            {new Date(project.endDate).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <div className="flex -space-x-2">
+                          {project.members.slice(0, 3).map((member, index) => (
+                            <Avatar
+                              key={index}
+                              className="h-6 w-6 border-2 border-background"
+                            >
+                              <AvatarImage src={member.avatar} />
+                              <AvatarFallback className="text-xs">
+                                {member.name
+                                  .split(" ")
+                                  .map((n) => n[0])
+                                  .join("")}
+                              </AvatarFallback>
+                            </Avatar>
+                          ))}
+                          {project.members.length > 3 && (
+                            <div className="h-6 w-6 rounded-full bg-muted border-2 border-background flex items-center justify-center">
+                              <span className="text-xs">
+                                +{project.members.length - 3}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        <span className="text-sm text-muted-foreground">
+                          {project.team}
+                        </span>
+                      </div>
+
+                      <div className="flex gap-1">
+                        {project.tags.slice(0, 3).map((tag) => (
+                          <Badge key={tag} variant="secondary" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                        {project.tags.length > 3 && (
+                          <Badge variant="secondary" className="text-xs">
+                            +{project.tags.length - 3}
+                          </Badge>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-xl">Projects List</CardTitle>
+                  <CardDescription>
+                    All projects with detailed information
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="space-y-4">
+                    {filteredProjects.map((project) => (
+                      <div
+                        key={project.id}
+                        className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline" className="font-mono text-xs">
+                                {project.projectId}
+                              </Badge>
+                              <h4 className="font-semibold">{project.name}</h4>
+                              {project.isPrivate && (
+                                <EyeOff className="h-4 w-4 text-muted-foreground" />
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Badge variant={getStatusColor(project.status)}>
+                                {project.status}
+                              </Badge>
+                              <Badge variant={getPriorityColor(project.priority)}>
+                                {project.priority}
+                              </Badge>
+                              <span className="text-sm text-muted-foreground">
+                                {project.team}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-6">
+                          <div className="text-center">
+                            <div className="text-sm font-medium">
+                              {project.progress}%
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              Progress
+                            </div>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-sm font-medium">
+                              ₦{(project.budget / 1000000).toFixed(1)}M
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              Budget
+                            </div>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-sm font-medium">
+                              {project.phases.filter(p => p.status === "Completed").length}/{project.phases.length}
+                            </div>
+                            <div className="text-xs text-muted-foreground">Phases</div>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-sm font-medium">
+                              {new Date(project.endDate).toLocaleDateString()}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              Due Date
+                            </div>
+                          </div>
+
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 w-8 p-0">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setSelectedProject(project);
+                                  setIsProjectDetailOpen(true);
+                                }}
+                              >
+                                <Eye className="h-4 w-4 mr-2" />
+                                View Details
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <Edit className="h-4 w-4 mr-2" />
+                                Edit Project
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem>
+                                <Archive className="h-4 w-4 mr-2" />
+                                Archive
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="text-destructive">
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </div>
                     ))}
-                    {project.tags.length > 3 && (
-                      <Badge variant="secondary" className="text-xs bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700 border-0">
-                        +{project.tags.length - 3}
-                      </Badge>
-                    )}
                   </div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
-        ) : (
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
-            <CardHeader className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-t-lg">
-              <CardTitle className="text-xl">Projects List</CardTitle>
-              <CardDescription className="text-blue-100">
-                All projects with detailed information
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="space-y-4">
-                {filteredProjects.map((project) => (
-                  <div
-                    key={project.id}
-                    className="flex items-center justify-between p-4 border-2 border-slate-200 rounded-lg hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 transition-all duration-300"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <h4 className="font-semibold text-slate-800">{project.name}</h4>
-                          {project.isPrivate && (
-                            <EyeOff className="h-4 w-4 text-muted-foreground" />
-                          )}
+            )}
+          </TabsContent>
+
+          {/* Project Phases Tab */}
+          <TabsContent value="phases" className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold">Project Phases</h3>
+                <p className="text-sm text-muted-foreground">Manage project phases in kanban view</p>
+              </div>
+              <Dialog open={showCreatePhase} onOpenChange={setShowCreatePhase}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Phase
+                  </Button>
+                </DialogTrigger>
+              </Dialog>
+            </div>
+            
+            <KanbanView />
+          </TabsContent>
+
+          {/* Analytics Tab */}
+          <TabsContent value="analytics" className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Project Status Overview</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {["Not Started", "In Progress", "On Hold", "Completed", "Cancelled"].map((status) => {
+                      const count = filteredProjects.filter(p => p.status === status).length;
+                      const percentage = filteredProjects.length > 0 ? (count / filteredProjects.length) * 100 : 0;
+                      
+                      return (
+                        <div key={status} className="flex justify-between items-center">
+                          <div className="flex items-center gap-2">
+                            <Badge variant={getStatusColor(status as any)} className="text-xs">
+                              {status}
+                            </Badge>
+                            <span className="text-sm">{count} projects</span>
+                          </div>
+                          <span className="text-sm font-medium">{percentage.toFixed(1)}%</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Badge className={getStatusColor(project.status)}>
-                            {project.status}
-                          </Badge>
-                          <Badge className={getPriorityColor(project.priority)}>
-                            {project.priority}
-                          </Badge>
-                          <span className="text-sm text-muted-foreground">
-                            {project.team}
-                          </span>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Budget Analysis</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <div className="text-2xl font-bold">
+                          ₦{(filteredProjects.reduce((sum, p) => sum + p.budget, 0) / 1000000).toFixed(1)}M
                         </div>
+                        <div className="text-sm text-muted-foreground">Total Budget</div>
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold">
+                          ₦{(filteredProjects.reduce((sum, p) => sum + p.spent, 0) / 1000000).toFixed(1)}M
+                        </div>
+                        <div className="text-sm text-muted-foreground">Total Spent</div>
                       </div>
                     </div>
-
-                    <div className="flex items-center gap-6">
-                      <div className="text-center">
-                        <div className="text-sm font-medium">
-                          {project.progress}%
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          Progress
-                        </div>
+                    
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Budget Utilization</span>
+                        <span>
+                          {filteredProjects.reduce((sum, p) => sum + p.budget, 0) > 0 
+                            ? ((filteredProjects.reduce((sum, p) => sum + p.spent, 0) / filteredProjects.reduce((sum, p) => sum + p.budget, 0)) * 100).toFixed(1)
+                            : 0}%
+                        </span>
                       </div>
-                      <div className="text-center">
-                        <div className="text-sm font-medium text-emerald-600">
-                          ₦{(project.budget / 1000000).toFixed(1)}M
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          Budget
-                        </div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-sm font-medium">
-                          {project.tasksCompleted}/{project.tasksTotal}
-                        </div>
-                        <div className="text-xs text-muted-foreground">Tasks</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-sm font-medium">
-                          {new Date(project.endDate).toLocaleDateString()}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          Due Date
-                        </div>
-                      </div>
-
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Eye className="h-4 w-4 mr-2" />
-                            View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Edit className="h-4 w-4 mr-2" />
-                            Edit Project
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem>
-                            <Archive className="h-4 w-4 mr-2" />
-                            Archive
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive">
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <Progress 
+                        value={
+                          filteredProjects.reduce((sum, p) => sum + p.budget, 0) > 0 
+                            ? (filteredProjects.reduce((sum, p) => sum + p.spent, 0) / filteredProjects.reduce((sum, p) => sum + p.budget, 0)) * 100
+                            : 0
+                        } 
+                        className="h-2" 
+                      />
                     </div>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
 
         {filteredProjects.length === 0 && (
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50">
+          <Card>
             <CardContent className="p-12 text-center">
               <FolderKanban className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
               <h3 className="text-lg font-semibold mb-2">No Projects Found</h3>
               <p className="text-muted-foreground mb-4">
                 No projects match your current search and filter criteria.
               </p>
-              <Button onClick={() => setShowCreateProject(true)} className="bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white border-0">
+              <Button onClick={() => setShowCreateProject(true)}>
                 <Plus className="h-4 w-4 mr-2" />
                 Create Your First Project
               </Button>
             </CardContent>
           </Card>
         )}
+
+        {/* Project Detail Dialog */}
+        <Dialog open={isProjectDetailOpen} onOpenChange={setIsProjectDetailOpen}>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Badge variant="outline" className="font-mono">
+                  {selectedProject?.projectId}
+                </Badge>
+                {selectedProject?.name}
+              </DialogTitle>
+              <DialogDescription>
+                Project details and phase breakdown
+              </DialogDescription>
+            </DialogHeader>
+            {selectedProject && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div>
+                      <Label className="text-sm font-medium">Project Owner</Label>
+                      <p className="text-sm text-muted-foreground">{selectedProject.owner}</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium">Status</Label>
+                      <div className="mt-1">
+                        <Badge variant={getStatusColor(selectedProject.status)}>
+                          {selectedProject.status}
+                        </Badge>
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium">Priority</Label>
+                      <div className="mt-1">
+                        <Badge variant={getPriorityColor(selectedProject.priority)}>
+                          {selectedProject.priority}
+                        </Badge>
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium">Risk Level</Label>
+                      <p className={`text-sm font-medium ${getRiskColor(selectedProject.riskLevel)}`}>
+                        {selectedProject.riskLevel}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <Label className="text-sm font-medium">Budget</Label>
+                      <p className="text-sm text-muted-foreground">
+                        ₦{selectedProject.budget.toLocaleString()}
+                      </p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium">Spent</Label>
+                      <p className="text-sm text-muted-foreground">
+                        ₦{selectedProject.spent.toLocaleString()}
+                      </p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium">Timeline</Label>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(selectedProject.startDate).toLocaleDateString()} - {new Date(selectedProject.endDate).toLocaleDateString()}
+                      </p>
+                    </div>
+                    {selectedProject.clientName && (
+                      <div>
+                        <Label className="text-sm font-medium">Client</Label>
+                        <p className="text-sm text-muted-foreground">{selectedProject.clientName}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-sm font-medium">Description</Label>
+                  <p className="text-sm text-muted-foreground mt-1">{selectedProject.description}</p>
+                </div>
+
+                <div>
+                  <Label className="text-sm font-medium">Project Phases ({selectedProject.phases.length})</Label>
+                  <div className="mt-3 space-y-3">
+                    {selectedProject.phases.map((phase) => (
+                      <div key={phase.id} className="p-3 border rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-medium">{phase.name}</h4>
+                            <Badge variant={getStatusColor(phase.status)}>
+                              {phase.status}
+                            </Badge>
+                          </div>
+                          <span className="text-sm text-muted-foreground">
+                            {phase.progress}% complete
+                          </span>
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-2">{phase.description}</p>
+                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                          <span>
+                            {new Date(phase.startDate).toLocaleDateString()} - {new Date(phase.endDate).toLocaleDateString()}
+                          </span>
+                          <span>
+                            Budget: ₦{(phase.budget / 1000).toFixed(0)}K | Spent: ₦{(phase.spent / 1000).toFixed(0)}K
+                          </span>
+                        </div>
+                        <Progress value={phase.progress} className="h-1 mt-2" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-sm font-medium">Team Members</Label>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {selectedProject.members.map((member, index) => (
+                      <div key={index} className="flex items-center gap-2 p-2 border rounded">
+                        <Avatar className="h-6 w-6">
+                          <AvatarImage src={member.avatar} />
+                          <AvatarFallback className="text-xs">
+                            {member.name.split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="text-sm font-medium">{member.name}</div>
+                          <div className="text-xs text-muted-foreground">{member.role}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsProjectDetailOpen(false)}>
+                Close
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Create Project Dialog */}
+        <Dialog open={showCreateProject} onOpenChange={setShowCreateProject}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Create New Project</DialogTitle>
+              <DialogDescription>
+                Set up a new project with timeline and team members
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="projectName">Project Name *</Label>
+                <Input 
+                  id="projectName" 
+                  placeholder="Enter project name" 
+                  value={newProject.name}
+                  onChange={(e) => setNewProject(prev => ({ ...prev, name: e.target.value }))}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  placeholder="Describe the project..."
+                  rows={3}
+                  value={newProject.description}
+                  onChange={(e) => setNewProject(prev => ({ ...prev, description: e.target.value }))}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="priority">Priority</Label>
+                  <Select value={newProject.priority} onValueChange={(value) => setNewProject(prev => ({ ...prev, priority: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select priority" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Low">Low</SelectItem>
+                      <SelectItem value="Medium">Medium</SelectItem>
+                      <SelectItem value="High">High</SelectItem>
+                      <SelectItem value="Critical">Critical</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="team">Team</Label>
+                  <Input
+                    id="team"
+                    placeholder="Team name"
+                    value={newProject.team}
+                    onChange={(e) => setNewProject(prev => ({ ...prev, team: e.target.value }))}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="startDate">Start Date *</Label>
+                  <Input
+                    id="startDate"
+                    type="date"
+                    value={newProject.startDate}
+                    onChange={(e) => setNewProject(prev => ({ ...prev, startDate: e.target.value }))}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="endDate">End Date *</Label>
+                  <Input
+                    id="endDate"
+                    type="date"
+                    value={newProject.endDate}
+                    onChange={(e) => setNewProject(prev => ({ ...prev, endDate: e.target.value }))}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="budget">Budget (₦)</Label>
+                  <Input 
+                    id="budget" 
+                    type="number" 
+                    placeholder="0" 
+                    value={newProject.budget}
+                    onChange={(e) => setNewProject(prev => ({ ...prev, budget: e.target.value }))}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="clientName">Client Name</Label>
+                  <Input
+                    id="clientName"
+                    placeholder="Client name"
+                    value={newProject.clientName}
+                    onChange={(e) => setNewProject(prev => ({ ...prev, clientName: e.target.value }))}
+                  />
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch 
+                  id="private" 
+                  checked={newProject.isPrivate}
+                  onCheckedChange={(checked) => setNewProject(prev => ({ ...prev, isPrivate: checked }))}
+                />
+                <Label htmlFor="private">Make this project private</Label>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setShowCreateProject(false)}
+              >
+                Cancel
+              </Button>
+              <Button onClick={handleCreateProject}>
+                Create Project
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Create Phase Dialog */}
+        <Dialog open={showCreatePhase} onOpenChange={setShowCreatePhase}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Add Project Phase</DialogTitle>
+              <DialogDescription>
+                Create a new phase for an existing project
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="projectSelect">Select Project *</Label>
+                <Select value={newPhase.projectId} onValueChange={(value) => setNewPhase(prev => ({ ...prev, projectId: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select project" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {projects.map(project => (
+                      <SelectItem key={project.id} value={project.id}>
+                        {project.projectId} - {project.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="phaseName">Phase Name *</Label>
+                <Input 
+                  id="phaseName" 
+                  placeholder="Enter phase name" 
+                  value={newPhase.name}
+                  onChange={(e) => setNewPhase(prev => ({ ...prev, name: e.target.value }))}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="phaseDescription">Description</Label>
+                <Textarea
+                  id="phaseDescription"
+                  placeholder="Describe the phase..."
+                  rows={3}
+                  value={newPhase.description}
+                  onChange={(e) => setNewPhase(prev => ({ ...prev, description: e.target.value }))}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="phaseStartDate">Start Date *</Label>
+                  <Input
+                    id="phaseStartDate"
+                    type="date"
+                    value={newPhase.startDate}
+                    onChange={(e) => setNewPhase(prev => ({ ...prev, startDate: e.target.value }))}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="phaseEndDate">End Date *</Label>
+                  <Input
+                    id="phaseEndDate"
+                    type="date"
+                    value={newPhase.endDate}
+                    onChange={(e) => setNewPhase(prev => ({ ...prev, endDate: e.target.value }))}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="phaseBudget">Budget (₦)</Label>
+                  <Input 
+                    id="phaseBudget" 
+                    type="number" 
+                    placeholder="0" 
+                    value={newPhase.budget}
+                    onChange={(e) => setNewPhase(prev => ({ ...prev, budget: e.target.value }))}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="phaseHours">Estimated Hours</Label>
+                  <Input
+                    id="phaseHours"
+                    type="number"
+                    placeholder="0"
+                    value={newPhase.estimatedHours}
+                    onChange={(e) => setNewPhase(prev => ({ ...prev, estimatedHours: e.target.value }))}
+                  />
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setShowCreatePhase(false)}
+              >
+                Cancel
+              </Button>
+              <Button onClick={handleCreatePhase}>
+                Create Phase
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
