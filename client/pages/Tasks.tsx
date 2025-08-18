@@ -73,9 +73,28 @@ import {
   FileText,
   KanbanSquare,
   List,
+  CheckSquare,
+  Building,
+  GitBranch,
+  Briefcase,
+  UserPlus,
+  ListChecks,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+
+interface TaskChecklist {
+  id: string;
+  taskId: string;
+  title: string;
+  description: string;
+  isCompleted: boolean;
+  assignedHours: number;
+  actualHours?: number;
+  assignedTo?: string;
+  createdDate: string;
+  completedDate?: string;
+}
 
 interface Task {
   id: string;
@@ -88,6 +107,8 @@ interface Task {
   status: "To Do" | "In Progress" | "Review" | "Done";
   dueDate: string;
   project: string;
+  projectId?: string; // Link to actual project
+  projectPhaseId?: string; // Link to specific project phase
   tags: string[];
   estimatedHours: number;
   actualHours?: number;
@@ -96,6 +117,9 @@ interface Task {
   updatedDate: string;
   stage: "Planning" | "Development" | "Testing" | "Review" | "Deployment" | "Completed";
   comments: TaskComment[];
+  checklist: TaskChecklist[];
+  assignedTeam?: string;
+  assignedDepartment?: string;
 }
 
 interface TaskComment {
@@ -128,6 +152,37 @@ interface WorkOverview {
   efficiency: number;
 }
 
+interface Project {
+  id: string;
+  projectId: string;
+  name: string;
+  description: string;
+  status: "Not Started" | "In Progress" | "On Hold" | "Completed" | "Cancelled";
+  phases: ProjectPhase[];
+}
+
+interface ProjectPhase {
+  id: string;
+  name: string;
+  description: string;
+  status: "Not Started" | "In Progress" | "Completed" | "On Hold" | "Cancelled";
+  assignedTeam?: string;
+  assignedMembers: string[];
+}
+
+interface Team {
+  id: string;
+  name: string;
+  department: string;
+  members: string[];
+}
+
+interface Department {
+  id: string;
+  name: string;
+  teams: string[];
+}
+
 const Tasks = () => {
   const [tasks, setTasks] = useState<Task[]>([
     {
@@ -141,6 +196,8 @@ const Tasks = () => {
       status: "In Progress",
       dueDate: "2024-02-15",
       project: "Web Application",
+      projectId: "project-1",
+      projectPhaseId: "phase-1",
       tags: ["Frontend", "Security"],
       estimatedHours: 20,
       actualHours: 12,
@@ -148,6 +205,44 @@ const Tasks = () => {
       createdDate: "2024-01-20",
       updatedDate: "2024-01-25",
       stage: "Development",
+      assignedTeam: "frontend-team",
+      assignedDepartment: "engineering",
+      checklist: [
+        {
+          id: "cl-1",
+          taskId: "1",
+          title: "Setup JWT library",
+          description: "Install and configure JWT token handling",
+          isCompleted: true,
+          assignedHours: 2,
+          actualHours: 1.5,
+          assignedTo: "John Smith",
+          createdDate: "2024-01-20",
+          completedDate: "2024-01-21"
+        },
+        {
+          id: "cl-2",
+          taskId: "1",
+          title: "Create login component",
+          description: "Build React login form component",
+          isCompleted: true,
+          assignedHours: 4,
+          actualHours: 3.5,
+          assignedTo: "John Smith",
+          createdDate: "2024-01-20",
+          completedDate: "2024-01-22"
+        },
+        {
+          id: "cl-3",
+          taskId: "1",
+          title: "Implement password validation",
+          description: "Add robust password validation rules",
+          isCompleted: false,
+          assignedHours: 3,
+          assignedTo: "John Smith",
+          createdDate: "2024-01-20"
+        }
+      ],
       comments: [
         {
           id: "c1",
@@ -178,6 +273,7 @@ const Tasks = () => {
       status: "Review",
       dueDate: "2024-02-10",
       project: "UI/UX Design",
+      projectId: "project-2",
       tags: ["Design", "Wireframes"],
       estimatedHours: 8,
       actualHours: 6,
@@ -185,6 +281,44 @@ const Tasks = () => {
       createdDate: "2024-01-18",
       updatedDate: "2024-01-24",
       stage: "Review",
+      assignedTeam: "design-team",
+      assignedDepartment: "design",
+      checklist: [
+        {
+          id: "cl-4",
+          taskId: "2",
+          title: "Research user requirements",
+          description: "Gather and analyze user needs",
+          isCompleted: true,
+          assignedHours: 3,
+          actualHours: 2.5,
+          assignedTo: "Sarah Johnson",
+          createdDate: "2024-01-18",
+          completedDate: "2024-01-19"
+        },
+        {
+          id: "cl-5",
+          taskId: "2",
+          title: "Create initial wireframes",
+          description: "Design basic layout wireframes",
+          isCompleted: true,
+          assignedHours: 4,
+          actualHours: 3,
+          assignedTo: "Sarah Johnson",
+          createdDate: "2024-01-18",
+          completedDate: "2024-01-21"
+        },
+        {
+          id: "cl-6",
+          taskId: "2",
+          title: "Mobile responsive design",
+          description: "Adapt wireframes for mobile devices",
+          isCompleted: false,
+          assignedHours: 2,
+          assignedTo: "Sarah Johnson",
+          createdDate: "2024-01-18"
+        }
+      ],
       comments: [
         {
           id: "c3",
@@ -207,33 +341,102 @@ const Tasks = () => {
       status: "To Do",
       dueDate: "2024-02-20",
       project: "Backend Development",
+      projectId: "project-1",
+      projectPhaseId: "phase-2",
       tags: ["Database", "Performance"],
       estimatedHours: 15,
       createdBy: "Admin",
       createdDate: "2024-01-22",
       updatedDate: "2024-01-22",
       stage: "Planning",
+      assignedTeam: "backend-team",
+      assignedDepartment: "engineering",
+      checklist: [],
       comments: []
+    }
+  ]);
+
+  const [projects] = useState<Project[]>([
+    {
+      id: "project-1",
+      projectId: "PRJ-001",
+      name: "E-commerce Platform",
+      description: "Complete e-commerce solution",
+      status: "In Progress",
+      phases: [
+        {
+          id: "phase-1",
+          name: "Authentication Module",
+          description: "User authentication and authorization",
+          status: "In Progress",
+          assignedTeam: "frontend-team",
+          assignedMembers: ["staff-1", "staff-2"]
+        },
+        {
+          id: "phase-2",
+          name: "Database Layer",
+          description: "Database design and optimization",
+          status: "Not Started",
+          assignedTeam: "backend-team",
+          assignedMembers: ["staff-3"]
+        }
+      ]
     },
     {
-      id: "4",
-      taskId: "TSK-004",
-      title: "API endpoint testing",
-      description: "Comprehensive testing of all API endpoints",
-      assignee: "John Smith",
-      assigneeId: "staff-1",
-      priority: "Medium",
-      status: "Done",
-      dueDate: "2024-01-30",
-      project: "Web Application",
-      tags: ["Testing", "API"],
-      estimatedHours: 12,
-      actualHours: 10,
-      createdBy: "Admin",
-      createdDate: "2024-01-15",
-      updatedDate: "2024-01-29",
-      stage: "Completed",
-      comments: []
+      id: "project-2",
+      projectId: "PRJ-002",
+      name: "Mobile App Design",
+      description: "Mobile application UI/UX design",
+      status: "In Progress",
+      phases: [
+        {
+          id: "phase-3",
+          name: "User Research",
+          description: "Research and wireframing",
+          status: "In Progress",
+          assignedTeam: "design-team",
+          assignedMembers: ["staff-2"]
+        }
+      ]
+    }
+  ]);
+
+  const [teams] = useState<Team[]>([
+    {
+      id: "frontend-team",
+      name: "Frontend Team",
+      department: "engineering",
+      members: ["staff-1", "staff-2"]
+    },
+    {
+      id: "backend-team",
+      name: "Backend Team", 
+      department: "engineering",
+      members: ["staff-3"]
+    },
+    {
+      id: "design-team",
+      name: "Design Team",
+      department: "design",
+      members: ["staff-2"]
+    }
+  ]);
+
+  const [departments] = useState<Department[]>([
+    {
+      id: "engineering",
+      name: "Engineering",
+      teams: ["frontend-team", "backend-team"]
+    },
+    {
+      id: "design",
+      name: "Design",
+      teams: ["design-team"]
+    },
+    {
+      id: "marketing",
+      name: "Marketing",
+      teams: []
     }
   ]);
 
@@ -270,6 +473,7 @@ const Tasks = () => {
   const [isStaffDetailOpen, setIsStaffDetailOpen] = useState(false);
   const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false);
   const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
+  const [isChecklistOpen, setIsChecklistOpen] = useState(false);
   const [newComment, setNewComment] = useState("");
   const [activeTab, setActiveTab] = useState("all-tasks");
   const [viewMode, setViewMode] = useState<"list" | "kanban">("list");
@@ -280,15 +484,28 @@ const Tasks = () => {
     assigneeId: "",
     priority: "Medium",
     dueDate: "",
-    project: "",
+    projectId: "",
+    projectPhaseId: "",
     estimatedHours: "",
-    tags: ""
+    tags: "",
+    assignedTeam: "",
+    assignedDepartment: ""
+  });
+
+  const [newChecklistItem, setNewChecklistItem] = useState({
+    title: "",
+    description: "",
+    assignedHours: "",
+    assignedTo: ""
   });
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [priorityFilter, setPriorityFilter] = useState("All");
   const [staffFilter, setStaffFilter] = useState("All");
+  const [departmentFilter, setDepartmentFilter] = useState("All");
+  const [teamFilter, setTeamFilter] = useState("All");
+  const [projectFilter, setProjectFilter] = useState("All");
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
   const [analyticsStaff, setAnalyticsStaff] = useState("All");
@@ -309,12 +526,16 @@ const Tasks = () => {
     const matchesStatus = statusFilter === "All" || task.status === statusFilter;
     const matchesPriority = priorityFilter === "All" || task.priority === priorityFilter;
     const matchesStaff = staffFilter === "All" || task.assigneeId === staffFilter;
+    const matchesDepartment = departmentFilter === "All" || task.assignedDepartment === departmentFilter;
+    const matchesTeam = teamFilter === "All" || task.assignedTeam === teamFilter;
+    const matchesProject = projectFilter === "All" || task.projectId === projectFilter;
     
     const taskDate = new Date(task.createdDate);
     const matchesDateFrom = !dateFrom || taskDate >= dateFrom;
     const matchesDateTo = !dateTo || taskDate <= dateTo;
     
-    return matchesSearch && matchesStatus && matchesPriority && matchesStaff && matchesDateFrom && matchesDateTo;
+    return matchesSearch && matchesStatus && matchesPriority && matchesStaff && 
+           matchesDepartment && matchesTeam && matchesProject && matchesDateFrom && matchesDateTo;
   });
 
   const getTasksByStaffAndDate = (staffId: string, period: "daily" | "weekly" | "monthly") => {
@@ -412,11 +633,14 @@ const Tasks = () => {
     }
 
     const assignee = staffMembers.find(s => s.id === newTask.assigneeId);
+    const selectedProject = projects.find(p => p.id === newTask.projectId);
+    
     const task: Task = {
       id: Date.now().toString(),
       taskId: generateTaskId(),
       ...newTask,
       assignee: assignee?.name || "",
+      project: selectedProject?.name || "",
       status: "To Do",
       stage: "Planning",
       estimatedHours: parseInt(newTask.estimatedHours) || 0,
@@ -424,13 +648,15 @@ const Tasks = () => {
       createdBy: "Admin",
       createdDate: new Date().toISOString().split('T')[0],
       updatedDate: new Date().toISOString().split('T')[0],
+      checklist: [],
       comments: []
     };
 
     setTasks([...tasks, task]);
     setNewTask({
       title: "", description: "", assigneeId: "", priority: "Medium",
-      dueDate: "", project: "", estimatedHours: "", tags: ""
+      dueDate: "", projectId: "", projectPhaseId: "", estimatedHours: "", 
+      tags: "", assignedTeam: "", assignedDepartment: ""
     });
     setIsCreateTaskOpen(false);
 
@@ -438,6 +664,63 @@ const Tasks = () => {
       title: "Task Created",
       description: `Task "${task.taskId}" has been assigned to ${task.assignee}.`,
     });
+  };
+
+  const handleAddChecklistItem = (taskId: string) => {
+    if (!newChecklistItem.title || !newChecklistItem.assignedHours) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in title and assigned hours.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const checklistItem: TaskChecklist = {
+      id: Date.now().toString(),
+      taskId,
+      title: newChecklistItem.title,
+      description: newChecklistItem.description,
+      isCompleted: false,
+      assignedHours: parseInt(newChecklistItem.assignedHours),
+      assignedTo: newChecklistItem.assignedTo || undefined,
+      createdDate: new Date().toISOString().split('T')[0]
+    };
+
+    setTasks(prev => prev.map(task => 
+      task.id === taskId 
+        ? { ...task, checklist: [...task.checklist, checklistItem], updatedDate: new Date().toISOString().split('T')[0] }
+        : task
+    ));
+
+    setNewChecklistItem({
+      title: "", description: "", assignedHours: "", assignedTo: ""
+    });
+
+    toast({
+      title: "Checklist Item Added",
+      description: "New checklist item has been added to the task.",
+    });
+  };
+
+  const handleChecklistToggle = (taskId: string, checklistId: string) => {
+    setTasks(prev => prev.map(task => 
+      task.id === taskId 
+        ? {
+            ...task,
+            checklist: task.checklist.map(item =>
+              item.id === checklistId 
+                ? { 
+                    ...item, 
+                    isCompleted: !item.isCompleted,
+                    completedDate: !item.isCompleted ? new Date().toISOString().split('T')[0] : undefined
+                  }
+                : item
+            ),
+            updatedDate: new Date().toISOString().split('T')[0]
+          }
+        : task
+    ));
   };
 
   const handleAddComment = (taskId: string) => {
@@ -539,6 +822,42 @@ const Tasks = () => {
                         </Badge>
                       </div>
                       
+                      {/* Checklist Progress in Kanban */}
+                      {task.checklist.length > 0 && (
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1 text-xs">
+                            <ListChecks className="h-3 w-3" />
+                            <span>
+                              {task.checklist.filter(c => c.isCompleted).length}/{task.checklist.length} items
+                            </span>
+                          </div>
+                          <Progress 
+                            value={(task.checklist.filter(c => c.isCompleted).length / task.checklist.length) * 100} 
+                            className="h-1" 
+                          />
+                          <div className="space-y-1">
+                            {task.checklist.slice(0, 3).map(item => (
+                              <div key={item.id} className="flex items-center gap-1 text-xs">
+                                <Checkbox 
+                                  checked={item.isCompleted}
+                                  onCheckedChange={() => handleChecklistToggle(task.id, item.id)}
+                                  className="h-3 w-3"
+                                />
+                                <span className={item.isCompleted ? "line-through text-muted-foreground" : ""}>
+                                  {item.title}
+                                </span>
+                                <span className="text-muted-foreground">({item.assignedHours}h)</span>
+                              </div>
+                            ))}
+                            {task.checklist.length > 3 && (
+                              <div className="text-xs text-muted-foreground">
+                                +{task.checklist.length - 3} more items
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                      
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <CalendarIcon className="h-3 w-3" />
                         {new Date(task.dueDate).toLocaleDateString()}
@@ -603,7 +922,7 @@ const Tasks = () => {
               Task Management
             </h1>
             <p className="text-muted-foreground mt-2">
-              Manage tasks with advanced analytics, date filtering, and kanban views
+              Manage tasks with checklists, team assignments, and project linking
             </p>
           </div>
           <div className="flex gap-2">
@@ -653,6 +972,32 @@ const Tasks = () => {
                   </SelectContent>
                 </Select>
                 
+                <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filter by department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All">All Departments</SelectItem>
+                    {departments.map(dept => (
+                      <SelectItem key={dept.id} value={dept.id}>{dept.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                
+                <Select value={teamFilter} onValueChange={setTeamFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filter by team" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All">All Teams</SelectItem>
+                    {teams.map(team => (
+                      <SelectItem key={team.id} value={team.id}>{team.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Select value={priorityFilter} onValueChange={setPriorityFilter}>
                   <SelectTrigger>
                     <SelectValue placeholder="Filter by priority" />
@@ -663,6 +1008,20 @@ const Tasks = () => {
                     <SelectItem value="Medium">Medium</SelectItem>
                     <SelectItem value="High">High</SelectItem>
                     <SelectItem value="Critical">Critical</SelectItem>
+                  </SelectContent>
+                </Select>
+                
+                <Select value={projectFilter} onValueChange={setProjectFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filter by project" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All">All Projects</SelectItem>
+                    {projects.map(project => (
+                      <SelectItem key={project.id} value={project.id}>
+                        {project.projectId} - {project.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 
@@ -754,45 +1113,53 @@ const Tasks = () => {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">In Progress</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">With Checklists</CardTitle>
+              <ListChecks className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {filteredTasks.filter(t => t.status === "In Progress").length}
+                {filteredTasks.filter(t => t.checklist.length > 0).length}
               </div>
               <p className="text-xs text-muted-foreground">
-                Active tasks
+                {filteredTasks.reduce((sum, t) => sum + t.checklist.length, 0)} total items
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">High Priority</CardTitle>
-              <AlertCircle className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Department Tasks</CardTitle>
+              <Building className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {filteredTasks.filter(t => t.priority === "High" || t.priority === "Critical").length}
+                {departmentFilter !== "All" 
+                  ? filteredTasks.filter(t => t.assignedDepartment === departmentFilter).length 
+                  : filteredTasks.length}
               </div>
               <p className="text-xs text-muted-foreground">
-                Urgent tasks
+                {departmentFilter !== "All" 
+                  ? departments.find(d => d.id === departmentFilter)?.name 
+                  : "All departments"}
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Overdue</CardTitle>
-              <AlertCircle className="h-4 w-4 text-destructive" />
+              <CardTitle className="text-sm font-medium">Team Tasks</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-destructive">
-                {filteredTasks.filter(t => new Date(t.dueDate) < new Date() && t.status !== "Done").length}
+              <div className="text-2xl font-bold">
+                {teamFilter !== "All" 
+                  ? filteredTasks.filter(t => t.assignedTeam === teamFilter).length 
+                  : filteredTasks.length}
               </div>
               <p className="text-xs text-muted-foreground">
-                Need attention
+                {teamFilter !== "All" 
+                  ? teams.find(t => t.id === teamFilter)?.name 
+                  : "All teams"}
               </p>
             </CardContent>
           </Card>
@@ -845,22 +1212,45 @@ const Tasks = () => {
                               {task.assignee}
                             </div>
                             <div className="flex items-center gap-1">
+                              <Briefcase className="h-3 w-3" />
+                              {task.project}
+                            </div>
+                            {task.assignedTeam && (
+                              <div className="flex items-center gap-1">
+                                <Users className="h-3 w-3" />
+                                {teams.find(t => t.id === task.assignedTeam)?.name}
+                              </div>
+                            )}
+                            {task.assignedDepartment && (
+                              <div className="flex items-center gap-1">
+                                <Building className="h-3 w-3" />
+                                {departments.find(d => d.id === task.assignedDepartment)?.name}
+                              </div>
+                            )}
+                            <div className="flex items-center gap-1">
                               <CalendarIcon className="h-3 w-3" />
                               Due: {new Date(task.dueDate).toLocaleDateString()}
                             </div>
-                            <div className="flex items-center gap-1">
-                              <Clock className="h-3 w-3" />
-                              {task.estimatedHours}h estimated
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <MessageSquare className="h-3 w-3" />
-                              {task.comments.length} comments
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Activity className="h-3 w-3" />
-                              Updated: {new Date(task.updatedDate).toLocaleDateString()}
-                            </div>
                           </div>
+
+                          {/* Checklist Summary */}
+                          {task.checklist.length > 0 && (
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2 text-sm">
+                                <ListChecks className="h-4 w-4" />
+                                <span className="font-medium">
+                                  Checklist ({task.checklist.filter(c => c.isCompleted).length}/{task.checklist.length})
+                                </span>
+                                <span className="text-muted-foreground">
+                                  - {task.checklist.reduce((sum, c) => sum + c.assignedHours, 0)}h total
+                                </span>
+                              </div>
+                              <Progress 
+                                value={(task.checklist.filter(c => c.isCompleted).length / task.checklist.length) * 100} 
+                                className="h-2" 
+                              />
+                            </div>
+                          )}
 
                           {task.tags.length > 0 && (
                             <div className="flex flex-wrap gap-1">
@@ -897,6 +1287,15 @@ const Tasks = () => {
                               <DropdownMenuItem>
                                 <Edit className="mr-2 h-4 w-4" />
                                 Edit Task
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setSelectedTask(task);
+                                  setIsChecklistOpen(true);
+                                }}
+                              >
+                                <ListChecks className="mr-2 h-4 w-4" />
+                                Manage Checklist
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuLabel>Change Status</DropdownMenuLabel>
@@ -953,14 +1352,9 @@ const Tasks = () => {
                           <Badge variant="outline">
                             {staffTasks.length} tasks
                           </Badge>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setAnalyticsStaff(staff.id)}
-                          >
-                            <BarChart3 className="mr-1 h-3 w-3" />
-                            Analytics
-                          </Button>
+                          <Badge variant="outline">
+                            {staffTasks.reduce((sum, t) => sum + t.checklist.length, 0)} checklist items
+                          </Badge>
                         </div>
                       </div>
                     </CardHeader>
@@ -983,9 +1377,15 @@ const Tasks = () => {
                                     {task.taskId}
                                   </Badge>
                                   <p className="font-medium">{task.title}</p>
+                                  {task.checklist.length > 0 && (
+                                    <Badge variant="secondary" className="text-xs">
+                                      <ListChecks className="h-3 w-3 mr-1" />
+                                      {task.checklist.filter(c => c.isCompleted).length}/{task.checklist.length}
+                                    </Badge>
+                                  )}
                                 </div>
                                 <p className="text-sm text-muted-foreground">
-                                  Due: {new Date(task.dueDate).toLocaleDateString()}
+                                  Due: {new Date(task.dueDate).toLocaleDateString()} • {task.project}
                                 </p>
                               </div>
                             </div>
@@ -995,9 +1395,6 @@ const Tasks = () => {
                               </Badge>
                               <Badge variant={getPriorityVariant(task.priority)} className="text-xs">
                                 {task.priority}
-                              </Badge>
-                              <Badge className={`text-xs ${getStageColor(task.stage)}`}>
-                                {task.stage}
                               </Badge>
                             </div>
                           </div>
@@ -1015,7 +1412,7 @@ const Tasks = () => {
             </div>
           </TabsContent>
 
-          {/* Task Analytics Tab */}
+          {/* Analytics Tab */}
           <TabsContent value="analytics" className="space-y-4">
             <div className="flex items-center gap-4 mb-6">
               <Select value={analyticsStaff} onValueChange={setAnalyticsStaff}>
@@ -1029,46 +1426,19 @@ const Tasks = () => {
                   ))}
                 </SelectContent>
               </Select>
-              
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline">
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {dateFrom ? format(dateFrom, "MMM dd") : "From Date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={dateFrom}
-                    onSelect={setDateFrom}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline">
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {dateTo ? format(dateTo, "MMM dd") : "To Date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={dateTo}
-                    onSelect={setDateTo}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {(analyticsStaff === "All" ? staffMembers : staffMembers.filter(s => s.id === analyticsStaff))
                 .map((staff) => {
                   const analytics = getStaffAnalytics(staff.id);
+                  const staffTasks = tasks.filter(t => t.assigneeId === staff.id);
+                  const checklistStats = {
+                    total: staffTasks.reduce((sum, t) => sum + t.checklist.length, 0),
+                    completed: staffTasks.reduce((sum, t) => sum + t.checklist.filter(c => c.isCompleted).length, 0),
+                    totalHours: staffTasks.reduce((sum, t) => sum + t.checklist.reduce((hrs, c) => hrs + c.assignedHours, 0), 0)
+                  };
+                  
                   return (
                     <Card key={staff.id}>
                       <CardHeader>
@@ -1086,35 +1456,32 @@ const Tasks = () => {
                             <div className="text-2xl font-bold text-green-600">{analytics.completedTasks}</div>
                           </div>
                           <div>
-                            <div className="font-medium">In Progress</div>
-                            <div className="text-2xl font-bold text-blue-600">{analytics.inProgressTasks}</div>
+                            <div className="font-medium">Checklist Items</div>
+                            <div className="text-2xl font-bold text-blue-600">{checklistStats.completed}/{checklistStats.total}</div>
                           </div>
                           <div>
-                            <div className="font-medium">Overdue</div>
-                            <div className="text-2xl font-bold text-red-600">{analytics.overdueTasks}</div>
+                            <div className="font-medium">Checklist Hours</div>
+                            <div className="text-2xl font-bold text-purple-600">{checklistStats.totalHours}h</div>
                           </div>
                         </div>
                         
                         <div className="space-y-2">
                           <div className="flex justify-between items-center text-sm">
-                            <span>Completion Rate</span>
+                            <span>Task Completion</span>
                             <span className="font-medium">{analytics.completionRate.toFixed(1)}%</span>
                           </div>
                           <Progress value={analytics.completionRate} className="h-2" />
                         </div>
                         
-                        <div className="space-y-2">
-                          <div className="flex justify-between items-center text-sm">
-                            <span>Efficiency</span>
-                            <span className="font-medium">{analytics.efficiency.toFixed(1)}%</span>
+                        {checklistStats.total > 0 && (
+                          <div className="space-y-2">
+                            <div className="flex justify-between items-center text-sm">
+                              <span>Checklist Progress</span>
+                              <span className="font-medium">{((checklistStats.completed / checklistStats.total) * 100).toFixed(1)}%</span>
+                            </div>
+                            <Progress value={(checklistStats.completed / checklistStats.total) * 100} className="h-2" />
                           </div>
-                          <Progress value={Math.min(analytics.efficiency, 100)} className="h-2" />
-                        </div>
-                        
-                        <div className="text-sm">
-                          <span className="font-medium">Total Hours Worked: </span>
-                          <span>{analytics.totalHours}h</span>
-                        </div>
+                        )}
                       </CardContent>
                     </Card>
                   );
@@ -1143,6 +1510,8 @@ const Tasks = () => {
                 const completedTasks = periodTasks.filter(t => t.status === "Done");
                 const inProgressTasks = periodTasks.filter(t => t.status === "In Progress");
                 const totalHours = periodTasks.reduce((sum, task) => sum + (task.actualHours || 0), 0);
+                const checklistItems = periodTasks.reduce((sum, t) => sum + t.checklist.length, 0);
+                const completedChecklistItems = periodTasks.reduce((sum, t) => sum + t.checklist.filter(c => c.isCompleted).length, 0);
                 
                 return (
                   <Card key={staff.id}>
@@ -1166,7 +1535,7 @@ const Tasks = () => {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="grid grid-cols-4 gap-4 text-center">
+                      <div className="grid grid-cols-5 gap-4 text-center">
                         <div>
                           <div className="text-2xl font-bold">{periodTasks.length}</div>
                           <div className="text-sm text-muted-foreground">Total Tasks</div>
@@ -1183,28 +1552,11 @@ const Tasks = () => {
                           <div className="text-2xl font-bold text-purple-600">{totalHours}h</div>
                           <div className="text-sm text-muted-foreground">Hours Worked</div>
                         </div>
-                      </div>
-                      
-                      {periodTasks.length > 0 && (
-                        <div className="mt-4">
-                          <div className="text-sm font-medium mb-2">Recent Tasks</div>
-                          <div className="space-y-1">
-                            {periodTasks.slice(0, 3).map(task => (
-                              <div key={task.id} className="flex items-center justify-between text-sm">
-                                <span className="flex items-center gap-2">
-                                  <Badge variant="outline" className="text-xs font-mono">
-                                    {task.taskId}
-                                  </Badge>
-                                  <span className="truncate">{task.title}</span>
-                                </span>
-                                <Badge variant={getStatusVariant(task.status)} className="text-xs">
-                                  {task.status}
-                                </Badge>
-                              </div>
-                            ))}
-                          </div>
+                        <div>
+                          <div className="text-2xl font-bold text-orange-600">{completedChecklistItems}/{checklistItems}</div>
+                          <div className="text-sm text-muted-foreground">Checklist Items</div>
                         </div>
-                      )}
+                      </div>
                     </CardContent>
                   </Card>
                 );
@@ -1215,7 +1567,7 @@ const Tasks = () => {
 
         {/* Task Detail Dialog */}
         <Dialog open={isTaskDetailOpen} onOpenChange={setIsTaskDetailOpen}>
-          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Badge variant="outline" className="font-mono">
@@ -1224,7 +1576,7 @@ const Tasks = () => {
                 {selectedTask?.title}
               </DialogTitle>
               <DialogDescription>
-                Task details and comments
+                Task details, checklist, and comments
               </DialogDescription>
             </DialogHeader>
             {selectedTask && (
@@ -1235,6 +1587,24 @@ const Tasks = () => {
                       <Label className="text-sm font-medium">Assignee</Label>
                       <p className="text-sm text-muted-foreground">{selectedTask.assignee}</p>
                     </div>
+                    <div>
+                      <Label className="text-sm font-medium">Project</Label>
+                      <p className="text-sm text-muted-foreground">{selectedTask.project}</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium">Team</Label>
+                      <p className="text-sm text-muted-foreground">
+                        {selectedTask.assignedTeam ? teams.find(t => t.id === selectedTask.assignedTeam)?.name : "Not assigned"}
+                      </p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium">Department</Label>
+                      <p className="text-sm text-muted-foreground">
+                        {selectedTask.assignedDepartment ? departments.find(d => d.id === selectedTask.assignedDepartment)?.name : "Not assigned"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
                     <div>
                       <Label className="text-sm font-medium">Status</Label>
                       <div className="mt-1">
@@ -1259,25 +1629,11 @@ const Tasks = () => {
                         </Badge>
                       </div>
                     </div>
-                  </div>
-                  <div className="space-y-3">
                     <div>
                       <Label className="text-sm font-medium">Due Date</Label>
                       <p className="text-sm text-muted-foreground">
                         {new Date(selectedTask.dueDate).toLocaleDateString()}
                       </p>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium">Estimated Hours</Label>
-                      <p className="text-sm text-muted-foreground">{selectedTask.estimatedHours}h</p>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium">Actual Hours</Label>
-                      <p className="text-sm text-muted-foreground">{selectedTask.actualHours || 0}h</p>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium">Project</Label>
-                      <p className="text-sm text-muted-foreground">{selectedTask.project}</p>
                     </div>
                   </div>
                 </div>
@@ -1287,14 +1643,43 @@ const Tasks = () => {
                   <p className="text-sm text-muted-foreground mt-1">{selectedTask.description}</p>
                 </div>
 
-                {selectedTask.tags.length > 0 && (
+                {/* Checklist Section */}
+                {selectedTask.checklist.length > 0 && (
                   <div>
-                    <Label className="text-sm font-medium">Tags</Label>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {selectedTask.tags.map((tag, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {tag}
-                        </Badge>
+                    <div className="flex items-center justify-between mb-3">
+                      <Label className="text-sm font-medium">
+                        Checklist ({selectedTask.checklist.filter(c => c.isCompleted).length}/{selectedTask.checklist.length})
+                      </Label>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setIsChecklistOpen(true);
+                        }}
+                      >
+                        <ListChecks className="mr-1 h-3 w-3" />
+                        Manage Checklist
+                      </Button>
+                    </div>
+                    <div className="space-y-2">
+                      {selectedTask.checklist.map((item) => (
+                        <div key={item.id} className="flex items-center gap-3 p-2 border rounded">
+                          <Checkbox 
+                            checked={item.isCompleted}
+                            onCheckedChange={() => handleChecklistToggle(selectedTask.id, item.id)}
+                          />
+                          <div className="flex-1">
+                            <div className={`text-sm ${item.isCompleted ? "line-through text-muted-foreground" : ""}`}>
+                              {item.title}
+                            </div>
+                            {item.description && (
+                              <div className="text-xs text-muted-foreground">{item.description}</div>
+                            )}
+                            <div className="text-xs text-muted-foreground">
+                              {item.assignedHours}h assigned {item.assignedTo && `• ${item.assignedTo}`}
+                            </div>
+                          </div>
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -1353,13 +1738,131 @@ const Tasks = () => {
           </DialogContent>
         </Dialog>
 
+        {/* Checklist Management Dialog */}
+        <Dialog open={isChecklistOpen} onOpenChange={setIsChecklistOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Manage Checklist - {selectedTask?.title}</DialogTitle>
+              <DialogDescription>
+                Add and manage checklist items for this task
+              </DialogDescription>
+            </DialogHeader>
+            
+            {selectedTask && (
+              <div className="space-y-4">
+                {/* Add New Checklist Item */}
+                <div className="border rounded-lg p-4 space-y-4">
+                  <h4 className="font-medium">Add New Checklist Item</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="col-span-2">
+                      <Label htmlFor="checklistTitle">Title *</Label>
+                      <Input
+                        id="checklistTitle"
+                        value={newChecklistItem.title}
+                        onChange={(e) => setNewChecklistItem(prev => ({ ...prev, title: e.target.value }))}
+                        placeholder="Enter checklist item title"
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <Label htmlFor="checklistDescription">Description</Label>
+                      <Textarea
+                        id="checklistDescription"
+                        value={newChecklistItem.description}
+                        onChange={(e) => setNewChecklistItem(prev => ({ ...prev, description: e.target.value }))}
+                        placeholder="Enter description (optional)"
+                        rows={2}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="assignedHours">Assigned Hours *</Label>
+                      <Input
+                        id="assignedHours"
+                        type="number"
+                        value={newChecklistItem.assignedHours}
+                        onChange={(e) => setNewChecklistItem(prev => ({ ...prev, assignedHours: e.target.value }))}
+                        placeholder="0"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="assignedTo">Assigned To</Label>
+                      <Select 
+                        value={newChecklistItem.assignedTo} 
+                        onValueChange={(value) => setNewChecklistItem(prev => ({ ...prev, assignedTo: value }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select assignee" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {staffMembers.map((staff) => (
+                            <SelectItem key={staff.id} value={staff.name}>
+                              {staff.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <Button onClick={() => handleAddChecklistItem(selectedTask.id)}>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Item
+                  </Button>
+                </div>
+
+                {/* Existing Checklist Items */}
+                <div>
+                  <h4 className="font-medium mb-3">
+                    Checklist Items ({selectedTask.checklist.filter(c => c.isCompleted).length}/{selectedTask.checklist.length})
+                  </h4>
+                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                    {selectedTask.checklist.map((item) => (
+                      <div key={item.id} className="flex items-start gap-3 p-3 border rounded">
+                        <Checkbox 
+                          checked={item.isCompleted}
+                          onCheckedChange={() => handleChecklistToggle(selectedTask.id, item.id)}
+                          className="mt-1"
+                        />
+                        <div className="flex-1">
+                          <div className={`font-medium ${item.isCompleted ? "line-through text-muted-foreground" : ""}`}>
+                            {item.title}
+                          </div>
+                          {item.description && (
+                            <div className="text-sm text-muted-foreground mt-1">{item.description}</div>
+                          )}
+                          <div className="text-sm text-muted-foreground mt-1">
+                            <span className="font-medium">{item.assignedHours}h</span>
+                            {item.assignedTo && <span> • Assigned to {item.assignedTo}</span>}
+                            <span> • Created {new Date(item.createdDate).toLocaleDateString()}</span>
+                            {item.completedDate && <span> • Completed {new Date(item.completedDate).toLocaleDateString()}</span>}
+                          </div>
+                        </div>
+                        <Button variant="ghost" size="sm">
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsChecklistOpen(false)}>
+                Close
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
         {/* Create Task Dialog */}
         <Dialog open={isCreateTaskOpen} onOpenChange={setIsCreateTaskOpen}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>Create New Task</DialogTitle>
               <DialogDescription>
-                Assign a new task to a team member
+                Create a task and assign it to teams, departments, and projects
               </DialogDescription>
             </DialogHeader>
             <div className="grid grid-cols-2 gap-4">
@@ -1382,6 +1885,85 @@ const Tasks = () => {
                   rows={3}
                 />
               </div>
+              
+              {/* Project and Phase Selection */}
+              <div className="space-y-2">
+                <Label htmlFor="project">Project</Label>
+                <Select value={newTask.projectId} onValueChange={(value) => {
+                  setNewTask(prev => ({ ...prev, projectId: value, projectPhaseId: "" }));
+                }}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select project" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {projects.map((project) => (
+                      <SelectItem key={project.id} value={project.id}>
+                        {project.projectId} - {project.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="projectPhase">Project Phase</Label>
+                <Select 
+                  value={newTask.projectPhaseId} 
+                  onValueChange={(value) => setNewTask(prev => ({ ...prev, projectPhaseId: value }))}
+                  disabled={!newTask.projectId}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select phase" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {newTask.projectId && projects.find(p => p.id === newTask.projectId)?.phases.map((phase) => (
+                      <SelectItem key={phase.id} value={phase.id}>
+                        {phase.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              {/* Team and Department Assignment */}
+              <div className="space-y-2">
+                <Label htmlFor="department">Department</Label>
+                <Select value={newTask.assignedDepartment} onValueChange={(value) => {
+                  setNewTask(prev => ({ ...prev, assignedDepartment: value, assignedTeam: "" }));
+                }}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {departments.map((dept) => (
+                      <SelectItem key={dept.id} value={dept.id}>
+                        {dept.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="team">Team</Label>
+                <Select 
+                  value={newTask.assignedTeam} 
+                  onValueChange={(value) => setNewTask(prev => ({ ...prev, assignedTeam: value }))}
+                  disabled={!newTask.assignedDepartment}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select team" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {newTask.assignedDepartment && teams.filter(t => t.department === newTask.assignedDepartment).map((team) => (
+                      <SelectItem key={team.id} value={team.id}>
+                        {team.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
               <div className="space-y-2">
                 <Label htmlFor="assignee">Assignee *</Label>
                 <Select value={newTask.assigneeId} onValueChange={(value) => setNewTask(prev => ({ ...prev, assigneeId: value }))}>
@@ -1428,15 +2010,6 @@ const Tasks = () => {
                   value={newTask.estimatedHours}
                   onChange={(e) => setNewTask(prev => ({ ...prev, estimatedHours: e.target.value }))}
                   placeholder="Enter estimated hours"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="project">Project</Label>
-                <Input
-                  id="project"
-                  value={newTask.project}
-                  onChange={(e) => setNewTask(prev => ({ ...prev, project: e.target.value }))}
-                  placeholder="Enter project name"
                 />
               </div>
               <div className="col-span-2 space-y-2">
