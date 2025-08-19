@@ -75,42 +75,53 @@ import {
   ArrowLeft,
   FileText,
   Briefcase,
-  GitBranch,
   Activity,
   BarChart3,
+  ListChecks,
+  User,
+  Building,
 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "@/hooks/use-toast";
 
-interface ProjectPhase {
+interface Task {
   id: string;
-  name: string;
+  taskId: string;
+  title: string;
   description: string;
-  status: "Not Started" | "In Progress" | "Completed" | "On Hold" | "Cancelled";
-  startDate: string;
-  endDate: string;
-  progress: number;
-  dependencies: string[];
-  assignedTo: string[];
-  deliverables: Deliverable[];
-  budget: number;
-  spent: number;
+  assignee: string;
+  assigneeId: string;
+  priority: "Low" | "Medium" | "High" | "Critical";
+  status: "To Do" | "In Progress" | "Review" | "Done";
+  dueDate: string;
+  project: string;
+  projectId?: string;
+  tags: string[];
   estimatedHours: number;
-  actualHours: number;
+  actualHours?: number;
+  createdBy: string;
+  createdDate: string;
+  updatedDate: string;
+  stage: "Planning" | "Development" | "Testing" | "Review" | "Deployment" | "Completed";
+  checklist: TaskChecklist[];
 }
 
-interface Deliverable {
+interface TaskChecklist {
   id: string;
-  name: string;
+  taskId: string;
+  title: string;
   description: string;
-  status: "Pending" | "In Progress" | "Review" | "Completed";
-  dueDate: string;
-  assignedTo: string;
+  isCompleted: boolean;
+  assignedHours: number;
+  actualHours?: number;
+  assignedTo?: string;
+  createdDate: string;
+  completedDate?: string;
 }
 
 interface Project {
   id: string;
-  projectId: string; // Auto-generated unique project ID
+  projectId: string;
   name: string;
   description: string;
   status: "Not Started" | "In Progress" | "On Hold" | "Completed" | "Cancelled";
@@ -134,7 +145,6 @@ interface Project {
   tasksCompleted: number;
   issuesOpen: number;
   lastUpdate: string;
-  phases: ProjectPhase[];
   createdDate: string;
   riskLevel: "Low" | "Medium" | "High" | "Critical";
   clientName?: string;
@@ -173,115 +183,6 @@ const Projects = () => {
       riskLevel: "Medium",
       clientName: "TechCorp Solutions",
       contractValue: 1800000,
-      phases: [
-        {
-          id: "phase-1",
-          name: "Requirements Analysis",
-          description: "Gather and analyze project requirements",
-          status: "Completed",
-          startDate: "2024-01-15",
-          endDate: "2024-01-25",
-          progress: 100,
-          dependencies: [],
-          assignedTo: ["John Doe", "Sarah Wilson"],
-          budget: 200000,
-          spent: 180000,
-          estimatedHours: 80,
-          actualHours: 75,
-          deliverables: [
-            {
-              id: "del-1",
-              name: "Requirements Document",
-              description: "Detailed project requirements",
-              status: "Completed",
-              dueDate: "2024-01-22",
-              assignedTo: "John Doe"
-            }
-          ]
-        },
-        {
-          id: "phase-2",
-          name: "UI/UX Design",
-          description: "Create wireframes and design mockups",
-          status: "In Progress",
-          startDate: "2024-01-26",
-          endDate: "2024-02-10",
-          progress: 85,
-          dependencies: ["phase-1"],
-          assignedTo: ["Mike Chen", "Sarah Wilson"],
-          budget: 300000,
-          spent: 250000,
-          estimatedHours: 120,
-          actualHours: 100,
-          deliverables: [
-            {
-              id: "del-2",
-              name: "Design System",
-              description: "Complete design system and components",
-              status: "In Progress",
-              dueDate: "2024-02-08",
-              assignedTo: "Mike Chen"
-            }
-          ]
-        },
-        {
-          id: "phase-3",
-          name: "Development",
-          description: "Frontend and backend development",
-          status: "In Progress",
-          startDate: "2024-02-01",
-          endDate: "2024-02-28",
-          progress: 60,
-          dependencies: ["phase-2"],
-          assignedTo: ["Sarah Wilson", "John Doe"],
-          budget: 800000,
-          spent: 450000,
-          estimatedHours: 320,
-          actualHours: 200,
-          deliverables: [
-            {
-              id: "del-3",
-              name: "MVP Release",
-              description: "Minimum viable product release",
-              status: "In Progress",
-              dueDate: "2024-02-25",
-              assignedTo: "Sarah Wilson"
-            }
-          ]
-        },
-        {
-          id: "phase-4",
-          name: "Testing & QA",
-          description: "Quality assurance and testing",
-          status: "Not Started",
-          startDate: "2024-02-20",
-          endDate: "2024-03-10",
-          progress: 0,
-          dependencies: ["phase-3"],
-          assignedTo: ["Testing Team"],
-          budget: 150000,
-          spent: 0,
-          estimatedHours: 100,
-          actualHours: 0,
-          deliverables: []
-        },
-        {
-          id: "phase-5",
-          name: "Deployment",
-          description: "Production deployment and launch",
-          status: "Not Started",
-          startDate: "2024-03-05",
-          endDate: "2024-03-15",
-          progress: 0,
-          dependencies: ["phase-4"],
-          assignedTo: ["DevOps Team"],
-          budget: 50000,
-          spent: 0,
-          estimatedHours: 40,
-          actualHours: 0,
-          deliverables: []
-        }
-      ]
     },
     {
       id: "2",
@@ -313,40 +214,107 @@ const Projects = () => {
       riskLevel: "Low",
       clientName: "Mobile First Inc",
       contractValue: 2200000,
-      phases: [
+    }
+  ]);
+
+  // Sample tasks linked to projects
+  const [projectTasks] = useState<Task[]>([
+    {
+      id: "1",
+      taskId: "TSK-001",
+      title: "Implement user authentication system",
+      description: "Build secure login/logout functionality with JWT tokens",
+      assignee: "John Smith",
+      assigneeId: "staff-1",
+      priority: "High",
+      status: "In Progress",
+      dueDate: "2024-02-15",
+      project: "E-commerce Platform Redesign",
+      projectId: "1",
+      tags: ["Frontend", "Security"],
+      estimatedHours: 20,
+      actualHours: 12,
+      createdBy: "Admin",
+      createdDate: "2024-01-20",
+      updatedDate: "2024-01-25",
+      stage: "Development",
+      checklist: [
         {
-          id: "phase-6",
-          name: "Planning",
-          description: "Project planning and architecture design",
-          status: "Completed",
-          startDate: "2024-02-01",
-          endDate: "2024-02-10",
-          progress: 100,
-          dependencies: [],
-          assignedTo: ["Sarah Wilson"],
-          budget: 300000,
-          spent: 280000,
-          estimatedHours: 120,
-          actualHours: 115,
-          deliverables: []
+          id: "cl-1",
+          taskId: "1",
+          title: "Setup JWT library",
+          description: "Install and configure JWT token handling",
+          isCompleted: true,
+          assignedHours: 2,
+          actualHours: 1.5,
+          assignedTo: "John Smith",
+          createdDate: "2024-01-20",
+          completedDate: "2024-01-21"
         },
         {
-          id: "phase-7",
-          name: "Development",
-          description: "Mobile app development for iOS and Android",
-          status: "In Progress",
-          startDate: "2024-02-11",
-          endDate: "2024-04-30",
-          progress: 35,
-          dependencies: ["phase-6"],
-          assignedTo: ["Alex Rodriguez", "Emma Davis"],
-          budget: 1400000,
-          spent: 500000,
-          estimatedHours: 600,
-          actualHours: 220,
-          deliverables: []
+          id: "cl-2",
+          taskId: "1",
+          title: "Create login component",
+          description: "Build React login form component",
+          isCompleted: true,
+          assignedHours: 4,
+          actualHours: 3.5,
+          assignedTo: "John Smith",
+          createdDate: "2024-01-20",
+          completedDate: "2024-01-22"
+        },
+        {
+          id: "cl-3",
+          taskId: "1",
+          title: "Implement password validation",
+          description: "Add robust password validation rules",
+          isCompleted: false,
+          assignedHours: 3,
+          assignedTo: "John Smith",
+          createdDate: "2024-01-20"
         }
       ]
+    },
+    {
+      id: "2",
+      taskId: "TSK-002",
+      title: "Design dashboard wireframes",
+      description: "Create wireframes for the main dashboard interface",
+      assignee: "Sarah Johnson",
+      assigneeId: "staff-2",
+      priority: "Medium",
+      status: "Review",
+      dueDate: "2024-02-10",
+      project: "E-commerce Platform Redesign",
+      projectId: "1",
+      tags: ["Design", "Wireframes"],
+      estimatedHours: 8,
+      actualHours: 6,
+      createdBy: "Admin",
+      createdDate: "2024-01-18",
+      updatedDate: "2024-01-24",
+      stage: "Review",
+      checklist: []
+    },
+    {
+      id: "3",
+      taskId: "TSK-003",
+      title: "Mobile app architecture design",
+      description: "Design the overall architecture for the mobile application",
+      assignee: "Alex Rodriguez",
+      assigneeId: "staff-3",
+      priority: "High",
+      status: "To Do",
+      dueDate: "2024-02-20",
+      project: "Mobile App Development",
+      projectId: "2",
+      tags: ["Architecture", "Mobile"],
+      estimatedHours: 15,
+      createdBy: "Admin",
+      createdDate: "2024-01-22",
+      updatedDate: "2024-01-22",
+      stage: "Planning",
+      checklist: []
     }
   ]);
 
@@ -356,8 +324,7 @@ const Projects = () => {
   const [startDateFilter, setStartDateFilter] = useState<Date | undefined>();
   const [endDateFilter, setEndDateFilter] = useState<Date | undefined>();
   const [showCreateProject, setShowCreateProject] = useState(false);
-  const [showCreatePhase, setShowCreatePhase] = useState(false);
-  const [viewMode, setViewMode] = useState<"grid" | "list" | "kanban">("grid");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isProjectDetailOpen, setIsProjectDetailOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("projects");
@@ -375,29 +342,13 @@ const Projects = () => {
     contractValue: ""
   });
 
-  const [newPhase, setNewPhase] = useState({
-    projectId: "",
-    name: "",
-    description: "",
-    startDate: "",
-    endDate: "",
-    assignedTo: [],
-    budget: "",
-    estimatedHours: ""
-  });
-
   const generateProjectId = () => {
     const maxId = Math.max(...projects.map(p => parseInt(p.projectId.split('-')[1])), 0);
     return `PRJ-${String(maxId + 1).padStart(3, '0')}`;
   };
 
-  const handleDateFilter = () => {
-    console.log("Date filter applied:", { startDateFilter, endDateFilter });
-  };
-
-  const clearDateFilters = () => {
-    setStartDateFilter(undefined);
-    setEndDateFilter(undefined);
+  const getTasksForProject = (projectId: string) => {
+    return projectTasks.filter(task => task.projectId === projectId);
   };
 
   const getStatusColor = (status: string) => {
@@ -418,6 +369,26 @@ const Projects = () => {
       case "High": return "destructive";
       case "Critical": return "destructive";
       default: return "secondary";
+    }
+  };
+
+  const getTaskStatusColor = (status: string) => {
+    switch (status) {
+      case "To Do": return "outline";
+      case "In Progress": return "default";
+      case "Review": return "secondary";
+      case "Done": return "default";
+      default: return "outline";
+    }
+  };
+
+  const getTaskPriorityColor = (priority: string) => {
+    switch (priority) {
+      case "Low": return "secondary";
+      case "Medium": return "default";
+      case "High": return "destructive";
+      case "Critical": return "destructive";
+      default: return "outline";
     }
   };
 
@@ -499,7 +470,6 @@ const Projects = () => {
       lastUpdate: new Date().toISOString().split('T')[0],
       createdDate: new Date().toISOString().split('T')[0],
       riskLevel: "Low",
-      phases: []
     };
 
     setProjects([...projects, project]);
@@ -516,165 +486,9 @@ const Projects = () => {
     });
   };
 
-  const handleCreatePhase = () => {
-    if (!newPhase.projectId || !newPhase.name || !newPhase.startDate || !newPhase.endDate) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const phase: ProjectPhase = {
-      id: Date.now().toString(),
-      ...newPhase,
-      status: "Not Started",
-      progress: 0,
-      dependencies: [],
-      assignedTo: [],
-      deliverables: [],
-      budget: parseInt(newPhase.budget) || 0,
-      spent: 0,
-      estimatedHours: parseInt(newPhase.estimatedHours) || 0,
-      actualHours: 0
-    };
-
-    setProjects(prev => prev.map(project => 
-      project.id === newPhase.projectId 
-        ? { ...project, phases: [...project.phases, phase] }
-        : project
-    ));
-
-    setNewPhase({
-      projectId: "", name: "", description: "", startDate: "",
-      endDate: "", assignedTo: [], budget: "", estimatedHours: ""
-    });
-    setShowCreatePhase(false);
-
-    toast({
-      title: "Phase Created",
-      description: `Phase "${phase.name}" has been added to the project.`,
-    });
-  };
-
-  const handlePhaseMove = (phaseId: string, projectId: string, direction: "left" | "right") => {
-    const project = projects.find(p => p.id === projectId);
-    if (!project) return;
-
-    const phaseIndex = project.phases.findIndex(p => p.id === phaseId);
-    if (phaseIndex === -1) return;
-
-    const newPhases = [...project.phases];
-    if (direction === "right" && phaseIndex < newPhases.length - 1) {
-      [newPhases[phaseIndex], newPhases[phaseIndex + 1]] = [newPhases[phaseIndex + 1], newPhases[phaseIndex]];
-    } else if (direction === "left" && phaseIndex > 0) {
-      [newPhases[phaseIndex], newPhases[phaseIndex - 1]] = [newPhases[phaseIndex - 1], newPhases[phaseIndex]];
-    }
-
-    setProjects(prev => prev.map(p => 
-      p.id === projectId ? { ...p, phases: newPhases } : p
-    ));
-
-    toast({
-      title: "Phase Moved",
-      description: "Phase order has been updated.",
-    });
-  };
-
-  const KanbanView = () => {
-    const allPhases = filteredProjects.flatMap(project => 
-      project.phases.map(phase => ({ ...phase, projectName: project.name, projectId: project.projectId }))
-    );
-
-    const phasesByStatus = {
-      "Not Started": allPhases.filter(p => p.status === "Not Started"),
-      "In Progress": allPhases.filter(p => p.status === "In Progress"),
-      "On Hold": allPhases.filter(p => p.status === "On Hold"),
-      "Completed": allPhases.filter(p => p.status === "Completed"),
-      "Cancelled": allPhases.filter(p => p.status === "Cancelled")
-    };
-
-    return (
-      <div className="grid grid-cols-5 gap-4 h-[600px] overflow-auto">
-        {Object.entries(phasesByStatus).map(([status, phases]) => (
-          <Card key={status} className="min-h-full">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center justify-between">
-                {status}
-                <Badge variant="outline" className="text-xs">
-                  {phases.length}
-                </Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {phases.map(phase => (
-                <Card key={phase.id} className="p-3 hover:shadow-md transition-shadow cursor-pointer">
-                  <div className="space-y-2">
-                    <div className="flex items-start justify-between">
-                      <h4 className="text-sm font-medium line-clamp-2">{phase.name}</h4>
-                      <Badge variant="outline" className="text-xs">
-                        {phase.projectId}
-                      </Badge>
-                    </div>
-                    
-                    <p className="text-xs text-muted-foreground line-clamp-1">
-                      {phase.projectName}
-                    </p>
-                    
-                    <p className="text-xs text-muted-foreground line-clamp-2">
-                      {phase.description}
-                    </p>
-                    
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-xs">
-                        <span>Progress</span>
-                        <span>{phase.progress}%</span>
-                      </div>
-                      <Progress value={phase.progress} className="h-1" />
-                    </div>
-                    
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>₦{(phase.budget / 1000).toFixed(0)}K</span>
-                      <span>{new Date(phase.endDate).toLocaleDateString()}</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-1">
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        className="h-6 text-xs px-2"
-                        onClick={() => {
-                          const project = projects.find(p => p.phases.some(ph => ph.id === phase.id));
-                          if (project) {
-                            handlePhaseMove(phase.id, project.id, "left");
-                          }
-                        }}
-                      >
-                        <ArrowLeft className="h-3 w-3" />
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        className="h-6 text-xs px-2"
-                        onClick={() => {
-                          const project = projects.find(p => p.phases.some(ph => ph.id === phase.id));
-                          if (project) {
-                            handlePhaseMove(phase.id, project.id, "right");
-                          }
-                        }}
-                      >
-                        <ArrowRight className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
+  const clearDateFilters = () => {
+    setStartDateFilter(undefined);
+    setEndDateFilter(undefined);
   };
 
   return (
@@ -686,19 +500,17 @@ const Projects = () => {
               Project Management
             </h1>
             <p className="text-muted-foreground mt-2">
-              Manage projects with phases, track progress, and monitor deliverables
+              Manage projects and view linked tasks
             </p>
           </div>
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setViewMode(viewMode === "grid" ? "list" : viewMode === "list" ? "kanban" : "grid")}
+              onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
             >
-              {viewMode === "grid" && <List className="mr-2 h-4 w-4" />}
-              {viewMode === "list" && <KanbanSquare className="mr-2 h-4 w-4" />}
-              {viewMode === "kanban" && <FolderKanban className="mr-2 h-4 w-4" />}
-              {viewMode === "grid" ? "List View" : viewMode === "list" ? "Kanban View" : "Grid View"}
+              {viewMode === "grid" ? <List className="mr-2 h-4 w-4" /> : <FolderKanban className="mr-2 h-4 w-4" />}
+              {viewMode === "grid" ? "List View" : "Grid View"}
             </Button>
             <Dialog open={showCreateProject} onOpenChange={setShowCreateProject}>
               <DialogTrigger asChild>
@@ -711,7 +523,7 @@ const Projects = () => {
           </div>
         </div>
 
-        {/* Enhanced Filters */}
+        {/* Simplified Filters */}
         <Card>
           <CardContent className="p-6">
             <div className="space-y-4">
@@ -868,13 +680,13 @@ const Projects = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">
-                    Total Budget
+                    Total Tasks
                   </p>
                   <div className="text-3xl font-bold">
-                    ₦{(filteredProjects.reduce((sum, p) => sum + p.budget, 0) / 1000000).toFixed(1)}M
+                    {projectTasks.length}
                   </div>
                 </div>
-                <DollarSign className="h-10 w-10 text-muted-foreground" />
+                <ListChecks className="h-10 w-10 text-muted-foreground" />
               </div>
             </CardContent>
           </Card>
@@ -882,212 +694,30 @@ const Projects = () => {
 
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="projects">Projects</TabsTrigger>
-            <TabsTrigger value="phases">Project Phases</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
           </TabsList>
 
           {/* Projects Tab */}
           <TabsContent value="projects" className="space-y-4">
-            {viewMode === "kanban" ? (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">Kanban view is available in the Project Phases tab</p>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setActiveTab("phases")}
-                  className="mt-4"
-                >
-                  View Project Phases Kanban
-                </Button>
-              </div>
-            ) : viewMode === "grid" ? (
+            {viewMode === "grid" ? (
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filteredProjects.map((project) => (
-                  <Card
-                    key={project.id}
-                    className="hover:shadow-lg transition-all duration-300"
-                  >
-                    <CardHeader className="pb-3">
-                      <div className="flex items-start justify-between">
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="font-mono text-xs">
-                              {project.projectId}
-                            </Badge>
-                            <CardTitle className="text-lg">{project.name}</CardTitle>
-                            {project.isPrivate && (
-                              <EyeOff className="h-4 w-4 text-muted-foreground" />
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Badge variant={getStatusColor(project.status)}>
-                              {project.status}
-                            </Badge>
-                            <Badge variant={getPriorityColor(project.priority)}>
-                              {project.priority}
-                            </Badge>
-                            <span className={`text-xs font-medium ${getRiskColor(project.riskLevel)}`}>
-                              Risk: {project.riskLevel}
-                            </span>
-                          </div>
-                        </div>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={() => {
-                                setSelectedProject(project);
-                                setIsProjectDetailOpen(true);
-                              }}
-                            >
-                              <Eye className="h-4 w-4 mr-2" />
-                              View Details
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Edit className="h-4 w-4 mr-2" />
-                              Edit Project
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>
-                              <GitBranch className="h-4 w-4 mr-2" />
-                              Manage Phases
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>
-                              <Archive className="h-4 w-4 mr-2" />
-                              Archive
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive">
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </CardHeader>
-
-                    <CardContent className="space-y-4">
-                      <p className="text-sm text-muted-foreground line-clamp-2">
-                        {project.description}
-                      </p>
-
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between text-sm">
-                          <span>Progress</span>
-                          <span className="font-medium">{project.progress}%</span>
-                        </div>
-                        <Progress value={project.progress} className="h-2" />
-                      </div>
-
-                      <div className="space-y-2 text-sm">
-                        <div className="flex items-center justify-between">
-                          <span className="text-muted-foreground">Budget</span>
-                          <span className="font-medium">
-                            ₦{(project.budget / 1000000).toFixed(1)}M
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-muted-foreground">Spent</span>
-                          <span className="font-medium">
-                            ₦{(project.spent / 1000000).toFixed(1)}M
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-muted-foreground">Phases</span>
-                          <span className="font-medium">
-                            {project.phases.filter(p => p.status === "Completed").length}/{project.phases.length}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-muted-foreground">Tasks</span>
-                          <span className="font-medium">
-                            {project.tasksCompleted}/{project.tasksTotal}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between text-sm">
-                        <div className="flex items-center gap-1">
-                          <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-muted-foreground">
-                            {new Date(project.startDate).toLocaleDateString()} -{" "}
-                            {new Date(project.endDate).toLocaleDateString()}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <div className="flex -space-x-2">
-                          {project.members.slice(0, 3).map((member, index) => (
-                            <Avatar
-                              key={index}
-                              className="h-6 w-6 border-2 border-background"
-                            >
-                              <AvatarImage src={member.avatar} />
-                              <AvatarFallback className="text-xs">
-                                {member.name
-                                  .split(" ")
-                                  .map((n) => n[0])
-                                  .join("")}
-                              </AvatarFallback>
-                            </Avatar>
-                          ))}
-                          {project.members.length > 3 && (
-                            <div className="h-6 w-6 rounded-full bg-muted border-2 border-background flex items-center justify-center">
-                              <span className="text-xs">
-                                +{project.members.length - 3}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                        <span className="text-sm text-muted-foreground">
-                          {project.team}
-                        </span>
-                      </div>
-
-                      <div className="flex gap-1">
-                        {project.tags.slice(0, 3).map((tag) => (
-                          <Badge key={tag} variant="secondary" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                        {project.tags.length > 3 && (
-                          <Badge variant="secondary" className="text-xs">
-                            +{project.tags.length - 3}
-                          </Badge>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-xl">Projects List</CardTitle>
-                  <CardDescription>
-                    All projects with detailed information
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <div className="space-y-4">
-                    {filteredProjects.map((project) => (
-                      <div
-                        key={project.id}
-                        className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-                      >
-                        <div className="flex items-center gap-4">
+                {filteredProjects.map((project) => {
+                  const linkedTasks = getTasksForProject(project.id);
+                  return (
+                    <Card
+                      key={project.id}
+                      className="hover:shadow-lg transition-all duration-300"
+                    >
+                      <CardHeader className="pb-3">
+                        <div className="flex items-start justify-between">
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
                               <Badge variant="outline" className="font-mono text-xs">
                                 {project.projectId}
                               </Badge>
-                              <h4 className="font-semibold">{project.name}</h4>
+                              <CardTitle className="text-lg">{project.name}</CardTitle>
                               {project.isPrivate && (
                                 <EyeOff className="h-4 w-4 text-muted-foreground" />
                               )}
@@ -1099,45 +729,11 @@ const Projects = () => {
                               <Badge variant={getPriorityColor(project.priority)}>
                                 {project.priority}
                               </Badge>
-                              <span className="text-sm text-muted-foreground">
-                                {project.team}
+                              <span className={`text-xs font-medium ${getRiskColor(project.riskLevel)}`}>
+                                Risk: {project.riskLevel}
                               </span>
                             </div>
                           </div>
-                        </div>
-
-                        <div className="flex items-center gap-6">
-                          <div className="text-center">
-                            <div className="text-sm font-medium">
-                              {project.progress}%
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              Progress
-                            </div>
-                          </div>
-                          <div className="text-center">
-                            <div className="text-sm font-medium">
-                              ₦{(project.budget / 1000000).toFixed(1)}M
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              Budget
-                            </div>
-                          </div>
-                          <div className="text-center">
-                            <div className="text-sm font-medium">
-                              {project.phases.filter(p => p.status === "Completed").length}/{project.phases.length}
-                            </div>
-                            <div className="text-xs text-muted-foreground">Phases</div>
-                          </div>
-                          <div className="text-center">
-                            <div className="text-sm font-medium">
-                              {new Date(project.endDate).toLocaleDateString()}
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              Due Date
-                            </div>
-                          </div>
-
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button variant="ghost" className="h-8 w-8 p-0">
@@ -1152,7 +748,7 @@ const Projects = () => {
                                 }}
                               >
                                 <Eye className="h-4 w-4 mr-2" />
-                                View Details
+                                View Details & Tasks
                               </DropdownMenuItem>
                               <DropdownMenuItem>
                                 <Edit className="h-4 w-4 mr-2" />
@@ -1170,32 +766,211 @@ const Projects = () => {
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </div>
-                      </div>
-                    ))}
+                      </CardHeader>
+
+                      <CardContent className="space-y-4">
+                        <p className="text-sm text-muted-foreground line-clamp-2">
+                          {project.description}
+                        </p>
+
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-sm">
+                            <span>Progress</span>
+                            <span className="font-medium">{project.progress}%</span>
+                          </div>
+                          <Progress value={project.progress} className="h-2" />
+                        </div>
+
+                        <div className="space-y-2 text-sm">
+                          <div className="flex items-center justify-between">
+                            <span className="text-muted-foreground">Budget</span>
+                            <span className="font-medium">
+                              ₦{(project.budget / 1000000).toFixed(1)}M
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-muted-foreground">Spent</span>
+                            <span className="font-medium">
+                              ₦{(project.spent / 1000000).toFixed(1)}M
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-muted-foreground">Linked Tasks</span>
+                            <span className="font-medium">
+                              {linkedTasks.filter(t => t.status === "Done").length}/{linkedTasks.length}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between text-sm">
+                          <div className="flex items-center gap-1">
+                            <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-muted-foreground">
+                              {new Date(project.startDate).toLocaleDateString()} -{" "}
+                              {new Date(project.endDate).toLocaleDateString()}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <div className="flex -space-x-2">
+                            {project.members.slice(0, 3).map((member, index) => (
+                              <Avatar
+                                key={index}
+                                className="h-6 w-6 border-2 border-background"
+                              >
+                                <AvatarImage src={member.avatar} />
+                                <AvatarFallback className="text-xs">
+                                  {member.name
+                                    .split(" ")
+                                    .map((n) => n[0])
+                                    .join("")}
+                                </AvatarFallback>
+                              </Avatar>
+                            ))}
+                            {project.members.length > 3 && (
+                              <div className="h-6 w-6 rounded-full bg-muted border-2 border-background flex items-center justify-center">
+                                <span className="text-xs">
+                                  +{project.members.length - 3}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          <span className="text-sm text-muted-foreground">
+                            {project.team}
+                          </span>
+                        </div>
+
+                        <div className="flex gap-1">
+                          {project.tags.slice(0, 3).map((tag) => (
+                            <Badge key={tag} variant="secondary" className="text-xs">
+                              {tag}
+                            </Badge>
+                          ))}
+                          {project.tags.length > 3 && (
+                            <Badge variant="secondary" className="text-xs">
+                              +{project.tags.length - 3}
+                            </Badge>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            ) : (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-xl">Projects List</CardTitle>
+                  <CardDescription>
+                    All projects with linked tasks
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="space-y-4">
+                    {filteredProjects.map((project) => {
+                      const linkedTasks = getTasksForProject(project.id);
+                      return (
+                        <div
+                          key={project.id}
+                          className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <Badge variant="outline" className="font-mono text-xs">
+                                  {project.projectId}
+                                </Badge>
+                                <h4 className="font-semibold">{project.name}</h4>
+                                {project.isPrivate && (
+                                  <EyeOff className="h-4 w-4 text-muted-foreground" />
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Badge variant={getStatusColor(project.status)}>
+                                  {project.status}
+                                </Badge>
+                                <Badge variant={getPriorityColor(project.priority)}>
+                                  {project.priority}
+                                </Badge>
+                                <span className="text-sm text-muted-foreground">
+                                  {project.team}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-6">
+                            <div className="text-center">
+                              <div className="text-sm font-medium">
+                                {project.progress}%
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                Progress
+                              </div>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-sm font-medium">
+                                ₦{(project.budget / 1000000).toFixed(1)}M
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                Budget
+                              </div>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-sm font-medium">
+                                {linkedTasks.filter(t => t.status === "Done").length}/{linkedTasks.length}
+                              </div>
+                              <div className="text-xs text-muted-foreground">Tasks</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-sm font-medium">
+                                {new Date(project.endDate).toLocaleDateString()}
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                Due Date
+                              </div>
+                            </div>
+
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem
+                                  onClick={() => {
+                                    setSelectedProject(project);
+                                    setIsProjectDetailOpen(true);
+                                  }}
+                                >
+                                  <Eye className="h-4 w-4 mr-2" />
+                                  View Details & Tasks
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                  <Edit className="h-4 w-4 mr-2" />
+                                  Edit Project
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem>
+                                  <Archive className="h-4 w-4 mr-2" />
+                                  Archive
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="text-destructive">
+                                  <Trash2 className="h-4 w-4 mr-2" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </CardContent>
               </Card>
             )}
-          </TabsContent>
-
-          {/* Project Phases Tab */}
-          <TabsContent value="phases" className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-semibold">Project Phases</h3>
-                <p className="text-sm text-muted-foreground">Manage project phases in kanban view</p>
-              </div>
-              <Dialog open={showCreatePhase} onOpenChange={setShowCreatePhase}>
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Phase
-                  </Button>
-                </DialogTrigger>
-              </Dialog>
-            </div>
-            
-            <KanbanView />
           </TabsContent>
 
           {/* Analytics Tab */}
@@ -1289,9 +1064,9 @@ const Projects = () => {
           </Card>
         )}
 
-        {/* Project Detail Dialog */}
+        {/* Project Detail Dialog with Linked Tasks */}
         <Dialog open={isProjectDetailOpen} onOpenChange={setIsProjectDetailOpen}>
-          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogContent className="max-w-5xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Badge variant="outline" className="font-mono">
@@ -1300,7 +1075,7 @@ const Projects = () => {
                 {selectedProject?.name}
               </DialogTitle>
               <DialogDescription>
-                Project details and phase breakdown
+                Project details and linked tasks
               </DialogDescription>
             </DialogHeader>
             {selectedProject && (
@@ -1367,34 +1142,57 @@ const Projects = () => {
                   <p className="text-sm text-muted-foreground mt-1">{selectedProject.description}</p>
                 </div>
 
+                {/* Linked Tasks Section */}
                 <div>
-                  <Label className="text-sm font-medium">Project Phases ({selectedProject.phases.length})</Label>
+                  <Label className="text-sm font-medium">Linked Tasks ({getTasksForProject(selectedProject.id).length})</Label>
                   <div className="mt-3 space-y-3">
-                    {selectedProject.phases.map((phase) => (
-                      <div key={phase.id} className="p-3 border rounded-lg">
+                    {getTasksForProject(selectedProject.id).map((task) => (
+                      <div key={task.id} className="p-3 border rounded-lg">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
-                            <h4 className="font-medium">{phase.name}</h4>
-                            <Badge variant={getStatusColor(phase.status)}>
-                              {phase.status}
+                            <Badge variant="outline" className="font-mono text-xs">
+                              {task.taskId}
+                            </Badge>
+                            <h4 className="font-medium">{task.title}</h4>
+                            <Badge variant={getTaskStatusColor(task.status)}>
+                              {task.status}
+                            </Badge>
+                            <Badge variant={getTaskPriorityColor(task.priority)}>
+                              {task.priority}
                             </Badge>
                           </div>
-                          <span className="text-sm text-muted-foreground">
-                            {phase.progress}% complete
-                          </span>
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <User className="h-3 w-3" />
+                            {task.assignee}
+                          </div>
                         </div>
-                        <p className="text-sm text-muted-foreground mb-2">{phase.description}</p>
+                        <p className="text-sm text-muted-foreground mb-2">{task.description}</p>
                         <div className="flex items-center justify-between text-xs text-muted-foreground">
                           <span>
-                            {new Date(phase.startDate).toLocaleDateString()} - {new Date(phase.endDate).toLocaleDateString()}
+                            Due: {new Date(task.dueDate).toLocaleDateString()}
                           </span>
                           <span>
-                            Budget: ₦{(phase.budget / 1000).toFixed(0)}K | Spent: ₦{(phase.spent / 1000).toFixed(0)}K
+                            Est: {task.estimatedHours}h | Actual: {task.actualHours || 0}h
                           </span>
+                          {task.checklist.length > 0 && (
+                            <span>
+                              Checklist: {task.checklist.filter(c => c.isCompleted).length}/{task.checklist.length}
+                            </span>
+                          )}
                         </div>
-                        <Progress value={phase.progress} className="h-1 mt-2" />
+                        {task.checklist.length > 0 && (
+                          <Progress 
+                            value={(task.checklist.filter(c => c.isCompleted).length / task.checklist.length) * 100} 
+                            className="h-1 mt-2" 
+                          />
+                        )}
                       </div>
                     ))}
+                    {getTasksForProject(selectedProject.id).length === 0 && (
+                      <div className="text-center py-4 text-muted-foreground">
+                        No tasks linked to this project yet.
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -1503,11 +1301,11 @@ const Projects = () => {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="budget">Budget (₦)</Label>
-                  <Input 
-                    id="budget" 
-                    type="number" 
-                    placeholder="0" 
+                  <Label htmlFor="budget">Budget</Label>
+                  <Input
+                    id="budget"
+                    type="number"
+                    placeholder="Project budget"
                     value={newProject.budget}
                     onChange={(e) => setNewProject(prev => ({ ...prev, budget: e.target.value }))}
                   />
@@ -1523,125 +1321,19 @@ const Projects = () => {
                 </div>
               </div>
               <div className="flex items-center space-x-2">
-                <Switch 
-                  id="private" 
+                <Switch
+                  id="isPrivate"
                   checked={newProject.isPrivate}
                   onCheckedChange={(checked) => setNewProject(prev => ({ ...prev, isPrivate: checked }))}
                 />
-                <Label htmlFor="private">Make this project private</Label>
+                <Label htmlFor="isPrivate">Private Project</Label>
               </div>
             </div>
             <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setShowCreateProject(false)}
-              >
+              <Button variant="outline" onClick={() => setShowCreateProject(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleCreateProject}>
-                Create Project
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* Create Phase Dialog */}
-        <Dialog open={showCreatePhase} onOpenChange={setShowCreatePhase}>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Add Project Phase</DialogTitle>
-              <DialogDescription>
-                Create a new phase for an existing project
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
-                <Label htmlFor="projectSelect">Select Project *</Label>
-                <Select value={newPhase.projectId} onValueChange={(value) => setNewPhase(prev => ({ ...prev, projectId: value }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select project" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {projects.map(project => (
-                      <SelectItem key={project.id} value={project.id}>
-                        {project.projectId} - {project.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="phaseName">Phase Name *</Label>
-                <Input 
-                  id="phaseName" 
-                  placeholder="Enter phase name" 
-                  value={newPhase.name}
-                  onChange={(e) => setNewPhase(prev => ({ ...prev, name: e.target.value }))}
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="phaseDescription">Description</Label>
-                <Textarea
-                  id="phaseDescription"
-                  placeholder="Describe the phase..."
-                  rows={3}
-                  value={newPhase.description}
-                  onChange={(e) => setNewPhase(prev => ({ ...prev, description: e.target.value }))}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="phaseStartDate">Start Date *</Label>
-                  <Input
-                    id="phaseStartDate"
-                    type="date"
-                    value={newPhase.startDate}
-                    onChange={(e) => setNewPhase(prev => ({ ...prev, startDate: e.target.value }))}
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="phaseEndDate">End Date *</Label>
-                  <Input
-                    id="phaseEndDate"
-                    type="date"
-                    value={newPhase.endDate}
-                    onChange={(e) => setNewPhase(prev => ({ ...prev, endDate: e.target.value }))}
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="phaseBudget">Budget (₦)</Label>
-                  <Input 
-                    id="phaseBudget" 
-                    type="number" 
-                    placeholder="0" 
-                    value={newPhase.budget}
-                    onChange={(e) => setNewPhase(prev => ({ ...prev, budget: e.target.value }))}
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="phaseHours">Estimated Hours</Label>
-                  <Input
-                    id="phaseHours"
-                    type="number"
-                    placeholder="0"
-                    value={newPhase.estimatedHours}
-                    onChange={(e) => setNewPhase(prev => ({ ...prev, estimatedHours: e.target.value }))}
-                  />
-                </div>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setShowCreatePhase(false)}
-              >
-                Cancel
-              </Button>
-              <Button onClick={handleCreatePhase}>
-                Create Phase
-              </Button>
+              <Button onClick={handleCreateProject}>Create Project</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
