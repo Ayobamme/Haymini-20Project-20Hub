@@ -79,6 +79,10 @@ import {
   Briefcase,
   UserPlus,
   ListChecks,
+  Mail,
+  Save,
+  X,
+  MessageCircle,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { format } from "date-fns";
@@ -98,7 +102,7 @@ interface TaskChecklist {
 
 interface Task {
   id: string;
-  taskId: string; // Auto-generated unique task ID
+  taskId: string;
   title: string;
   description: string;
   assignee: string;
@@ -107,8 +111,7 @@ interface Task {
   status: "To Do" | "In Progress" | "Review" | "Done";
   dueDate: string;
   project: string;
-  projectId?: string; // Link to actual project
-  projectPhaseId?: string; // Link to specific project phase
+  projectId?: string;
   tags: string[];
   estimatedHours: number;
   actualHours?: number;
@@ -118,8 +121,6 @@ interface Task {
   stage: "Planning" | "Development" | "Testing" | "Review" | "Deployment" | "Completed";
   comments: TaskComment[];
   checklist: TaskChecklist[];
-  assignedTeam?: string;
-  assignedDepartment?: string;
 }
 
 interface TaskComment {
@@ -142,45 +143,18 @@ interface StaffMember {
   tasks: Task[];
 }
 
-interface WorkOverview {
-  staffId: string;
-  period: "daily" | "weekly" | "monthly";
-  date: string;
-  tasksCompleted: number;
-  tasksInProgress: number;
-  hoursWorked: number;
-  efficiency: number;
-}
-
 interface Project {
   id: string;
   projectId: string;
   name: string;
   description: string;
   status: "Not Started" | "In Progress" | "On Hold" | "Completed" | "Cancelled";
-  phases: ProjectPhase[];
 }
 
-interface ProjectPhase {
-  id: string;
-  name: string;
-  description: string;
-  status: "Not Started" | "In Progress" | "Completed" | "On Hold" | "Cancelled";
-  assignedTeam?: string;
-  assignedMembers: string[];
-}
-
-interface Team {
-  id: string;
-  name: string;
-  department: string;
-  members: string[];
-}
-
-interface Department {
-  id: string;
-  name: string;
-  teams: string[];
+interface ReminderSettings {
+  selectedTasks: string[];
+  reminderType: "selected" | "all_todo" | "all_staff";
+  reminderMessage: string;
 }
 
 const Tasks = () => {
@@ -197,7 +171,6 @@ const Tasks = () => {
       dueDate: "2024-02-15",
       project: "Web Application",
       projectId: "project-1",
-      projectPhaseId: "phase-1",
       tags: ["Frontend", "Security"],
       estimatedHours: 20,
       actualHours: 12,
@@ -205,8 +178,6 @@ const Tasks = () => {
       createdDate: "2024-01-20",
       updatedDate: "2024-01-25",
       stage: "Development",
-      assignedTeam: "frontend-team",
-      assignedDepartment: "engineering",
       checklist: [
         {
           id: "cl-1",
@@ -281,8 +252,6 @@ const Tasks = () => {
       createdDate: "2024-01-18",
       updatedDate: "2024-01-24",
       stage: "Review",
-      assignedTeam: "design-team",
-      assignedDepartment: "design",
       checklist: [
         {
           id: "cl-4",
@@ -342,15 +311,12 @@ const Tasks = () => {
       dueDate: "2024-02-20",
       project: "Backend Development",
       projectId: "project-1",
-      projectPhaseId: "phase-2",
       tags: ["Database", "Performance"],
       estimatedHours: 15,
       createdBy: "Admin",
       createdDate: "2024-01-22",
       updatedDate: "2024-01-22",
       stage: "Planning",
-      assignedTeam: "backend-team",
-      assignedDepartment: "engineering",
       checklist: [],
       comments: []
     }
@@ -363,24 +329,6 @@ const Tasks = () => {
       name: "E-commerce Platform",
       description: "Complete e-commerce solution",
       status: "In Progress",
-      phases: [
-        {
-          id: "phase-1",
-          name: "Authentication Module",
-          description: "User authentication and authorization",
-          status: "In Progress",
-          assignedTeam: "frontend-team",
-          assignedMembers: ["staff-1", "staff-2"]
-        },
-        {
-          id: "phase-2",
-          name: "Database Layer",
-          description: "Database design and optimization",
-          status: "Not Started",
-          assignedTeam: "backend-team",
-          assignedMembers: ["staff-3"]
-        }
-      ]
     },
     {
       id: "project-2",
@@ -388,55 +336,6 @@ const Tasks = () => {
       name: "Mobile App Design",
       description: "Mobile application UI/UX design",
       status: "In Progress",
-      phases: [
-        {
-          id: "phase-3",
-          name: "User Research",
-          description: "Research and wireframing",
-          status: "In Progress",
-          assignedTeam: "design-team",
-          assignedMembers: ["staff-2"]
-        }
-      ]
-    }
-  ]);
-
-  const [teams] = useState<Team[]>([
-    {
-      id: "frontend-team",
-      name: "Frontend Team",
-      department: "engineering",
-      members: ["staff-1", "staff-2"]
-    },
-    {
-      id: "backend-team",
-      name: "Backend Team", 
-      department: "engineering",
-      members: ["staff-3"]
-    },
-    {
-      id: "design-team",
-      name: "Design Team",
-      department: "design",
-      members: ["staff-2"]
-    }
-  ]);
-
-  const [departments] = useState<Department[]>([
-    {
-      id: "engineering",
-      name: "Engineering",
-      teams: ["frontend-team", "backend-team"]
-    },
-    {
-      id: "design",
-      name: "Design",
-      teams: ["design-team"]
-    },
-    {
-      id: "marketing",
-      name: "Marketing",
-      teams: []
     }
   ]);
 
@@ -472,11 +371,14 @@ const Tasks = () => {
   const [isTaskDetailOpen, setIsTaskDetailOpen] = useState(false);
   const [isStaffDetailOpen, setIsStaffDetailOpen] = useState(false);
   const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false);
+  const [isEditTaskOpen, setIsEditTaskOpen] = useState(false);
   const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
   const [isChecklistOpen, setIsChecklistOpen] = useState(false);
+  const [isReminderOpen, setIsReminderOpen] = useState(false);
   const [newComment, setNewComment] = useState("");
   const [activeTab, setActiveTab] = useState("all-tasks");
   const [viewMode, setViewMode] = useState<"list" | "kanban">("list");
+  const [selectedTaskIds, setSelectedTaskIds] = useState<Set<string>>(new Set());
 
   const [newTask, setNewTask] = useState({
     title: "",
@@ -485,12 +387,11 @@ const Tasks = () => {
     priority: "Medium",
     dueDate: "",
     projectId: "",
-    projectPhaseId: "",
     estimatedHours: "",
-    tags: "",
-    assignedTeam: "",
-    assignedDepartment: ""
+    tags: ""
   });
+
+  const [editTask, setEditTask] = useState<Partial<Task>>({});
 
   const [newChecklistItem, setNewChecklistItem] = useState({
     title: "",
@@ -499,13 +400,16 @@ const Tasks = () => {
     assignedTo: ""
   });
 
+  const [reminderSettings, setReminderSettings] = useState<ReminderSettings>({
+    selectedTasks: [],
+    reminderType: "selected",
+    reminderMessage: ""
+  });
+
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [priorityFilter, setPriorityFilter] = useState("All");
   const [staffFilter, setStaffFilter] = useState("All");
-  const [departmentFilter, setDepartmentFilter] = useState("All");
-  const [teamFilter, setTeamFilter] = useState("All");
-  const [projectFilter, setProjectFilter] = useState("All");
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
   const [analyticsStaff, setAnalyticsStaff] = useState("All");
@@ -526,16 +430,13 @@ const Tasks = () => {
     const matchesStatus = statusFilter === "All" || task.status === statusFilter;
     const matchesPriority = priorityFilter === "All" || task.priority === priorityFilter;
     const matchesStaff = staffFilter === "All" || task.assigneeId === staffFilter;
-    const matchesDepartment = departmentFilter === "All" || task.assignedDepartment === departmentFilter;
-    const matchesTeam = teamFilter === "All" || task.assignedTeam === teamFilter;
-    const matchesProject = projectFilter === "All" || task.projectId === projectFilter;
     
     const taskDate = new Date(task.createdDate);
     const matchesDateFrom = !dateFrom || taskDate >= dateFrom;
     const matchesDateTo = !dateTo || taskDate <= dateTo;
     
     return matchesSearch && matchesStatus && matchesPriority && matchesStaff && 
-           matchesDepartment && matchesTeam && matchesProject && matchesDateFrom && matchesDateTo;
+           matchesDateFrom && matchesDateTo;
   });
 
   const getTasksByStaffAndDate = (staffId: string, period: "daily" | "weekly" | "monthly") => {
@@ -655,8 +556,7 @@ const Tasks = () => {
     setTasks([...tasks, task]);
     setNewTask({
       title: "", description: "", assigneeId: "", priority: "Medium",
-      dueDate: "", projectId: "", projectPhaseId: "", estimatedHours: "", 
-      tags: "", assignedTeam: "", assignedDepartment: ""
+      dueDate: "", projectId: "", estimatedHours: "", tags: ""
     });
     setIsCreateTaskOpen(false);
 
@@ -664,6 +564,38 @@ const Tasks = () => {
       title: "Task Created",
       description: `Task "${task.taskId}" has been assigned to ${task.assignee}.`,
     });
+  };
+
+  const handleEditTask = () => {
+    if (!editTask.id) return;
+
+    setTasks(prev => prev.map(task => 
+      task.id === editTask.id 
+        ? { 
+            ...task, 
+            ...editTask,
+            updatedDate: new Date().toISOString().split('T')[0]
+          }
+        : task
+    ));
+
+    setEditTask({});
+    setIsEditTaskOpen(false);
+
+    toast({
+      title: "Task Updated",
+      description: "Task has been updated successfully.",
+    });
+  };
+
+  const handleTaskSelection = (taskId: string, checked: boolean) => {
+    const newSelectedTasks = new Set(selectedTaskIds);
+    if (checked) {
+      newSelectedTasks.add(taskId);
+    } else {
+      newSelectedTasks.delete(taskId);
+    }
+    setSelectedTaskIds(newSelectedTasks);
   };
 
   const handleAddChecklistItem = (taskId: string) => {
@@ -781,6 +713,39 @@ const Tasks = () => {
       title: "Stage Updated",
       description: `Task moved to ${newStage} stage.`,
     });
+  };
+
+  const handleSendReminders = () => {
+    let recipientCount = 0;
+    let tasksToNotify: Task[] = [];
+
+    if (reminderSettings.reminderType === "selected") {
+      tasksToNotify = tasks.filter(t => selectedTaskIds.has(t.id));
+      recipientCount = new Set(tasksToNotify.map(t => t.assigneeId)).size;
+    } else if (reminderSettings.reminderType === "all_todo") {
+      tasksToNotify = tasks.filter(t => t.status === "To Do");
+      recipientCount = new Set(tasksToNotify.map(t => t.assigneeId)).size;
+    } else if (reminderSettings.reminderType === "all_staff") {
+      tasksToNotify = tasks;
+      recipientCount = staffMembers.length;
+    }
+
+    // Simulate sending email notifications
+    console.log("Sending reminders to:", tasksToNotify);
+    console.log("Reminder message:", reminderSettings.reminderMessage);
+
+    toast({
+      title: "Reminders Sent",
+      description: `Email reminders sent to ${recipientCount} staff members for ${tasksToNotify.length} tasks.`,
+    });
+
+    setIsReminderOpen(false);
+    setReminderSettings({
+      selectedTasks: [],
+      reminderType: "selected",
+      reminderMessage: ""
+    });
+    setSelectedTaskIds(new Set());
   };
 
   const KanbanBoard = () => {
@@ -922,7 +887,7 @@ const Tasks = () => {
               Task Management
             </h1>
             <p className="text-muted-foreground mt-2">
-              Manage tasks with checklists, team assignments, and project linking
+              Manage tasks with checklists, editing capabilities and reminders
             </p>
           </div>
           <div className="flex gap-2">
@@ -933,6 +898,14 @@ const Tasks = () => {
               {viewMode === "list" ? <KanbanSquare className="mr-2 h-4 w-4" /> : <List className="mr-2 h-4 w-4" />}
               {viewMode === "list" ? "Kanban View" : "List View"}
             </Button>
+            <Dialog open={isReminderOpen} onOpenChange={setIsReminderOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline">
+                  <Mail className="mr-2 h-4 w-4" />
+                  Send Reminders
+                </Button>
+              </DialogTrigger>
+            </Dialog>
             <Dialog open={isCreateTaskOpen} onOpenChange={setIsCreateTaskOpen}>
               <DialogTrigger asChild>
                 <Button>
@@ -944,7 +917,7 @@ const Tasks = () => {
           </div>
         </div>
 
-        {/* Enhanced Filters */}
+        {/* Simplified Filters */}
         <Card>
           <CardContent className="p-6">
             <div className="space-y-4">
@@ -972,32 +945,6 @@ const Tasks = () => {
                   </SelectContent>
                 </Select>
                 
-                <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Filter by department" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="All">All Departments</SelectItem>
-                    {departments.map(dept => (
-                      <SelectItem key={dept.id} value={dept.id}>{dept.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                
-                <Select value={teamFilter} onValueChange={setTeamFilter}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Filter by team" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="All">All Teams</SelectItem>
-                    {teams.map(team => (
-                      <SelectItem key={team.id} value={team.id}>{team.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Select value={priorityFilter} onValueChange={setPriorityFilter}>
                   <SelectTrigger>
                     <SelectValue placeholder="Filter by priority" />
@@ -1008,20 +955,6 @@ const Tasks = () => {
                     <SelectItem value="Medium">Medium</SelectItem>
                     <SelectItem value="High">High</SelectItem>
                     <SelectItem value="Critical">Critical</SelectItem>
-                  </SelectContent>
-                </Select>
-                
-                <Select value={projectFilter} onValueChange={setProjectFilter}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Filter by project" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="All">All Projects</SelectItem>
-                    {projects.map(project => (
-                      <SelectItem key={project.id} value={project.id}>
-                        {project.projectId} - {project.name}
-                      </SelectItem>
-                    ))}
                   </SelectContent>
                 </Select>
                 
@@ -1128,38 +1061,30 @@ const Tasks = () => {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Department Tasks</CardTitle>
-              <Building className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Selected Tasks</CardTitle>
+              <CheckSquare className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {departmentFilter !== "All" 
-                  ? filteredTasks.filter(t => t.assignedDepartment === departmentFilter).length 
-                  : filteredTasks.length}
+                {selectedTaskIds.size}
               </div>
               <p className="text-xs text-muted-foreground">
-                {departmentFilter !== "All" 
-                  ? departments.find(d => d.id === departmentFilter)?.name 
-                  : "All departments"}
+                Ready for reminders
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Team Tasks</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Comments</CardTitle>
+              <MessageCircle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {teamFilter !== "All" 
-                  ? filteredTasks.filter(t => t.assignedTeam === teamFilter).length 
-                  : filteredTasks.length}
+                {filteredTasks.reduce((sum, t) => sum + t.comments.length, 0)}
               </div>
               <p className="text-xs text-muted-foreground">
-                {teamFilter !== "All" 
-                  ? teams.find(t => t.id === teamFilter)?.name 
-                  : "All teams"}
+                Total comments
               </p>
             </CardContent>
           </Card>
@@ -1184,83 +1109,84 @@ const Tasks = () => {
                   <Card key={task.id} className="hover:shadow-md transition-shadow">
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between">
-                        <div className="space-y-2 flex-1">
-                          <div className="flex items-center gap-3">
-                            <Badge variant="outline" className="font-mono">
-                              {task.taskId}
-                            </Badge>
-                            <h3 className="font-semibold text-lg">{task.title}</h3>
-                            <div className="flex items-center gap-2">
-                              <Badge variant={getStatusVariant(task.status)}>
-                                {task.status}
+                        <div className="flex items-start gap-3">
+                          <Checkbox
+                            checked={selectedTaskIds.has(task.id)}
+                            onCheckedChange={(checked) => handleTaskSelection(task.id, checked as boolean)}
+                            className="mt-1"
+                          />
+                          <div className="space-y-2 flex-1">
+                            <div className="flex items-center gap-3">
+                              <Badge variant="outline" className="font-mono">
+                                {task.taskId}
                               </Badge>
-                              <Badge variant={getPriorityVariant(task.priority)}>
-                                {getPriorityIcon(task.priority)}
-                                <span className="ml-1">{task.priority}</span>
-                              </Badge>
-                              <Badge className={getStageColor(task.stage)}>
-                                {task.stage}
-                              </Badge>
-                            </div>
-                          </div>
-                          
-                          <p className="text-muted-foreground">{task.description}</p>
-                          
-                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                              <User className="h-3 w-3" />
-                              {task.assignee}
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Briefcase className="h-3 w-3" />
-                              {task.project}
-                            </div>
-                            {task.assignedTeam && (
-                              <div className="flex items-center gap-1">
-                                <Users className="h-3 w-3" />
-                                {teams.find(t => t.id === task.assignedTeam)?.name}
-                              </div>
-                            )}
-                            {task.assignedDepartment && (
-                              <div className="flex items-center gap-1">
-                                <Building className="h-3 w-3" />
-                                {departments.find(d => d.id === task.assignedDepartment)?.name}
-                              </div>
-                            )}
-                            <div className="flex items-center gap-1">
-                              <CalendarIcon className="h-3 w-3" />
-                              Due: {new Date(task.dueDate).toLocaleDateString()}
-                            </div>
-                          </div>
-
-                          {/* Checklist Summary */}
-                          {task.checklist.length > 0 && (
-                            <div className="space-y-2">
-                              <div className="flex items-center gap-2 text-sm">
-                                <ListChecks className="h-4 w-4" />
-                                <span className="font-medium">
-                                  Checklist ({task.checklist.filter(c => c.isCompleted).length}/{task.checklist.length})
-                                </span>
-                                <span className="text-muted-foreground">
-                                  - {task.checklist.reduce((sum, c) => sum + c.assignedHours, 0)}h total
-                                </span>
-                              </div>
-                              <Progress 
-                                value={(task.checklist.filter(c => c.isCompleted).length / task.checklist.length) * 100} 
-                                className="h-2" 
-                              />
-                            </div>
-                          )}
-
-                          {task.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-1">
-                              {task.tags.map((tag, index) => (
-                                <Badge key={index} variant="outline" className="text-xs">
-                                  {tag}
+                              <h3 className="font-semibold text-lg">{task.title}</h3>
+                              <div className="flex items-center gap-2">
+                                <Badge variant={getStatusVariant(task.status)}>
+                                  {task.status}
                                 </Badge>
-                              ))}
+                                <Badge variant={getPriorityVariant(task.priority)}>
+                                  {getPriorityIcon(task.priority)}
+                                  <span className="ml-1">{task.priority}</span>
+                                </Badge>
+                                <Badge className={getStageColor(task.stage)}>
+                                  {task.stage}
+                                </Badge>
+                              </div>
                             </div>
-                          )}
+                            
+                            <p className="text-muted-foreground">{task.description}</p>
+                            
+                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                              <div className="flex items-center gap-1">
+                                <User className="h-3 w-3" />
+                                {task.assignee}
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Briefcase className="h-3 w-3" />
+                                {task.project}
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <CalendarIcon className="h-3 w-3" />
+                                Due: {new Date(task.dueDate).toLocaleDateString()}
+                              </div>
+                              {task.comments.length > 0 && (
+                                <div className="flex items-center gap-1">
+                                  <MessageCircle className="h-3 w-3" />
+                                  {task.comments.length} comments
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Checklist Summary */}
+                            {task.checklist.length > 0 && (
+                              <div className="space-y-2">
+                                <div className="flex items-center gap-2 text-sm">
+                                  <ListChecks className="h-4 w-4" />
+                                  <span className="font-medium">
+                                    Checklist ({task.checklist.filter(c => c.isCompleted).length}/{task.checklist.length})
+                                  </span>
+                                  <span className="text-muted-foreground">
+                                    - {task.checklist.reduce((sum, c) => sum + c.assignedHours, 0)}h total
+                                  </span>
+                                </div>
+                                <Progress 
+                                  value={(task.checklist.filter(c => c.isCompleted).length / task.checklist.length) * 100} 
+                                  className="h-2" 
+                                />
+                              </div>
+                            )}
+
+                            {task.tags.length > 0 && (
+                              <div className="flex flex-wrap gap-1">
+                                {task.tags.map((tag, index) => (
+                                  <Badge key={index} variant="outline" className="text-xs">
+                                    {tag}
+                                  </Badge>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         </div>
 
                         <div className="flex items-center gap-2">
@@ -1273,7 +1199,7 @@ const Tasks = () => {
                             }}
                           >
                             <Eye className="mr-1 h-3 w-3" />
-                            View Details
+                            View
                           </Button>
                           
                           <DropdownMenu>
@@ -1284,7 +1210,12 @@ const Tasks = () => {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                              <DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setEditTask(task);
+                                  setIsEditTaskOpen(true);
+                                }}
+                              >
                                 <Edit className="mr-2 h-4 w-4" />
                                 Edit Task
                               </DropdownMenuItem>
@@ -1383,6 +1314,12 @@ const Tasks = () => {
                                       {task.checklist.filter(c => c.isCompleted).length}/{task.checklist.length}
                                     </Badge>
                                   )}
+                                  {task.comments.length > 0 && (
+                                    <Badge variant="outline" className="text-xs">
+                                      <MessageCircle className="h-3 w-3 mr-1" />
+                                      {task.comments.length}
+                                    </Badge>
+                                  )}
                                 </div>
                                 <p className="text-sm text-muted-foreground">
                                   Due: {new Date(task.dueDate).toLocaleDateString()} • {task.project}
@@ -1460,8 +1397,10 @@ const Tasks = () => {
                             <div className="text-2xl font-bold text-blue-600">{checklistStats.completed}/{checklistStats.total}</div>
                           </div>
                           <div>
-                            <div className="font-medium">Checklist Hours</div>
-                            <div className="text-2xl font-bold text-purple-600">{checklistStats.totalHours}h</div>
+                            <div className="font-medium">Comments</div>
+                            <div className="text-2xl font-bold text-purple-600">
+                              {staffTasks.reduce((sum, t) => sum + t.comments.filter(c => c.authorId === staff.id).length, 0)}
+                            </div>
                           </div>
                         </div>
                         
@@ -1504,58 +1443,52 @@ const Tasks = () => {
               </Select>
             </div>
 
-            <div className="grid gap-4">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {staffMembers.map((staff) => {
                 const periodTasks = getTasksByStaffAndDate(staff.id, workOverviewPeriod);
                 const completedTasks = periodTasks.filter(t => t.status === "Done");
                 const inProgressTasks = periodTasks.filter(t => t.status === "In Progress");
-                const totalHours = periodTasks.reduce((sum, task) => sum + (task.actualHours || 0), 0);
-                const checklistItems = periodTasks.reduce((sum, t) => sum + t.checklist.length, 0);
-                const completedChecklistItems = periodTasks.reduce((sum, t) => sum + t.checklist.filter(c => c.isCompleted).length, 0);
+                const hoursWorked = periodTasks.reduce((sum, t) => sum + (t.actualHours || 0), 0);
                 
                 return (
                   <Card key={staff.id}>
                     <CardHeader>
-                      <CardTitle className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <Avatar>
-                            <AvatarImage src={staff.avatar} alt={staff.name} />
-                            <AvatarFallback>
-                              {staff.name.split(' ').map(n => n[0]).join('')}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <div className="font-semibold">{staff.name}</div>
-                            <div className="text-sm text-muted-foreground">{staff.position}</div>
-                          </div>
-                        </div>
-                        <Badge variant="outline" className="capitalize">
-                          {workOverviewPeriod} Overview
-                        </Badge>
-                      </CardTitle>
+                      <CardTitle className="text-lg">{staff.name}</CardTitle>
+                      <CardDescription>
+                        {workOverviewPeriod.charAt(0).toUpperCase() + workOverviewPeriod.slice(1)} Overview
+                      </CardDescription>
                     </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-5 gap-4 text-center">
+                    <CardContent className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                          <div className="text-2xl font-bold">{periodTasks.length}</div>
-                          <div className="text-sm text-muted-foreground">Total Tasks</div>
-                        </div>
-                        <div>
+                          <div className="font-medium">Tasks Completed</div>
                           <div className="text-2xl font-bold text-green-600">{completedTasks.length}</div>
-                          <div className="text-sm text-muted-foreground">Completed</div>
                         </div>
                         <div>
+                          <div className="font-medium">In Progress</div>
                           <div className="text-2xl font-bold text-blue-600">{inProgressTasks.length}</div>
-                          <div className="text-sm text-muted-foreground">In Progress</div>
                         </div>
                         <div>
-                          <div className="text-2xl font-bold text-purple-600">{totalHours}h</div>
-                          <div className="text-sm text-muted-foreground">Hours Worked</div>
+                          <div className="font-medium">Hours Worked</div>
+                          <div className="text-2xl font-bold text-purple-600">{hoursWorked}h</div>
                         </div>
                         <div>
-                          <div className="text-2xl font-bold text-orange-600">{completedChecklistItems}/{checklistItems}</div>
-                          <div className="text-sm text-muted-foreground">Checklist Items</div>
+                          <div className="font-medium">Total Tasks</div>
+                          <div className="text-2xl font-bold">{periodTasks.length}</div>
                         </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center text-sm">
+                          <span>Completion Rate</span>
+                          <span className="font-medium">
+                            {periodTasks.length > 0 ? ((completedTasks.length / periodTasks.length) * 100).toFixed(1) : 0}%
+                          </span>
+                        </div>
+                        <Progress 
+                          value={periodTasks.length > 0 ? (completedTasks.length / periodTasks.length) * 100 : 0} 
+                          className="h-2" 
+                        />
                       </div>
                     </CardContent>
                   </Card>
@@ -1565,7 +1498,7 @@ const Tasks = () => {
           </TabsContent>
         </Tabs>
 
-        {/* Task Detail Dialog */}
+        {/* Task Detail Dialog with Comments */}
         <Dialog open={isTaskDetailOpen} onOpenChange={setIsTaskDetailOpen}>
           <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
@@ -1576,35 +1509,17 @@ const Tasks = () => {
                 {selectedTask?.title}
               </DialogTitle>
               <DialogDescription>
-                Task details, checklist, and comments
+                Task details, checklist and comments
               </DialogDescription>
             </DialogHeader>
             {selectedTask && (
               <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-4">
                     <div>
                       <Label className="text-sm font-medium">Assignee</Label>
                       <p className="text-sm text-muted-foreground">{selectedTask.assignee}</p>
                     </div>
-                    <div>
-                      <Label className="text-sm font-medium">Project</Label>
-                      <p className="text-sm text-muted-foreground">{selectedTask.project}</p>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium">Team</Label>
-                      <p className="text-sm text-muted-foreground">
-                        {selectedTask.assignedTeam ? teams.find(t => t.id === selectedTask.assignedTeam)?.name : "Not assigned"}
-                      </p>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium">Department</Label>
-                      <p className="text-sm text-muted-foreground">
-                        {selectedTask.assignedDepartment ? departments.find(d => d.id === selectedTask.assignedDepartment)?.name : "Not assigned"}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="space-y-3">
                     <div>
                       <Label className="text-sm font-medium">Status</Label>
                       <div className="mt-1">
@@ -1621,18 +1536,22 @@ const Tasks = () => {
                         </Badge>
                       </div>
                     </div>
+                  </div>
+                  <div className="space-y-4">
                     <div>
-                      <Label className="text-sm font-medium">Stage</Label>
-                      <div className="mt-1">
-                        <Badge className={getStageColor(selectedTask.stage)}>
-                          {selectedTask.stage}
-                        </Badge>
-                      </div>
+                      <Label className="text-sm font-medium">Project</Label>
+                      <p className="text-sm text-muted-foreground">{selectedTask.project}</p>
                     </div>
                     <div>
                       <Label className="text-sm font-medium">Due Date</Label>
                       <p className="text-sm text-muted-foreground">
                         {new Date(selectedTask.dueDate).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium">Hours</Label>
+                      <p className="text-sm text-muted-foreground">
+                        {selectedTask.actualHours || 0} / {selectedTask.estimatedHours} hours
                       </p>
                     </div>
                   </div>
@@ -1646,22 +1565,10 @@ const Tasks = () => {
                 {/* Checklist Section */}
                 {selectedTask.checklist.length > 0 && (
                   <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <Label className="text-sm font-medium">
-                        Checklist ({selectedTask.checklist.filter(c => c.isCompleted).length}/{selectedTask.checklist.length})
-                      </Label>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          setIsChecklistOpen(true);
-                        }}
-                      >
-                        <ListChecks className="mr-1 h-3 w-3" />
-                        Manage Checklist
-                      </Button>
-                    </div>
-                    <div className="space-y-2">
+                    <Label className="text-sm font-medium">
+                      Checklist ({selectedTask.checklist.filter(c => c.isCompleted).length}/{selectedTask.checklist.length})
+                    </Label>
+                    <div className="mt-3 space-y-2">
                       {selectedTask.checklist.map((item) => (
                         <div key={item.id} className="flex items-center gap-3 p-2 border rounded">
                           <Checkbox 
@@ -1669,14 +1576,16 @@ const Tasks = () => {
                             onCheckedChange={() => handleChecklistToggle(selectedTask.id, item.id)}
                           />
                           <div className="flex-1">
-                            <div className={`text-sm ${item.isCompleted ? "line-through text-muted-foreground" : ""}`}>
+                            <div className={`font-medium ${item.isCompleted ? 'line-through text-muted-foreground' : ''}`}>
                               {item.title}
                             </div>
                             {item.description && (
-                              <div className="text-xs text-muted-foreground">{item.description}</div>
+                              <div className="text-sm text-muted-foreground">{item.description}</div>
                             )}
                             <div className="text-xs text-muted-foreground">
-                              {item.assignedHours}h assigned {item.assignedTo && `• ${item.assignedTo}`}
+                              {item.assignedHours}h assigned
+                              {item.assignedTo && ` • ${item.assignedTo}`}
+                              {item.completedDate && ` • Completed: ${new Date(item.completedDate).toLocaleDateString()}`}
                             </div>
                           </div>
                         </div>
@@ -1685,22 +1594,21 @@ const Tasks = () => {
                   </div>
                 )}
 
-                <Separator />
-
+                {/* Comments Section */}
                 <div>
                   <Label className="text-sm font-medium">Comments ({selectedTask.comments.length})</Label>
-                  <div className="mt-3 space-y-3 max-h-60 overflow-y-auto">
+                  <div className="mt-3 space-y-3">
                     {selectedTask.comments.map((comment) => (
-                      <div key={comment.id} className="flex gap-3 p-3 bg-muted rounded-lg">
+                      <div key={comment.id} className="flex gap-3 p-3 border rounded">
                         <Avatar className="h-8 w-8">
-                          <AvatarImage src={comment.avatar} alt={comment.author} />
+                          <AvatarImage src={comment.avatar} />
                           <AvatarFallback className="text-xs">
                             {comment.author.split(' ').map(n => n[0]).join('')}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="text-sm font-medium">{comment.author}</span>
+                            <span className="font-medium text-sm">{comment.author}</span>
                             <span className="text-xs text-muted-foreground">
                               {new Date(comment.timestamp).toLocaleString()}
                             </span>
@@ -1709,23 +1617,29 @@ const Tasks = () => {
                         </div>
                       </div>
                     ))}
-                  </div>
-                  
-                  <div className="mt-4 space-y-2">
-                    <Textarea
-                      placeholder="Add a comment..."
-                      value={newComment}
-                      onChange={(e) => setNewComment(e.target.value)}
-                      rows={3}
-                    />
-                    <Button 
-                      size="sm" 
-                      onClick={() => handleAddComment(selectedTask.id)}
-                      disabled={!newComment.trim()}
-                    >
-                      <Send className="mr-1 h-3 w-3" />
-                      Add Comment
-                    </Button>
+                    
+                    {/* Add Comment */}
+                    <div className="flex gap-3 p-3 border rounded">
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback className="text-xs">A</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 space-y-2">
+                        <Textarea
+                          placeholder="Add a comment..."
+                          value={newComment}
+                          onChange={(e) => setNewComment(e.target.value)}
+                          rows={2}
+                        />
+                        <Button 
+                          size="sm" 
+                          onClick={() => handleAddComment(selectedTask.id)}
+                          disabled={!newComment.trim()}
+                        >
+                          <Send className="h-3 w-3 mr-1" />
+                          Comment
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1738,119 +1652,169 @@ const Tasks = () => {
           </DialogContent>
         </Dialog>
 
-        {/* Checklist Management Dialog */}
-        <Dialog open={isChecklistOpen} onOpenChange={setIsChecklistOpen}>
+        {/* Edit Task Dialog */}
+        <Dialog open={isEditTaskOpen} onOpenChange={setIsEditTaskOpen}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Manage Checklist - {selectedTask?.title}</DialogTitle>
+              <DialogTitle>Edit Task</DialogTitle>
               <DialogDescription>
-                Add and manage checklist items for this task
+                Update task information
               </DialogDescription>
             </DialogHeader>
-            
-            {selectedTask && (
-              <div className="space-y-4">
-                {/* Add New Checklist Item */}
-                <div className="border rounded-lg p-4 space-y-4">
-                  <h4 className="font-medium">Add New Checklist Item</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="col-span-2">
-                      <Label htmlFor="checklistTitle">Title *</Label>
-                      <Input
-                        id="checklistTitle"
-                        value={newChecklistItem.title}
-                        onChange={(e) => setNewChecklistItem(prev => ({ ...prev, title: e.target.value }))}
-                        placeholder="Enter checklist item title"
-                      />
-                    </div>
-                    <div className="col-span-2">
-                      <Label htmlFor="checklistDescription">Description</Label>
-                      <Textarea
-                        id="checklistDescription"
-                        value={newChecklistItem.description}
-                        onChange={(e) => setNewChecklistItem(prev => ({ ...prev, description: e.target.value }))}
-                        placeholder="Enter description (optional)"
-                        rows={2}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="assignedHours">Assigned Hours *</Label>
-                      <Input
-                        id="assignedHours"
-                        type="number"
-                        value={newChecklistItem.assignedHours}
-                        onChange={(e) => setNewChecklistItem(prev => ({ ...prev, assignedHours: e.target.value }))}
-                        placeholder="0"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="assignedTo">Assigned To</Label>
-                      <Select 
-                        value={newChecklistItem.assignedTo} 
-                        onValueChange={(value) => setNewChecklistItem(prev => ({ ...prev, assignedTo: value }))}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select assignee" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {staffMembers.map((staff) => (
-                            <SelectItem key={staff.id} value={staff.name}>
-                              {staff.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  <Button onClick={() => handleAddChecklistItem(selectedTask.id)}>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Item
-                  </Button>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="editTitle">Task Title *</Label>
+                <Input 
+                  id="editTitle" 
+                  value={editTask.title || ""}
+                  onChange={(e) => setEditTask(prev => ({ ...prev, title: e.target.value }))}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="editDescription">Description</Label>
+                <Textarea
+                  id="editDescription"
+                  rows={3}
+                  value={editTask.description || ""}
+                  onChange={(e) => setEditTask(prev => ({ ...prev, description: e.target.value }))}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="editPriority">Priority</Label>
+                  <Select 
+                    value={editTask.priority || "Medium"} 
+                    onValueChange={(value) => setEditTask(prev => ({ ...prev, priority: value as Task["priority"] }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Low">Low</SelectItem>
+                      <SelectItem value="Medium">Medium</SelectItem>
+                      <SelectItem value="High">High</SelectItem>
+                      <SelectItem value="Critical">Critical</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-
-                {/* Existing Checklist Items */}
-                <div>
-                  <h4 className="font-medium mb-3">
-                    Checklist Items ({selectedTask.checklist.filter(c => c.isCompleted).length}/{selectedTask.checklist.length})
-                  </h4>
-                  <div className="space-y-2 max-h-60 overflow-y-auto">
-                    {selectedTask.checklist.map((item) => (
-                      <div key={item.id} className="flex items-start gap-3 p-3 border rounded">
-                        <Checkbox 
-                          checked={item.isCompleted}
-                          onCheckedChange={() => handleChecklistToggle(selectedTask.id, item.id)}
-                          className="mt-1"
-                        />
-                        <div className="flex-1">
-                          <div className={`font-medium ${item.isCompleted ? "line-through text-muted-foreground" : ""}`}>
-                            {item.title}
-                          </div>
-                          {item.description && (
-                            <div className="text-sm text-muted-foreground mt-1">{item.description}</div>
-                          )}
-                          <div className="text-sm text-muted-foreground mt-1">
-                            <span className="font-medium">{item.assignedHours}h</span>
-                            {item.assignedTo && <span> • Assigned to {item.assignedTo}</span>}
-                            <span> • Created {new Date(item.createdDate).toLocaleDateString()}</span>
-                            {item.completedDate && <span> • Completed {new Date(item.completedDate).toLocaleDateString()}</span>}
-                          </div>
-                        </div>
-                        <Button variant="ghost" size="sm">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="editStatus">Status</Label>
+                  <Select 
+                    value={editTask.status || "To Do"} 
+                    onValueChange={(value) => setEditTask(prev => ({ ...prev, status: value as Task["status"] }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="To Do">To Do</SelectItem>
+                      <SelectItem value="In Progress">In Progress</SelectItem>
+                      <SelectItem value="Review">Review</SelectItem>
+                      <SelectItem value="Done">Done</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
-            )}
-            
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="editDueDate">Due Date</Label>
+                  <Input
+                    id="editDueDate"
+                    type="date"
+                    value={editTask.dueDate || ""}
+                    onChange={(e) => setEditTask(prev => ({ ...prev, dueDate: e.target.value }))}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="editEstimatedHours">Estimated Hours</Label>
+                  <Input
+                    id="editEstimatedHours"
+                    type="number"
+                    value={editTask.estimatedHours || ""}
+                    onChange={(e) => setEditTask(prev => ({ ...prev, estimatedHours: parseInt(e.target.value) || 0 }))}
+                  />
+                </div>
+              </div>
+            </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsChecklistOpen(false)}>
-                Close
+              <Button variant="outline" onClick={() => setIsEditTaskOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleEditTask}>
+                <Save className="h-4 w-4 mr-2" />
+                Save Changes
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Reminder Dialog */}
+        <Dialog open={isReminderOpen} onOpenChange={setIsReminderOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Send Email Reminders</DialogTitle>
+              <DialogDescription>
+                Send reminder notifications to staff members
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label>Reminder Type</Label>
+                <Select 
+                  value={reminderSettings.reminderType} 
+                  onValueChange={(value) => setReminderSettings(prev => ({ ...prev, reminderType: value as "selected" | "all_todo" | "all_staff" }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="selected">Selected Tasks ({selectedTaskIds.size} tasks)</SelectItem>
+                    <SelectItem value="all_todo">All To-Do Tasks ({tasks.filter(t => t.status === "To Do").length} tasks)</SelectItem>
+                    <SelectItem value="all_staff">All Staff ({staffMembers.length} members)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="reminderMessage">Reminder Message</Label>
+                <Textarea
+                  id="reminderMessage"
+                  placeholder="Enter your reminder message..."
+                  rows={4}
+                  value={reminderSettings.reminderMessage}
+                  onChange={(e) => setReminderSettings(prev => ({ ...prev, reminderMessage: e.target.value }))}
+                />
+              </div>
+
+              {reminderSettings.reminderType === "selected" && selectedTaskIds.size === 0 && (
+                <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <p className="text-sm text-yellow-800">
+                    Please select tasks from the task list to send reminders for specific tasks.
+                  </p>
+                </div>
+              )}
+
+              {reminderSettings.reminderType !== "selected" && (
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-sm text-blue-800">
+                    {reminderSettings.reminderType === "all_todo" 
+                      ? "This will send reminders to all staff members who have To-Do tasks."
+                      : "This will send reminders to all staff members regardless of task status."
+                    }
+                  </p>
+                </div>
+              )}
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsReminderOpen(false)}>
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleSendReminders}
+                disabled={reminderSettings.reminderType === "selected" && selectedTaskIds.size === 0}
+              >
+                <Mail className="h-4 w-4 mr-2" />
+                Send Reminders
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -1862,164 +1826,106 @@ const Tasks = () => {
             <DialogHeader>
               <DialogTitle>Create New Task</DialogTitle>
               <DialogDescription>
-                Create a task and assign it to teams, departments, and projects
+                Create a new task and assign it to a team member
               </DialogDescription>
             </DialogHeader>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2 space-y-2">
-                <Label htmlFor="title">Task Title *</Label>
-                <Input
-                  id="title"
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="taskTitle">Task Title *</Label>
+                <Input 
+                  id="taskTitle" 
+                  placeholder="Enter task title" 
                   value={newTask.title}
                   onChange={(e) => setNewTask(prev => ({ ...prev, title: e.target.value }))}
-                  placeholder="Enter task title"
                 />
               </div>
-              <div className="col-span-2 space-y-2">
-                <Label htmlFor="description">Description</Label>
+              <div className="grid gap-2">
+                <Label htmlFor="taskDescription">Description</Label>
                 <Textarea
-                  id="description"
+                  id="taskDescription"
+                  placeholder="Describe the task..."
+                  rows={3}
                   value={newTask.description}
                   onChange={(e) => setNewTask(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder="Enter task description"
-                  rows={3}
                 />
               </div>
-              
-              {/* Project and Phase Selection */}
-              <div className="space-y-2">
-                <Label htmlFor="project">Project</Label>
-                <Select value={newTask.projectId} onValueChange={(value) => {
-                  setNewTask(prev => ({ ...prev, projectId: value, projectPhaseId: "" }));
-                }}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select project" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {projects.map((project) => (
-                      <SelectItem key={project.id} value={project.id}>
-                        {project.projectId} - {project.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="taskAssignee">Assignee *</Label>
+                  <Select value={newTask.assigneeId} onValueChange={(value) => setNewTask(prev => ({ ...prev, assigneeId: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select assignee" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {staffMembers.map(staff => (
+                        <SelectItem key={staff.id} value={staff.id}>
+                          {staff.name} - {staff.position}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="taskPriority">Priority</Label>
+                  <Select value={newTask.priority} onValueChange={(value) => setNewTask(prev => ({ ...prev, priority: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select priority" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Low">Low</SelectItem>
+                      <SelectItem value="Medium">Medium</SelectItem>
+                      <SelectItem value="High">High</SelectItem>
+                      <SelectItem value="Critical">Critical</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="projectPhase">Project Phase</Label>
-                <Select 
-                  value={newTask.projectPhaseId} 
-                  onValueChange={(value) => setNewTask(prev => ({ ...prev, projectPhaseId: value }))}
-                  disabled={!newTask.projectId}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select phase" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {newTask.projectId && projects.find(p => p.id === newTask.projectId)?.phases.map((phase) => (
-                      <SelectItem key={phase.id} value={phase.id}>
-                        {phase.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="taskDueDate">Due Date *</Label>
+                  <Input
+                    id="taskDueDate"
+                    type="date"
+                    value={newTask.dueDate}
+                    onChange={(e) => setNewTask(prev => ({ ...prev, dueDate: e.target.value }))}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="taskProject">Project</Label>
+                  <Select value={newTask.projectId} onValueChange={(value) => setNewTask(prev => ({ ...prev, projectId: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select project" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {projects.map(project => (
+                        <SelectItem key={project.id} value={project.id}>
+                          {project.projectId} - {project.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              
-              {/* Team and Department Assignment */}
-              <div className="space-y-2">
-                <Label htmlFor="department">Department</Label>
-                <Select value={newTask.assignedDepartment} onValueChange={(value) => {
-                  setNewTask(prev => ({ ...prev, assignedDepartment: value, assignedTeam: "" }));
-                }}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select department" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {departments.map((dept) => (
-                      <SelectItem key={dept.id} value={dept.id}>
-                        {dept.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="team">Team</Label>
-                <Select 
-                  value={newTask.assignedTeam} 
-                  onValueChange={(value) => setNewTask(prev => ({ ...prev, assignedTeam: value }))}
-                  disabled={!newTask.assignedDepartment}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select team" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {newTask.assignedDepartment && teams.filter(t => t.department === newTask.assignedDepartment).map((team) => (
-                      <SelectItem key={team.id} value={team.id}>
-                        {team.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="assignee">Assignee *</Label>
-                <Select value={newTask.assigneeId} onValueChange={(value) => setNewTask(prev => ({ ...prev, assigneeId: value }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select assignee" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {staffMembers.map((staff) => (
-                      <SelectItem key={staff.id} value={staff.id}>
-                        {staff.name} - {staff.position}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="priority">Priority</Label>
-                <Select value={newTask.priority} onValueChange={(value) => setNewTask(prev => ({ ...prev, priority: value }))}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Low">Low</SelectItem>
-                    <SelectItem value="Medium">Medium</SelectItem>
-                    <SelectItem value="High">High</SelectItem>
-                    <SelectItem value="Critical">Critical</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="dueDate">Due Date *</Label>
-                <Input
-                  id="dueDate"
-                  type="date"
-                  value={newTask.dueDate}
-                  onChange={(e) => setNewTask(prev => ({ ...prev, dueDate: e.target.value }))}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="estimatedHours">Estimated Hours</Label>
-                <Input
-                  id="estimatedHours"
-                  type="number"
-                  value={newTask.estimatedHours}
-                  onChange={(e) => setNewTask(prev => ({ ...prev, estimatedHours: e.target.value }))}
-                  placeholder="Enter estimated hours"
-                />
-              </div>
-              <div className="col-span-2 space-y-2">
-                <Label htmlFor="tags">Tags (comma-separated)</Label>
-                <Input
-                  id="tags"
-                  value={newTask.tags}
-                  onChange={(e) => setNewTask(prev => ({ ...prev, tags: e.target.value }))}
-                  placeholder="e.g., Frontend, Backend, Design"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="taskHours">Estimated Hours</Label>
+                  <Input
+                    id="taskHours"
+                    type="number"
+                    placeholder="Hours"
+                    value={newTask.estimatedHours}
+                    onChange={(e) => setNewTask(prev => ({ ...prev, estimatedHours: e.target.value }))}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="taskTags">Tags (comma-separated)</Label>
+                  <Input
+                    id="taskTags"
+                    placeholder="frontend, urgent, etc."
+                    value={newTask.tags}
+                    onChange={(e) => setNewTask(prev => ({ ...prev, tags: e.target.value }))}
+                  />
+                </div>
               </div>
             </div>
             <DialogFooter>
@@ -2027,6 +1933,123 @@ const Tasks = () => {
                 Cancel
               </Button>
               <Button onClick={handleCreateTask}>Create Task</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Checklist Management Dialog */}
+        <Dialog open={isChecklistOpen} onOpenChange={setIsChecklistOpen}>
+          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Manage Checklist</DialogTitle>
+              <DialogDescription>
+                Add and manage checklist items for the task
+              </DialogDescription>
+            </DialogHeader>
+            {selectedTask && (
+              <div className="space-y-4">
+                {/* Add New Checklist Item */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Add New Checklist Item</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="checklistTitle">Title *</Label>
+                      <Input 
+                        id="checklistTitle" 
+                        placeholder="Checklist item title" 
+                        value={newChecklistItem.title}
+                        onChange={(e) => setNewChecklistItem(prev => ({ ...prev, title: e.target.value }))}
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="checklistDescription">Description</Label>
+                      <Textarea
+                        id="checklistDescription"
+                        placeholder="Describe the checklist item..."
+                        rows={2}
+                        value={newChecklistItem.description}
+                        onChange={(e) => setNewChecklistItem(prev => ({ ...prev, description: e.target.value }))}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="checklistHours">Assigned Hours *</Label>
+                        <Input
+                          id="checklistHours"
+                          type="number"
+                          placeholder="Hours"
+                          value={newChecklistItem.assignedHours}
+                          onChange={(e) => setNewChecklistItem(prev => ({ ...prev, assignedHours: e.target.value }))}
+                        />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="checklistAssignedTo">Assigned To</Label>
+                        <Input
+                          id="checklistAssignedTo"
+                          placeholder="Staff member name"
+                          value={newChecklistItem.assignedTo}
+                          onChange={(e) => setNewChecklistItem(prev => ({ ...prev, assignedTo: e.target.value }))}
+                        />
+                      </div>
+                    </div>
+                    <Button onClick={() => handleAddChecklistItem(selectedTask.id)}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Item
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* Existing Checklist Items */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">
+                      Checklist Items ({selectedTask.checklist.filter(c => c.isCompleted).length}/{selectedTask.checklist.length})
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {selectedTask.checklist.map((item) => (
+                        <div key={item.id} className="flex items-start gap-3 p-3 border rounded">
+                          <Checkbox 
+                            checked={item.isCompleted}
+                            onCheckedChange={() => handleChecklistToggle(selectedTask.id, item.id)}
+                            className="mt-1"
+                          />
+                          <div className="flex-1">
+                            <div className={`font-medium ${item.isCompleted ? 'line-through text-muted-foreground' : ''}`}>
+                              {item.title}
+                            </div>
+                            {item.description && (
+                              <div className="text-sm text-muted-foreground mt-1">{item.description}</div>
+                            )}
+                            <div className="text-xs text-muted-foreground mt-2 flex items-center gap-4">
+                              <span>Hours: {item.assignedHours}</span>
+                              {item.assignedTo && <span>Assigned to: {item.assignedTo}</span>}
+                              <span>Created: {new Date(item.createdDate).toLocaleDateString()}</span>
+                              {item.completedDate && <span>Completed: {new Date(item.completedDate).toLocaleDateString()}</span>}
+                            </div>
+                          </div>
+                          <Button variant="ghost" size="sm" className="text-destructive">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                      {selectedTask.checklist.length === 0 && (
+                        <div className="text-center py-4 text-muted-foreground">
+                          No checklist items yet. Add your first item above.
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsChecklistOpen(false)}>
+                Close
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
