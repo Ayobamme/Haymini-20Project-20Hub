@@ -686,6 +686,17 @@ const HumanResources = () => {
     }
   };
 
+  const getStatusVariant = (status: string) => {
+    switch (status) {
+      case "onboarding": return "default";
+      case "active": return "default";
+      case "offboarding": return "secondary";
+      case "terminated": return "destructive";
+      case "resigned": return "outline";
+      default: return "secondary";
+    }
+  };
+
   const getTaskStatusColor = (status: string) => {
     switch (status) {
       case "pending": return "bg-gradient-to-r from-orange-400 to-orange-500 text-white border-0";
